@@ -37,7 +37,8 @@ class SecurityConfig(
                     "/api/auth/signup",
                     "/api/auth/verify-otp",
                     "/api/auth/resend-otp",
-                    "/api/auth/login"
+                    "/api/auth/login",
+                    "/api/courses/published"
                 ).permitAll()
 
                 it.anyRequest().authenticated()

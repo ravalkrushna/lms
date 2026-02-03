@@ -1,5 +1,6 @@
 package com.example.backend.config
 
+import com.example.backend.model.CoursesTable
 import com.example.backend.model.OtpVerificationTable
 import com.example.backend.model.UserAuthTable
 import jakarta.annotation.PostConstruct
@@ -26,7 +27,7 @@ class DatabaseConfig(
         )
 
         transaction {
-            SchemaUtils.create(UserAuthTable, OtpVerificationTable)
+            SchemaUtils.create(UserAuthTable, OtpVerificationTable, CoursesTable)
         }
     }
 }
