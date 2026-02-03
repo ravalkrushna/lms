@@ -12,19 +12,16 @@ class CourseController(
     private val courseService: CourseService
 ) {
 
-    // Teacher/Admin creates
     @PostMapping
     fun create(@Valid @RequestBody req: CreateCourseRequest): ResponseEntity<CourseResponse> {
         return ResponseEntity.ok(courseService.createCourse(req))
     }
 
-    // Anyone can view published courses
     @GetMapping("/published")
     fun listPublished(): ResponseEntity<List<CourseResponse>> {
         return ResponseEntity.ok(courseService.listPublishedCourses())
     }
 
-    // Logged in user gets his created courses
     @GetMapping("/my")
     fun myCourses(): ResponseEntity<List<CourseResponse>> {
         return ResponseEntity.ok(courseService.myCourses())
