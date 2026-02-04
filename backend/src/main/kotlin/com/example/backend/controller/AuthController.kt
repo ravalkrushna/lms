@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,10 +28,9 @@ class AuthController(
     @PostMapping("/login")
     fun login(
         @Valid @RequestBody req: LoginRequest,
-        request: HttpServletRequest,
-        response: HttpServletResponse
+        request: HttpServletRequest
     ): ResponseEntity<SessionResponse> {
-        return ResponseEntity.ok(authService.login(req, request, response))
+        return ResponseEntity.ok(authService.login(req, request))
     }
 
     @GetMapping("/me")
@@ -51,4 +51,17 @@ class AuthController(
         return ResponseEntity.ok(AuthResponse(authService.logout(request, response)))
     }
 
+    @PostMapping("/signup/instructor")
+    fun instructorSignup(@RequestBody req: InstructorSignupRequest): ResponseEntity<AuthResponse> {
+        return ResponseEntity.ok(AuthResponse(authService.signupInstructor(req)))
+    }
+
+    @GetMapping("/debug/roles")
+    fun roles(): Any {
+        val auth = SecurityContextHolder.getContext().authentication
+        return mapOf(
+            "name" to auth?.name,
+            "authorities" to auth?.authorities?.map { it.authority }
+        )
+    }
 }

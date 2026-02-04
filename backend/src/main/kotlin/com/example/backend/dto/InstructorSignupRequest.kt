@@ -1,8 +1,7 @@
 package com.example.backend.dto
 
-data class SessionResponse(
-    val userId: Long,
+data class InstructorSignupRequest(
     val name: String,
     val email: String,
-    val role: String
+    val password: String
 )

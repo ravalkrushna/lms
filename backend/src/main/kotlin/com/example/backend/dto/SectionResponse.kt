@@ -4,5 +4,5 @@ data class SectionResponse(
     val id: Long,
     val courseId: Long,
     val title: String,
-    val sortOrder: Int
+    val position: Int
 )

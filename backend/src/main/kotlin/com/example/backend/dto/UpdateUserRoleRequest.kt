@@ -2,7 +2,7 @@ package com.example.backend.dto
 
 import jakarta.validation.constraints.NotBlank
 
-data class CreateSectionRequest(
+data class UpdateUserRoleRequest(
     @field:NotBlank
-    val title: String
+    val role: String
 )

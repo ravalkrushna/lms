@@ -1,6 +1,7 @@
-package com.example.backend.security
+package com.example.backend.service
 
 import com.example.backend.repository.AuthRepository
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -14,17 +15,18 @@ class CustomUserDetailsService(
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = authRepository.findByEmail(username.lowercase().trim())
-            ?: throw UsernameNotFoundException("User not found")
+        val email = username.trim().lowercase()
+
+        val user = transaction {
+            authRepository.findByEmail(email)
+        } ?: throw UsernameNotFoundException("User not found")
+
+        val role = user.role.uppercase() // STUDENT / INSTRUCTOR / ADMIN
 
         return User(
             user.email,
             user.passwordHash,
-            user.emailVerified, // ✅ enabled only when verified
-            true,
-            true,
-            true,
-            listOf(SimpleGrantedAuthority("ROLE_USER"))
+            listOf(SimpleGrantedAuthority("ROLE_$role"))
         )
     }
 }

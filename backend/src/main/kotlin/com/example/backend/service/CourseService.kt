@@ -1,9 +1,13 @@
 package com.example.backend.service
 
-import com.example.backend.dto.*
+import com.example.backend.dto.CourseResponse
+import com.example.backend.dto.CreateCourseRequest
+import com.example.backend.model.CoursesTable
+import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import com.example.backend.repository.CourseRepository
-import org.springframework.security.core.context.SecurityContextHolder
+import com.example.backend.security.SecurityUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,73 +16,84 @@ class CourseService(
     private val authRepository: AuthRepository
 ) {
 
-    private fun currentUserId(): Long {
-        val authentication = SecurityContextHolder.getContext().authentication
-            ?: throw RuntimeException("Unauthorized")
-
-        val email = authentication.name
-        val user = authRepository.findByEmail(email) ?: throw RuntimeException("Unauthorized")
-
-        return user.id
-    }
-
     fun createCourse(req: CreateCourseRequest): CourseResponse {
-        val userId = currentUserId()
+        val email = SecurityUtils.currentEmail()
 
-        val courseId = courseRepository.createCourse(
-            title = req.title.trim(),
-            description = req.description?.trim(),
-            createdByUserId = userId
-        )
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
 
-        return courseRepository.findById(courseId)!!
+            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name) {
+                throw RuntimeException("Only instructor/admin can create course")
+            }
+
+            val courseId = courseRepository.createCourse(
+                title = req.title.trim(),
+                description = req.description?.trim(),
+                instructorId = user.id
+            )
+
+            val row = courseRepository.findById(courseId)
+                ?: throw RuntimeException("Course not found")
+
+            CourseResponse(
+                id = row[CoursesTable.id],
+                title = row[CoursesTable.title],
+                description = row[CoursesTable.description],
+                instructorId = row[CoursesTable.instructorId],
+                status = row[CoursesTable.status]
+            )
+        }
     }
 
-    fun getCourse(courseId: Long): CourseResponse {
-        return courseRepository.findById(courseId)
-            ?: throw RuntimeException("Course not found")
+    fun publishCourse(courseId: Long): String {
+        val email = SecurityUtils.currentEmail()
+
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
+
+            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name) {
+                throw RuntimeException("Only instructor/admin can publish course")
+            }
+
+            val updated = courseRepository.publishCourse(courseId)
+            if (updated == 0) throw RuntimeException("Course not found")
+
+            "Course published successfully"
+        }
+    }
+
+    fun listMyCourses(): List<CourseResponse> {
+        val email = SecurityUtils.currentEmail()
+
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
+
+            courseRepository.listInstructorCourses(user.id).map { row ->
+                CourseResponse(
+                    id = row[CoursesTable.id],
+                    title = row[CoursesTable.title],
+                    description = row[CoursesTable.description],
+                    instructorId = row[CoursesTable.instructorId],
+                    status = row[CoursesTable.status]
+                )
+            }
+        }
     }
 
     fun listPublishedCourses(): List<CourseResponse> {
-        return courseRepository.listAllPublished()
-    }
-
-    fun myCourses(): List<CourseResponse> {
-        val userId = currentUserId()
-        return courseRepository.listMyCourses(userId)
-    }
-
-    fun updateCourse(courseId: Long, req: UpdateCourseRequest): CourseResponse {
-        val userId = currentUserId()
-
-        val existing = courseRepository.findById(courseId)
-            ?: throw RuntimeException("Course not found")
-
-        if (existing.createdByUserId != userId) {
-            throw RuntimeException("Forbidden: You can only update your own course")
+        return transaction {
+            courseRepository.listPublishedCourses().map { row ->
+                CourseResponse(
+                    id = row[CoursesTable.id],
+                    title = row[CoursesTable.title],
+                    description = row[CoursesTable.description],
+                    instructorId = row[CoursesTable.instructorId],
+                    status = row[CoursesTable.status]
+                )
+            }
         }
-
-        courseRepository.updateCourse(
-            courseId = courseId,
-            title = req.title.trim(),
-            description = req.description?.trim(),
-            isPublished = req.isPublished
-        )
-
-        return courseRepository.findById(courseId)!!
-    }
-
-    fun deleteCourse(courseId: Long): String {
-        val userId = currentUserId()
-
-        val existing = courseRepository.findById(courseId)
-            ?: throw RuntimeException("Course not found")
-
-        if (existing.createdByUserId != userId) {
-            throw RuntimeException("Forbidden: You can only delete your own course")
-        }
-
-        courseRepository.deleteCourse(courseId)
-        return "Course deleted"
     }
 }

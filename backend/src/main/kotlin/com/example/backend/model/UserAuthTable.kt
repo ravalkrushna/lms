@@ -8,8 +8,18 @@ object UserAuthTable : Table("user_auth") {
     val name = varchar("name", 120)
     val email = varchar("email", 160).uniqueIndex()
     val passwordHash = varchar("password_hash", 255)
+    val role = varchar("role", 20).default(UserRole.STUDENT.name)
     val emailVerified = bool("email_verified").default(false)
     val createdAt = timestamp("created_at")
 
     override val primaryKey = PrimaryKey(id)
 }
+
+data class UserAuth(
+    val id: Long,
+    val name: String,
+    val email: String,
+    val passwordHash: String,
+    val emailVerified: Boolean,
+    val role: String
+)
