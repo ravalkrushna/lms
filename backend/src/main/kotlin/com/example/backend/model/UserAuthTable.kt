@@ -11,6 +11,7 @@ object UserAuthTable : Table("user_auth") {
     val role = varchar("role", 20).default(UserRole.STUDENT.name)
     val emailVerified = bool("email_verified").default(false)
     val createdAt = timestamp("created_at")
+    val updatedAt = timestamp("updated_at").nullable()
 
     override val primaryKey = PrimaryKey(id)
 }

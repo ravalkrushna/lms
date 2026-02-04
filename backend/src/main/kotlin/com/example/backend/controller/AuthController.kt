@@ -2,17 +2,20 @@ package com.example.backend.controller
 
 import com.example.backend.dto.*
 import com.example.backend.service.AuthService
+import com.example.backend.service.ForgotPasswordService
+import com.example.backend.service.PasswordService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val passwordService: PasswordService,
+    private val forgotPasswordService: ForgotPasswordService
 ) {
 
     @PostMapping("/signup")
@@ -20,9 +23,19 @@ class AuthController(
         return ResponseEntity.ok(AuthResponse(authService.signup(req)))
     }
 
+    @PostMapping("/signup/instructor")
+    fun instructorSignup(@Valid @RequestBody req: InstructorSignupRequest): ResponseEntity<AuthResponse> {
+        return ResponseEntity.ok(AuthResponse(authService.signupInstructor(req)))
+    }
+
     @PostMapping("/verify-otp")
     fun verifyOtp(@Valid @RequestBody req: VerifyOtpRequest): ResponseEntity<AuthResponse> {
         return ResponseEntity.ok(AuthResponse(authService.verifyOtp(req)))
+    }
+
+    @PostMapping("/resend-otp")
+    fun resendOtp(@Valid @RequestBody req: ResendOtpRequest): ResponseEntity<AuthResponse> {
+        return ResponseEntity.ok(AuthResponse(authService.resendOtp(req)))
     }
 
     @PostMapping("/login")
@@ -41,27 +54,26 @@ class AuthController(
         return ResponseEntity.ok(session)
     }
 
-    @PostMapping("/resend-otp")
-    fun resendOtp(@Valid @RequestBody req: ResendOtpRequest): ResponseEntity<AuthResponse> {
-        return ResponseEntity.ok(AuthResponse(authService.resendOtp(req)))
-    }
-
     @PostMapping("/logout")
     fun logout(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<AuthResponse> {
         return ResponseEntity.ok(AuthResponse(authService.logout(request, response)))
     }
 
-    @PostMapping("/signup/instructor")
-    fun instructorSignup(@RequestBody req: InstructorSignupRequest): ResponseEntity<AuthResponse> {
-        return ResponseEntity.ok(AuthResponse(authService.signupInstructor(req)))
+    @PutMapping("/change-password")
+    fun changePassword(@Valid @RequestBody req: ChangePasswordRequest): ResponseEntity<AuthResponse> {
+        passwordService.changePassword(req)
+        return ResponseEntity.ok(AuthResponse("Password updated successfully"))
     }
 
-    @GetMapping("/debug/roles")
-    fun roles(): Any {
-        val auth = SecurityContextHolder.getContext().authentication
-        return mapOf(
-            "name" to auth?.name,
-            "authorities" to auth?.authorities?.map { it.authority }
-        )
+    @PostMapping("/forgot-password")
+    fun forgotPassword(@Valid @RequestBody req: ForgotPasswordRequest): ResponseEntity<AuthResponse> {
+        forgotPasswordService.forgotPassword(req)
+        return ResponseEntity.ok(AuthResponse("OTP sent successfully"))
+    }
+
+    @PostMapping("/reset-password")
+    fun resetPassword(@Valid @RequestBody req: ResetPasswordRequest): ResponseEntity<AuthResponse> {
+        forgotPasswordService.resetPassword(req)
+        return ResponseEntity.ok(AuthResponse("Password reset successfully"))
     }
 }
