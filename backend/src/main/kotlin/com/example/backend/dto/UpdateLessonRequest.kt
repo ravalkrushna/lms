@@ -1,10 +1,9 @@
 package com.example.backend.dto
 
-
-data class CreateLessonRequest(
-    val title: String,
+data class UpdateLessonRequest(
+    val title: String? = null,
     val content: String? = null,
     val videoUrl: String? = null,
     val position: Int? = null,
-    val isFreePreview: Boolean = false
+    val isFreePreview: Boolean? = null
 )

@@ -1,45 +1,96 @@
 package com.example.backend.repository
 
+import com.example.backend.dto.CreateLessonRequest
 import com.example.backend.dto.LessonResponse
+import com.example.backend.dto.UpdateLessonRequest
+import com.example.backend.model.LessonTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 class LessonRepository {
 
-    object CourseLessons : Table("course_lessons") {
-        val id = long("id").autoIncrement()
-        val sectionId = long("section_id")
-        val title = varchar("title", 200)
-        val content = text("content").nullable()
-        val sortOrder = integer("sort_order")
-        override val primaryKey = PrimaryKey(id)
+    private fun ResultRow.toResponse(): LessonResponse {
+        return LessonResponse(
+            id = this[LessonTable.id],
+            sectionId = this[LessonTable.sectionId],
+            title = this[LessonTable.title],
+            content = this[LessonTable.content],
+            videoUrl = this[LessonTable.videoUrl],
+            position = this[LessonTable.position],
+            isFreePreview = this[LessonTable.isFreePreview],
+            createdAt = this[LessonTable.createdAt],
+            updatedAt = this[LessonTable.updatedAt]
+        )
     }
 
-    fun createLesson(sectionId: Long, title: String, content: String?, sortOrder: Int): Long = transaction {
-        CourseLessons.insert {
-            it[CourseLessons.sectionId] = sectionId
-            it[CourseLessons.title] = title
-            it[CourseLessons.content] = content
-            it[CourseLessons.sortOrder] = sortOrder
-        } get CourseLessons.id
+    fun create(sectionId: Long, req: CreateLessonRequest): LessonResponse {
+        val now = Instant.now()
+
+        val nextPosition = if (req?.position != null) {
+            req.position
+        } else {
+            LessonTable
+                .select(LessonTable.position.max())
+                .where { LessonTable.sectionId eq sectionId }
+                .singleOrNull()
+                ?.get(LessonTable.position.max())
+                ?: 0
+        } + 1
+
+        val insertedRow = LessonTable.insert {
+            it[LessonTable.sectionId] = sectionId
+            it[LessonTable.title] = req.title.trim()
+            it[LessonTable.content] = req.content?.trim()
+            it[LessonTable.videoUrl] = req.videoUrl?.trim()
+            it[LessonTable.position] = nextPosition
+            it[LessonTable.isFreePreview] = req.isFreePreview
+            it[LessonTable.createdAt] = now
+            it[LessonTable.updatedAt] = now
+        }
+
+        val newId = insertedRow[LessonTable.id]
+        return getById(newId)!!
     }
 
-    fun listBySection(sectionId: Long): List<LessonResponse> = transaction {
-        CourseLessons
+
+
+    fun getById(id: Long): LessonResponse? {
+        return LessonTable
             .selectAll()
-            .where { CourseLessons.sectionId eq sectionId }
-            .orderBy(CourseLessons.sortOrder to SortOrder.ASC)
-            .map {
-                LessonResponse(
-                    id = it[CourseLessons.id],
-                    sectionId = it[CourseLessons.sectionId],
-                    title = it[CourseLessons.title],
-                    content = it[CourseLessons.content],
-                    sortOrder = it[CourseLessons.sortOrder]
-                )
-            }
+            .where { LessonTable.id eq id }
+            .limit(1)
+            .map { it.toResponse() }
+            .singleOrNull()
     }
 
+    fun listBySection(sectionId: Long): List<LessonResponse> {
+        return LessonTable
+            .selectAll()
+            .where { LessonTable.sectionId eq sectionId }
+            .orderBy(LessonTable.position to SortOrder.ASC, LessonTable.id to SortOrder.ASC)
+            .map { it.toResponse() }
+    }
+
+    fun update(id: Long, req: UpdateLessonRequest): LessonResponse? {
+        val now = Instant.now()
+
+        val updated = LessonTable.update({ LessonTable.id eq id }) {
+            req.title?.let { t -> it[LessonTable.title] = t.trim() }
+            req.content?.let { c -> it[LessonTable.content] = c.trim() }
+            req.videoUrl?.let { v -> it[LessonTable.videoUrl] = v.trim() }
+            req.position?.let { p -> it[LessonTable.position] = p }
+            req.isFreePreview?.let { fp -> it[LessonTable.isFreePreview] = fp }
+            it[LessonTable.updatedAt] = now
+        }
+
+        if (updated == 0) return null
+        return getById(id)
+    }
+
+    fun delete(id: Long): Boolean {
+        return LessonTable.deleteWhere { LessonTable.id eq id } > 0
+    }
 }

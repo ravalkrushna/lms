@@ -25,7 +25,9 @@ class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
-
+            .sessionManagement {
+                it.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
+            }
 
             .formLogin { it.disable() }
             .httpBasic { it.disable() }

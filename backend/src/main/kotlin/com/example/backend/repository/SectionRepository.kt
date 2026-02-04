@@ -69,4 +69,12 @@ class SectionRepository {
             SectionsTable.deleteWhere { SectionsTable.id eq sectionId }
         }
     }
+
+    fun existsById(sectionId: Long): Boolean {
+        return !SectionsTable
+            .selectAll()
+            .where { SectionsTable.id eq sectionId }
+            .empty()
+    }
+
 }
