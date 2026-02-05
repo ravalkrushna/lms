@@ -1,9 +1,9 @@
 package com.example.backend.service
 
 import com.example.backend.repository.AuthRepository
+import com.example.backend.security.CustomUserPrincipal
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -21,12 +21,13 @@ class CustomUserDetailsService(
             authRepository.findByEmail(email)
         } ?: throw UsernameNotFoundException("User not found")
 
-        val role = user.role.uppercase() // STUDENT / INSTRUCTOR / ADMIN
+        val role = user.role.uppercase()
 
-        return User(
-            user.email,
-            user.passwordHash,
-            listOf(SimpleGrantedAuthority("ROLE_$role"))
+        return CustomUserPrincipal(
+            id = user.id,
+            email = user.email,
+            password = user.passwordHash,
+            authorities = listOf(SimpleGrantedAuthority("ROLE_$role"))
         )
     }
 }

@@ -33,7 +33,8 @@ class SecurityConfig {
                         "/api/auth/verify-otp",
                         "/api/auth/resend-otp",
                         "/api/auth/forgot-password",
-                        "/api/auth/reset-password"
+                        "/api/auth/reset-password",
+                        "/api/enrollments/**"
                     ).permitAll()
 
                     .anyRequest().authenticated()

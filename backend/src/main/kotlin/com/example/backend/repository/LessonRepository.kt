@@ -4,8 +4,10 @@ import com.example.backend.dto.CreateLessonRequest
 import com.example.backend.dto.LessonResponse
 import com.example.backend.dto.UpdateLessonRequest
 import com.example.backend.model.LessonTable
+import com.example.backend.model.SectionsTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -92,5 +94,18 @@ class LessonRepository {
 
     fun delete(id: Long): Boolean {
         return LessonTable.deleteWhere { LessonTable.id eq id } > 0
+    }
+
+    fun findByCourse(courseId: Long): List<LessonResponse> {
+        return transaction {
+            (LessonTable innerJoin SectionsTable)
+                .selectAll()
+                .where { SectionsTable.courseId eq courseId }
+                .orderBy(
+                    SectionsTable.position to SortOrder.ASC,
+                    LessonTable.position to SortOrder.ASC
+                )
+                .map { it.toResponse() }
+        }
     }
 }
