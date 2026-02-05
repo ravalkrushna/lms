@@ -108,4 +108,34 @@ class LessonRepository {
                 .map { it.toResponse() }
         }
     }
+
+    fun countByCourse(courseId: Long): Int =
+        transaction {
+            LessonTable
+                .join(
+                    SectionsTable,
+                    JoinType.INNER,
+                    additionalConstraint = {
+                        LessonTable.sectionId eq SectionsTable.id
+                    }
+                )
+                .selectAll().where {
+                    SectionsTable.courseId eq courseId
+                }
+                .count()
+                .toInt()
+        }
+
+
+    fun countBySection(sectionId: Long): Int =
+        transaction {
+            LessonTable
+                .selectAll()
+                .where { LessonTable.sectionId eq sectionId }
+                .count()
+                .toInt()
+        }
+
+
+
 }
