@@ -1,36 +1,27 @@
 package com.example.backend.controller
 
 import com.example.backend.dto.LessonResponse
+import com.example.backend.dto.StudentLessonResponse
+import com.example.backend.repository.StudentLessonRepository
 import com.example.backend.security.CustomUserPrincipal
-import com.example.backend.service.EnrollmentService
-import com.example.backend.service.LessonService
-import com.example.backend.utils.EnrollmentGuard
-import org.springframework.security.core.Authentication
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/courses/{courseId}/sections/{sectionId}/lessons")
+@RequestMapping("/api/student/lessons")
 class StudentLessonController(
-    private val enrollmentService: EnrollmentService,
-    private val lessonService: LessonService
+    private val repository: StudentLessonRepository
 ) {
 
-    @GetMapping
-    fun listLessonsForStudent(
-        @PathVariable courseId: Long,
-        @PathVariable sectionId: Long,
-        authentication: Authentication
-    ): List<LessonResponse> {
+    @GetMapping("/{lessonId}")
+    fun getLesson(
+        @AuthenticationPrincipal principal: CustomUserPrincipal,
+        @PathVariable lessonId: Long
+    ): ResponseEntity<StudentLessonResponse> {
 
-        val principal = authentication.principal as CustomUserPrincipal
-        val userId = principal.id
-
-        EnrollmentGuard.requireEnrollment(
-            enrollmentService,
-            userId,
-            courseId
+        return ResponseEntity.ok(
+            repository.getLesson(principal.id, lessonId)
         )
-
-        return lessonService.listBySection(sectionId)
     }
 }
