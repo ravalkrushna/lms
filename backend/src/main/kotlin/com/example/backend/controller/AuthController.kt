@@ -46,7 +46,6 @@ class AuthController(
         return ResponseEntity.ok(authService.login(req, request))
     }
 
-
     @GetMapping("/me")
     fun me(): ResponseEntity<SessionResponse> {
         val session = authService.getSessionInfo()
