@@ -2,6 +2,7 @@ package com.example.backend.repository
 
 import com.example.backend.model.CoursesTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -53,4 +54,21 @@ class CourseRepository {
             .orderBy(CoursesTable.id, SortOrder.DESC)
             .toList()
     }
+
+    fun isInstructorOfCourse(
+        instructorId: Long,
+        courseId: Long
+    ): Boolean =
+        transaction {
+            CoursesTable
+                .selectAll().where{
+                    (CoursesTable.id eq courseId) and
+                            (CoursesTable.instructorId eq instructorId)
+                }
+                .limit(1)
+                .any()
+        }
+
+
+
 }

@@ -59,15 +59,15 @@ class LessonProgressRepository {
         transaction {
             LessonProgressTable
                 .join(
-                    LessonTable,
-                    JoinType.INNER,
+                    otherTable = LessonTable,
+                    joinType = JoinType.INNER,
                     additionalConstraint = {
                         LessonProgressTable.lessonId eq LessonTable.id
                     }
                 )
                 .join(
-                    SectionsTable,
-                    JoinType.INNER,
+                    otherTable = SectionsTable,
+                    joinType = JoinType.INNER,
                     additionalConstraint = {
                         LessonTable.sectionId eq SectionsTable.id
                     }
@@ -80,6 +80,7 @@ class LessonProgressRepository {
                 .count()
                 .toInt()
         }
+
 
 
     fun countCompletedLessonsInSection(

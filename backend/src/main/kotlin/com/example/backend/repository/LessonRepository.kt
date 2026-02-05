@@ -111,20 +111,18 @@ class LessonRepository {
 
     fun countByCourse(courseId: Long): Int =
         transaction {
-            LessonTable
-                .join(
-                    SectionsTable,
-                    JoinType.INNER,
-                    additionalConstraint = {
-                        LessonTable.sectionId eq SectionsTable.id
-                    }
-                )
-                .selectAll().where {
-                    SectionsTable.courseId eq courseId
+            LessonTable.join(
+                otherTable = SectionsTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    LessonTable.sectionId eq SectionsTable.id
                 }
+            )
+                .selectAll().where { SectionsTable.courseId eq courseId }
                 .count()
                 .toInt()
         }
+
 
 
     fun countBySection(sectionId: Long): Int =
