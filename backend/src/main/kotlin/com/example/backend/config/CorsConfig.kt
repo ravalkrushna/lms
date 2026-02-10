@@ -1,27 +1,38 @@
 package com.example.backend.config
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 
 @Configuration
 class CorsConfig(
     @Value("\${app.cors.allowedOrigin}") private val allowedOrigin: String
-) : WebMvcConfigurer {
+) {
 
-    override fun addCorsMappings(registry: CorsRegistry) {
+    @Bean
+    fun corsFilter(): CorsFilter {
+        val config = CorsConfiguration()
+
         val origins = allowedOrigin
             .split(",")
             .map { it.trim() }
             .filter { it.isNotBlank() }
 
-        registry.addMapping("/**")
-            .allowedOrigins(*origins.toTypedArray())
-            .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .exposedHeaders("Set-Cookie")
-            .allowCredentials(true)
-            .maxAge(3600)
+        config.allowedOrigins = origins
+        config.allowedMethods = listOf(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        )
+        config.allowedHeaders = listOf("*")
+        config.exposedHeaders = listOf("Set-Cookie")
+        config.allowCredentials = true
+        config.maxAge = 3600
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
+
+        return CorsFilter(source)
     }
 }

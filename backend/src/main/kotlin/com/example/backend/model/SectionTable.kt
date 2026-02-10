@@ -4,9 +4,12 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.timestamp
 
 object SectionsTable : Table("sections") {
+
     val id = long("id").autoIncrement()
 
     val courseId = long("course_id")
+        .references(CoursesTable.id)
+
     val title = varchar("title", 200)
     val position = integer("position")
 

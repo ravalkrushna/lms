@@ -1,9 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-
-import { loginSchema } from "../../schema/loginSchema"
-import type { LoginFormValues } from "../../schema/loginSchema"
 
 import { login, getMe } from "@/api/auth"
 
@@ -16,9 +14,25 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { loginSchema, type LoginFormValues } from "@/schema/loginSchema"
 
 export default function Login() {
   const navigate = useNavigate()
+  const [checkingSession, setCheckingSession] = useState(true)
+
+  // ✅ Check session BEFORE rendering login UI
+  useEffect(() => {
+    getMe()
+      .then((me) => {
+        if (me.role === "STUDENT") navigate("/student/dashboard", { replace: true })
+        if (me.role === "INSTRUCTOR") navigate("/instructor/dashboard", { replace: true })
+        if (me.role === "ADMIN") navigate("/admin/dashboard", { replace: true })
+      })
+      .catch(() => {
+        // not logged in → show login form
+      })
+      .finally(() => setCheckingSession(false))
+  }, [navigate])
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -27,22 +41,21 @@ export default function Login() {
   const onSubmit = async (values: LoginFormValues) => {
     try {
       await login(values)
-
       const me = await getMe()
 
-      if (me.role === "STUDENT") {
-        navigate("/student/dashboard")
-      } else if (me.role === "INSTRUCTOR") {
-        navigate("/instructor/dashboard")
-      } else if (me.role === "ADMIN") {
-        navigate("/admin/dashboard")
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+      if (me.role === "STUDENT") navigate("/student/dashboard")
+      if (me.role === "INSTRUCTOR") navigate("/instructor/dashboard")
+      if (me.role === "ADMIN") navigate("/admin/dashboard")
+    } catch {
       form.setError("root", {
         message: "Invalid email or password",
       })
     }
+  }
+
+  // 🔑 THIS removes flicker
+  if (checkingSession) {
+    return null // later you can show spinner/skeleton
   }
 
   return (
@@ -56,28 +69,15 @@ export default function Login() {
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label>Email</Label>
               <Input {...form.register("email")} />
-              {form.formState.errors.email && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.email.message}
-                </p>
-              )}
             </div>
 
             <div className="space-y-2">
               <Label>Password</Label>
               <Input type="password" {...form.register("password")} />
-              {form.formState.errors.password && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.password.message}
-                </p>
-              )}
             </div>
 
             {form.formState.errors.root && (
@@ -86,22 +86,16 @@ export default function Login() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting
-                ? "Logging in..."
-                : "Login"}
+            <Button className="w-full" disabled={form.formState.isSubmitting}>
+              Login
             </Button>
           </form>
         </CardContent>
 
         <CardFooter className="justify-center text-sm">
           <span className="text-muted-foreground">
-            Don’t have an account?{" "}
-            <Link to="/register" className="text-primary hover:underline">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-primary hover:underline">
               Register
             </Link>
           </span>

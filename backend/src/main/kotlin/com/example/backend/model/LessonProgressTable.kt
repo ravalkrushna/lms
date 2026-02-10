@@ -8,7 +8,9 @@ object LessonProgressTable : Table("lesson_progress") {
     val id = long("id").autoIncrement()
 
     val userId = long("user_id").index()
-    val lessonId = long("lesson_id").index()
+
+    val lessonId = long("lesson_id")
+        .references(LessonTable.id)
 
     val status = varchar("status", 20)
     val lastAccessedAt = timestamp("last_accessed_at")

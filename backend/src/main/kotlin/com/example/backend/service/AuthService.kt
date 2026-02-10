@@ -26,17 +26,34 @@ class AuthService(
     private val emailService: EmailService
 ) {
 
+    /* ================= SIGNUP ================= */
+
     fun signup(req: SignupRequest): String {
-        return signupInternal(req.name, req.email, req.password, UserRole.STUDENT)
+        return signupInternal(
+            nameRaw = req.name,
+            emailRaw = req.email,
+            passwordRaw = req.password,
+            role = UserRole.STUDENT
+        )
     }
 
     fun signupInstructor(req: InstructorSignupRequest): String {
-        return signupInternal(req.name, req.email, req.password, UserRole.INSTRUCTOR)
+        return signupInternal(
+            nameRaw = req.name,
+            emailRaw = req.email,
+            passwordRaw = req.password,
+            role = UserRole.INSTRUCTOR
+        )
     }
 
-    private fun signupInternal(nameRaw: String, emailRaw: String, passwordRaw: String, role: UserRole): String {
+    private fun signupInternal(
+        nameRaw: String?,
+        emailRaw: String,
+        passwordRaw: String,
+        role: UserRole
+    ): String {
         val email = emailRaw.trim().lowercase()
-        val name = nameRaw.trim()
+        val name = nameRaw?.trim() ?: "Student"
 
         transaction {
             if (authRepository.existsByEmail(email)) {
@@ -44,12 +61,11 @@ class AuthService(
             }
 
             val passwordHash = passwordEncoder.encode(passwordRaw)
-                ?: throw IllegalStateException("Failed to encode password")
 
             authRepository.createUser(
                 name = name,
                 email = email,
-                passwordHash = passwordHash,
+                passwordHash = passwordHash!!,
                 role = role.name
             )
 
@@ -58,6 +74,8 @@ class AuthService(
 
         return "Signup initiated. OTP sent to email."
     }
+
+    /* ================= OTP ================= */
 
     fun verifyOtp(req: VerifyOtpRequest): String {
         val email = req.email.trim().lowercase()
@@ -71,9 +89,9 @@ class AuthService(
             if (otpRow.expiresAt.isBefore(Instant.now())) throw RuntimeException("OTP expired")
             if (otpRow.attemptsLeft <= 0) throw RuntimeException("Too many wrong attempts")
 
-            val ok = passwordEncoder.matches(otp, otpRow.otpHash)
+            val valid = passwordEncoder.matches(otp, otpRow.otpHash)
 
-            if (!ok) {
+            if (!valid) {
                 val left = otpRepository.decrementAttempts(email)
                 throw RuntimeException("Invalid OTP. Attempts left: $left")
             }
@@ -101,6 +119,8 @@ class AuthService(
 
         return "New OTP sent successfully"
     }
+
+    /* ================= LOGIN ================= */
 
     fun login(req: LoginRequest, request: HttpServletRequest): SessionResponse {
         val email = req.email.trim().lowercase()
@@ -163,23 +183,19 @@ class AuthService(
         }
     }
 
-    // ✅ OTP Helper
+    /* ================= OTP HELPER ================= */
+
     private fun sendOtp(email: String) {
-        val otp = generateOtp()
+        val otp = Random.nextInt(100000, 999999).toString()
 
         val otpHash = passwordEncoder.encode(otp)
-            ?: throw IllegalStateException("Failed to encode OTP")
 
         otpRepository.upsertOtp(
             email = email,
-            otpHash = otpHash,
+            otpHash = otpHash!!,
             expiresAt = Instant.now().plusSeconds(10 * 60)
         )
 
         emailService.sendOtp(email, otp)
-    }
-
-    private fun generateOtp(): String {
-        return Random.nextInt(100000, 999999).toString()
     }
 }

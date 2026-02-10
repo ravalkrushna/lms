@@ -1,50 +1,70 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 
 import Login from "@/pages/auth/Login"
-import Register from "@/pages/auth/Register"
+import SignupPage from "@/pages/auth/Signup"
+import VerifyOtp from "@/pages/auth/VerifyOtp"
 
 import ProtectedRoute from "@/components/ProtectedRoute"
-import StudentDashboard from "./pages/student/StudentDashboard"
-import InstructorDashboard from "./pages/instructor/InstructorDashboard"
-import AdminDashboard from "./pages/admin/AdminDashboard"
+import AppLayout from "@/components/AppLayout"
+
+import StudentDashboard from "@/pages/student/StudentDashboard"
+import CourseDetail from "@/pages/student/CourseDetail"
+import InstructorDashboard from "@/pages/instructor/InstructorDashboard"
+import AdminDashboard from "@/pages/admin/AdminDashboard"
 
 function App() {
   return (
     <Routes>
       {/* Public */}
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
 
-      {/* Protected */}
+      {/* STUDENT */}
       <Route
-        path="/student/dashboard"
         element={
-          <ProtectedRoute>
-            <StudentDashboard />
+          <ProtectedRoute allowedRoles={["STUDENT"]}>
+            <AppLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path="/student/dashboard"
+          element={<StudentDashboard />}
+        />
+        <Route
+          path="/student/courses/:courseId"
+          element={<CourseDetail />}
+        />
+      </Route>
 
+      {/* INSTRUCTOR */}
       <Route
-        path="/instructor/dashboard"
         element={
-          <ProtectedRoute>
-            <InstructorDashboard />
+          <ProtectedRoute allowedRoles={["INSTRUCTOR"]}>
+            <AppLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path="/instructor/dashboard"
+          element={<InstructorDashboard />}
+        />
+      </Route>
 
+      {/* ADMIN */}
       <Route
-        path="/admin/dashboard"
         element={
-          <ProtectedRoute>
-            <AdminDashboard />
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AppLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      </Route>
 
-      {/* Default */}
-      <Route path="*" element={<Navigate to="/login" />} />
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }

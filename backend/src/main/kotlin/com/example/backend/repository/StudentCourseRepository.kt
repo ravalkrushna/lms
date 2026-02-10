@@ -1,14 +1,8 @@
 package com.example.backend.repository
 
 import com.example.backend.dto.StudentCourse
-import com.example.backend.model.CoursesTable
-import com.example.backend.model.EnrollmentsTable
-import com.example.backend.model.LessonProgressTable
-import com.example.backend.model.LessonTable
-import com.example.backend.model.SectionsTable
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.selectAll
+import com.example.backend.model.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 
@@ -21,7 +15,7 @@ class StudentCourseRepository {
             EnrollmentsTable
                 .selectAll()
                 .where { EnrollmentsTable.userId eq userId }
-                .map { enrollmentRow ->
+                .mapNotNull { enrollmentRow ->
 
                     val courseId = enrollmentRow[EnrollmentsTable.courseId]
 
@@ -31,16 +25,17 @@ class StudentCourseRepository {
                             (CoursesTable.id eq courseId) and
                                     (CoursesTable.status eq "PUBLISHED")
                         }
-                        .single()
+                        .singleOrNull()
+                        ?: return@mapNotNull null   // ✅ SKIP DRAFT / MISSING
 
-                    // ✅ total lessons in this course
+                    // total lessons
                     val totalLessons =
                         (LessonTable innerJoin SectionsTable)
                             .selectAll()
                             .where { SectionsTable.courseId eq courseId }
                             .count()
 
-                    // ✅ completed lessons by this user in this course
+                    // completed lessons
                     val completedLessons =
                         (LessonProgressTable
                                 innerJoin LessonTable

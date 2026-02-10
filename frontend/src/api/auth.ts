@@ -1,5 +1,15 @@
 import { api } from "./axios"
 
+export const signup = (payload: {
+  email: string,
+  password: string
+}) => api.post("/auth/signup", payload)
+
+export const verifyOtp = (payload: {
+  email: string
+  otp: string
+}) => api.post("/auth/verify-otp", payload)
+
 export type LoginRequest = {
   email: string
   password: string

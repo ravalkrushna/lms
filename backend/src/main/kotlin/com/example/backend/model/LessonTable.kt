@@ -8,6 +8,8 @@ object LessonTable : Table("lessons") {
     val id = long("id").autoIncrement()
 
     val sectionId = long("section_id")
+        .references(SectionsTable.id)
+
     val title = varchar("title", 255)
 
     val content = text("content").nullable()
@@ -22,7 +24,7 @@ object LessonTable : Table("lessons") {
     override val primaryKey = PrimaryKey(id)
 
     init {
-        index(true, sectionId, position) // unique ordering in a section
+        index(true, sectionId, position)
         index(false, sectionId)
     }
 }
