@@ -1,6 +1,9 @@
 package com.example.backend.repository
 
 import com.example.backend.model.CoursesTable
+import com.example.backend.model.LessonTable
+import com.example.backend.model.SectionsTable
+import com.example.backend.model.UserAuthTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
@@ -68,6 +71,80 @@ class CourseRepository {
                 .limit(1)
                 .any()
         }
+
+    fun listPublishedCourses(
+        search: String?,
+        page: Int,
+        size: Int
+    ): List<ResultRow> {
+
+        val offset = (page * size).toLong()
+
+        val query = CoursesTable
+            .join(
+                UserAuthTable,
+                JoinType.INNER,
+                CoursesTable.instructorId,
+                UserAuthTable.id
+            )
+            .selectAll().where { CoursesTable.status eq "PUBLISHED" }
+
+        if (!search.isNullOrBlank()) {
+            query.andWhere {
+                CoursesTable.title.lowerCase() like "%${search.lowercase()}%"
+            }
+        }
+
+        return query
+            .orderBy(CoursesTable.createdAt, SortOrder.DESC)
+            .limit(size)
+            .offset(offset)
+            .toList()
+    }
+
+
+    fun findPublishedCourseDetail(courseId: Long): ResultRow? {
+        return CoursesTable
+            .join(
+                UserAuthTable,
+                JoinType.INNER,
+                CoursesTable.instructorId,
+                UserAuthTable.id
+            )
+            .join(
+                SectionsTable,
+                JoinType.LEFT,
+                CoursesTable.id,
+                SectionsTable.courseId
+            )
+            .join(
+                LessonTable,
+                JoinType.LEFT,
+                SectionsTable.id,
+                LessonTable.sectionId
+            )
+            .select(
+                columns = listOf(
+                    CoursesTable.id,
+                    CoursesTable.title,
+                    CoursesTable.description,
+                    UserAuthTable.name,
+                    SectionsTable.id.countDistinct(),
+                    LessonTable.id.countDistinct()
+                )
+            )
+            .where {
+                (CoursesTable.id eq courseId) and
+                        (CoursesTable.status eq "PUBLISHED")
+            }
+            .groupBy(
+                CoursesTable.id,
+                CoursesTable.title,
+                CoursesTable.description,
+                UserAuthTable.name
+            )
+            .singleOrNull()
+    }
 
 
 
