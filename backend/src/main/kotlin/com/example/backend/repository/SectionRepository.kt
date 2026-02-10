@@ -3,6 +3,7 @@ package com.example.backend.repository
 import com.example.backend.model.SectionsTable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -76,5 +77,23 @@ class SectionRepository {
             .where { SectionsTable.id eq sectionId }
             .empty()
     }
+
+    fun reorderSections(
+        courseId: Long,
+        orderedSectionIds: List<Long>
+    ) {
+        orderedSectionIds.forEachIndexed { index, sectionId ->
+            SectionsTable.update(
+                where = {
+                    (SectionsTable.id eq sectionId) and
+                            (SectionsTable.courseId eq courseId)
+                }
+            ) {
+                it[position] = index + 1
+                it[updatedAt] = Instant.now()
+            }
+        }
+    }
+
 
 }

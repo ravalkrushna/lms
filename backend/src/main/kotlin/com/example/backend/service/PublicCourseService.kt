@@ -13,11 +13,6 @@ class PublicCourseService(
         search: String?,
         page: Int,
         size: Int
-    ): List<PublicCourseResponse> {
-
-        require(page >= 0) { "Page must be >= 0" }
-        require(size in 1..50) { "Size must be between 1 and 50" }
-
-        return publicCourseRepository.findPublishedCourses(search, page, size)
-    }
+    ): List<PublicCourseResponse> =
+        publicCourseRepository.findPublishedCourses(search, page, size)
 }

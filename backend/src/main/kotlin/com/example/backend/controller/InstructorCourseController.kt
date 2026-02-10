@@ -3,6 +3,7 @@ package com.example.backend.controller
 import com.example.backend.dto.AuthResponse
 import com.example.backend.dto.CourseResponse
 import com.example.backend.dto.CreateCourseRequest
+import com.example.backend.dto.ReorderRequest
 import com.example.backend.service.CourseService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -27,4 +28,17 @@ class InstructorCourseController(
     @GetMapping
     fun myCourses(): ResponseEntity<List<CourseResponse>> =
         ResponseEntity.ok(courseService.listMyCourses())
+
+    @PatchMapping("/{courseId}/unpublish")
+    fun unpublishCourse(
+        @PathVariable courseId: Long
+    ): ResponseEntity<String> =
+        ResponseEntity.ok(courseService.unpublishCourse(courseId))
+
+    @PatchMapping("/{courseId}/sections/reorder")
+    fun reorderSections(
+        @PathVariable courseId: Long,
+        @RequestBody req: ReorderRequest
+    ) =
+        ResponseEntity.ok(courseService.reorderSections(courseId, req))
 }

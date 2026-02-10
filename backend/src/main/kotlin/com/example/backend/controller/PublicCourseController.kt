@@ -1,20 +1,14 @@
 package com.example.backend.controller
 
-import com.example.backend.dto.PublicCourseResponse
-import com.example.backend.service.PublicCourseDetailService
-import com.example.backend.service.PublicCourseService
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import com.example.backend.service.*
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/public/courses")
 class PublicCourseController(
     private val publicCourseService: PublicCourseService,
-    private val publicCourseDetailService: PublicCourseDetailService
+    private val publicCourseDetailService: PublicCourseDetailService,
+    private val publicCurriculumService: PublicCurriculumService
 ) {
 
     @GetMapping
@@ -25,7 +19,10 @@ class PublicCourseController(
     ) = publicCourseService.browseCourses(search, page, size)
 
     @GetMapping("/{id}")
-    fun getCourseDetail(
-        @PathVariable id: Long
-    ) = publicCourseDetailService.getCourseDetail(id)
+    fun courseDetail(@PathVariable id: Long) =
+        publicCourseDetailService.getCourseDetail(id)
+
+    @GetMapping("/{id}/curriculum")
+    fun curriculum(@PathVariable id: Long) =
+        publicCurriculumService.getCurriculum(id)
 }

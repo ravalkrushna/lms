@@ -145,7 +145,37 @@ class CourseRepository {
             )
             .singleOrNull()
     }
+    fun unpublishCourse(courseId: Long): Int =
+        CoursesTable.update(
+            where = {
+                (CoursesTable.id eq courseId) and
+                        (CoursesTable.status eq "PUBLISHED")
+            }
+        ) {
+            it[status] = "DRAFT"
+            it[updatedAt] = Instant.now()
+        }
 
+    fun findPublicCurriculum(courseId: Long): List<ResultRow> {
+        val lessonCountExpr = LessonTable.id.count()
 
+        return SectionsTable
+            .join(CoursesTable, JoinType.INNER, SectionsTable.courseId, CoursesTable.id)
+            .join(LessonTable, JoinType.LEFT, SectionsTable.id, LessonTable.sectionId)
+            .select(
+                listOf(
+                    SectionsTable.id,
+                    SectionsTable.title,
+                    lessonCountExpr
+                )
+            )
+            .where {
+                (CoursesTable.id eq courseId) and
+                        (CoursesTable.status eq "PUBLISHED")
+            }
+            .groupBy(SectionsTable.id, SectionsTable.title)
+            .orderBy(SectionsTable.position to SortOrder.ASC)
+            .toList()
+    }
 
 }

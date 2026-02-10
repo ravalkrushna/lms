@@ -2,10 +2,12 @@ package com.example.backend.service
 
 import com.example.backend.dto.CourseResponse
 import com.example.backend.dto.CreateCourseRequest
+import com.example.backend.dto.ReorderRequest
 import com.example.backend.model.CoursesTable
 import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import com.example.backend.repository.CourseRepository
+import com.example.backend.repository.SectionRepository
 import com.example.backend.security.SecurityUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Service
@@ -13,7 +15,8 @@ import org.springframework.stereotype.Service
 @Service
 class CourseService(
     private val courseRepository: CourseRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val sectionRepository: SectionRepository
 ) {
 
     fun createCourse(req: CreateCourseRequest): CourseResponse {
@@ -96,4 +99,45 @@ class CourseService(
             }
         }
     }
+
+    fun unpublishCourse(courseId: Long): String {
+        val email = SecurityUtils.currentEmail()
+
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
+
+            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name)
+                throw RuntimeException("Forbidden")
+
+            if (user.role != UserRole.ADMIN.name &&
+                !courseRepository.isInstructorOfCourse(user.id, courseId)
+            ) throw RuntimeException("Forbidden")
+
+            val updated = courseRepository.unpublishCourse(courseId)
+            if (updated == 0) throw RuntimeException("Course not found or already draft")
+
+            "Course unpublished successfully"
+        }
+    }
+
+    fun reorderSections(courseId: Long, req: ReorderRequest): String {
+        val email = SecurityUtils.currentEmail()
+
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
+
+            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name)
+                throw RuntimeException("Forbidden")
+
+            if (user.role != UserRole.ADMIN.name &&
+                !courseRepository.isInstructorOfCourse(user.id, courseId)
+            ) throw RuntimeException("Forbidden")
+
+            sectionRepository.reorderSections(courseId, req.orderedSectionIds)
+            "Sections reordered successfully"
+        }
+    }
+
 }

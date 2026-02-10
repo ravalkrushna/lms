@@ -1,9 +1,7 @@
 package com.example.backend.repository
 
 import com.example.backend.dto.PublicCourseResponse
-import com.example.backend.model.CoursesTable
-import com.example.backend.model.EnrollmentsTable
-import com.example.backend.model.UserAuthTable
+import com.example.backend.model.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
@@ -18,27 +16,18 @@ class PublicCourseRepository {
     ): List<PublicCourseResponse> = transaction {
 
         val offset = (page * size).toLong()
+        val enrollCountExpr = EnrollmentsTable.id.count()
 
         val query = CoursesTable
-            .join(
-                UserAuthTable,
-                JoinType.INNER,
-                CoursesTable.instructorId,
-                UserAuthTable.id
-            )
-            .join(
-                EnrollmentsTable,
-                JoinType.LEFT,
-                CoursesTable.id,
-                EnrollmentsTable.courseId
-            )
+            .join(UserAuthTable, JoinType.INNER, CoursesTable.instructorId, UserAuthTable.id)
+            .join(EnrollmentsTable, JoinType.LEFT, CoursesTable.id, EnrollmentsTable.courseId)
             .select(
-                columns = listOf(
+                listOf(
                     CoursesTable.id,
                     CoursesTable.title,
                     CoursesTable.description,
                     UserAuthTable.name,
-                    EnrollmentsTable.id.count(),
+                    enrollCountExpr,
                     CoursesTable.createdAt
                 )
             )
@@ -67,7 +56,7 @@ class PublicCourseRepository {
                     title = it[CoursesTable.title],
                     description = it[CoursesTable.description],
                     instructorName = it[UserAuthTable.name],
-                    enrolledCount = it[EnrollmentsTable.id.count()],
+                    enrolledCount = it[enrollCountExpr],
                     createdAt = it[CoursesTable.createdAt]
                 )
             }
