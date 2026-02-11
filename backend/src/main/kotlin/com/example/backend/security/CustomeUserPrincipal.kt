@@ -10,6 +10,8 @@ class CustomUserPrincipal(
     private val authorities: Collection<GrantedAuthority>
 ) : UserDetails {
 
+    fun getEmail(): String = email
+
     override fun getUsername(): String = email
     override fun getPassword(): String = password
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
