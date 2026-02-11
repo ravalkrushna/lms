@@ -1,9 +1,9 @@
-// src/pages/auth/VerifyOtp.tsx
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate, useSearch } from "@tanstack/react-router"
 
 import { verifyOtp } from "@/api/auth"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,7 +11,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card"
 
 type OtpForm = {
@@ -20,28 +20,20 @@ type OtpForm = {
 
 export default function VerifyOtpPage() {
   const navigate = useNavigate()
-  const location = useLocation()
+  const { email } = useSearch({ from: "/verify-otp" })
 
-  const email: string | undefined = location.state?.email
-
-  // ✅ hooks MUST come first
   const form = useForm<OtpForm>({
-    defaultValues: { otp: "" }
+    defaultValues: { otp: "" },
   })
 
   const verifyMutation = useMutation({
-    mutationFn: (data: OtpForm) => {
-      // this will never run if email is undefined
-      return verifyOtp({ email: email!, otp: data.otp })
-    },
+    mutationFn: (data: OtpForm) =>
+      verifyOtp({ email: email!, otp: data.otp }),
     onSuccess: () => {
-      navigate("/login", {
-        state: { message: "Account verified. Please login." }
-      })
-    }
+      navigate({ to: "/login" })
+    },
   })
 
-  // ✅ guards AFTER hooks
   if (!email) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/40">
@@ -69,7 +61,8 @@ export default function VerifyOtpPage() {
             className="space-y-4"
           >
             <p className="text-sm text-muted-foreground">
-              OTP sent to <span className="font-medium">{email}</span>
+              OTP sent to{" "}
+              <span className="font-medium">{email}</span>
             </p>
 
             <div className="space-y-1">
@@ -85,7 +78,9 @@ export default function VerifyOtpPage() {
               className="w-full"
               disabled={verifyMutation.isPending}
             >
-              {verifyMutation.isPending ? "Verifying..." : "Verify"}
+              {verifyMutation.isPending
+                ? "Verifying..."
+                : "Verify"}
             </Button>
           </form>
         </CardContent>

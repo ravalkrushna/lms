@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 import { logout } from "@/api/auth"
 
 export default function AdminDashboard() {
@@ -7,7 +7,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await logout()
-    navigate("/login")
+    navigate({ to: "/login" })
   }
 
   return (

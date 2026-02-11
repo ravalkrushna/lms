@@ -1,13 +1,18 @@
-// src/features/auth/SignupPage.tsx
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 
 import { signup } from "@/api/auth"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 type SignupForm = {
   email: string
@@ -20,17 +25,20 @@ export default function SignupPage() {
   const form = useForm<SignupForm>({
     defaultValues: {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   })
 
   const signupMutation = useMutation({
     mutationFn: signup,
     onSuccess: (_, variables) => {
-      navigate("/verify-otp", {
-        state: { email: variables.email }
+      navigate({
+        to: "/verify-otp",
+        search: {
+          email: variables.email,
+        },
       })
-    }
+    },
   })
 
   return (

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 
 import CourseCard from "@/components/course/CourseCard"
@@ -7,13 +7,10 @@ import { getStudentCourses, type Course } from "@/api/course"
 export default function StudentDashboard() {
   const navigate = useNavigate()
 
-  const {
-    data: courses,
-    isLoading,
-    isError,
-  } = useQuery<Course[]>({
+  const { data: courses, isLoading, isError } = useQuery<Course[]>({
     queryKey: ["student-courses"],
     queryFn: getStudentCourses,
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
   })
 
   if (isLoading) {
@@ -48,7 +45,12 @@ export default function StudentDashboard() {
             title={course.title}
             description={`Progress: ${course.progressPercent}%`}
             onView={() =>
-              navigate(`/student/courses/${course.courseId}`)
+              navigate({
+                to: "/dashboard/student/courses/$courseId",
+                params: {
+                  courseId: String(course.courseId),
+                },
+              })
             }
           />
         ))}

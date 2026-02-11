@@ -1,9 +1,10 @@
-import { Link, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { login, getMe } from "@/api/auth"
+import { login } from "@/api/auth"
+import { loginSchema, type LoginFormValues } from "@/schema/loginSchema"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,54 +15,44 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { loginSchema, type LoginFormValues } from "@/schema/loginSchema"
 
 export default function Login() {
   const navigate = useNavigate()
-  const [checkingSession, setCheckingSession] = useState(true)
-
-  // ✅ Check session BEFORE rendering login UI
-  useEffect(() => {
-    getMe()
-      .then((me) => {
-        if (me.role === "STUDENT") navigate("/student/dashboard", { replace: true })
-        if (me.role === "INSTRUCTOR") navigate("/instructor/dashboard", { replace: true })
-        if (me.role === "ADMIN") navigate("/admin/dashboard", { replace: true })
-      })
-      .catch(() => {
-        // not logged in → show login form
-      })
-      .finally(() => setCheckingSession(false))
-  }, [navigate])
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (values: LoginFormValues) => {
-    try {
-      await login(values)
-      const me = await getMe()
+  const loginMutation = useMutation({
+    mutationFn: login,
 
-      if (me.role === "STUDENT") navigate("/student/dashboard")
-      if (me.role === "INSTRUCTOR") navigate("/instructor/dashboard")
-      if (me.role === "ADMIN") navigate("/admin/dashboard")
-    } catch {
+    onSuccess: (user) => {
+      switch (user.role) {
+        case "ADMIN":
+          navigate({ to: "/dashboard/admin" })
+          break
+
+        case "INSTRUCTOR":
+          navigate({ to: "/dashboard/instructor" })
+          break
+
+        default:
+          navigate({ to: "/dashboard/student" })
+      }
+    }
+    ,
+
+    onError: () => {
       form.setError("root", {
         message: "Invalid email or password",
       })
-    }
-  }
-
-  // 🔑 THIS removes flicker
-  if (checkingSession) {
-    return null // later you can show spinner/skeleton
-  }
+    },
+  })
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+        <CardHeader>
           <h1 className="text-2xl font-semibold">Login</h1>
           <p className="text-sm text-muted-foreground">
             Enter your credentials to continue
@@ -69,15 +60,23 @@ export default function Login() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
+          <form
+            onSubmit={form.handleSubmit(data =>
+              loginMutation.mutate(data)
+            )}
+            className="space-y-4"
+          >
+            <div>
               <Label>Email</Label>
               <Input {...form.register("email")} />
             </div>
 
-            <div className="space-y-2">
+            <div>
               <Label>Password</Label>
-              <Input type="password" {...form.register("password")} />
+              <Input
+                type="password"
+                {...form.register("password")}
+              />
             </div>
 
             {form.formState.errors.root && (
@@ -86,16 +85,24 @@ export default function Login() {
               </p>
             )}
 
-            <Button className="w-full" disabled={form.formState.isSubmitting}>
-              Login
+            <Button
+              className="w-full"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending
+                ? "Logging in..."
+                : "Login"}
             </Button>
           </form>
         </CardContent>
 
         <CardFooter className="justify-center text-sm">
-          <span className="text-muted-foreground">
+          <span>
             Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline">
+            <Link
+              to="/signup"
+              className="text-primary hover:underline"
+            >
               Register
             </Link>
           </span>

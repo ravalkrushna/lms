@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 import { logout } from "@/api/auth"
 
 export default function InstructorDashboard() {
@@ -7,7 +7,7 @@ export default function InstructorDashboard() {
 
   const handleLogout = async () => {
     await logout()
-    navigate("/login")
+    navigate({ to: "/login" })
   }
 
   return (
@@ -15,7 +15,7 @@ export default function InstructorDashboard() {
       <h1 className="text-3xl font-bold">Instructor Dashboard</h1>
 
       <p className="text-muted-foreground">
-        Welcome instructor 
+        Welcome instructor 👋
       </p>
 
       <Button variant="outline" onClick={handleLogout}>

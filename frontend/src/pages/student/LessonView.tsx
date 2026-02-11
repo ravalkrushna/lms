@@ -1,37 +1,39 @@
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+
 import { getStudentLesson, completeLesson } from "@/api/lesson"
 import type { StudentLesson } from "@/types/StudentLesson"
+
 import { Button } from "@/components/ui/button"
 
 export default function LessonView() {
-  const { courseId, lessonId } = useParams()
   const navigate = useNavigate()
-  const qc = useQueryClient()
+  const queryClient = useQueryClient()
+
+  // ✅ FIXED PATH
+  const { courseId, lessonId } = useParams({
+    from: "/dashboard/student/courses/$courseId/lessons/$lessonId",
+  })
 
   const cId = Number(courseId)
   const lId = Number(lessonId)
 
-  // 🔹 Fetch lesson (same pattern as CourseDetail)
-  const {
-    data: lesson,
-    isLoading,
-    isError,
-  } = useQuery<StudentLesson>({
-    queryKey: ["student-lesson", lId],
-    queryFn: () => getStudentLesson(lId),
-    enabled: Number.isFinite(lId),
-  })
+  const { data: lesson, isLoading, isError } =
+    useQuery<StudentLesson>({
+      queryKey: ["student-lesson", lId],
+      queryFn: () => getStudentLesson(lId),
+      enabled: Number.isFinite(lId),
+    })
 
-  // 🔹 Complete lesson mutation
   const completeMutation = useMutation({
     mutationFn: () => completeLesson(lId),
-    onSuccess: () => {
-      // refresh lesson
-      qc.invalidateQueries({ queryKey: ["student-lesson", lId] })
 
-      // refresh course progress
-      qc.invalidateQueries({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["student-lesson", lId],
+      })
+
+      queryClient.invalidateQueries({
         queryKey: ["student-course", cId],
       })
     },
@@ -45,7 +47,14 @@ export default function LessonView() {
       {/* Back */}
       <button
         className="text-sm text-blue-600"
-        onClick={() => navigate(-1)}
+        onClick={() =>
+          navigate({
+            // ✅ FIXED PATH
+            to: "/dashboard/student/courses/$courseId",
+
+            params: { courseId },
+          })
+        }
       >
         ← Back to course
       </button>
@@ -81,7 +90,6 @@ export default function LessonView() {
         </div>
       )}
 
-      {/* Complete button */}
       {!lesson.completed && (
         <Button
           onClick={() => completeMutation.mutate()}

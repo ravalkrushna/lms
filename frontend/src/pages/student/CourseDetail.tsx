@@ -1,23 +1,24 @@
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 
 import { getStudentCourse } from "@/api/student"
 import type { StudentCourse } from "@/types/StudentCourse"
 
 export default function CourseDetail() {
-  const { courseId } = useParams()
   const navigate = useNavigate()
+
+  // ✅ FIXED PATH
+  const { courseId } = useParams({
+    from: "/dashboard/student/courses/$courseId",
+  })
 
   const id = Number(courseId)
 
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useQuery<StudentCourse>({
+  const { data, isLoading, isError } = useQuery<StudentCourse>({
     queryKey: ["student-course", id],
     queryFn: () => getStudentCourse(id),
     enabled: Number.isFinite(id),
+    staleTime: 1000 * 60 * 5,
   })
 
   if (isLoading) {
@@ -61,9 +62,15 @@ export default function CourseDetail() {
               <button
                 className="text-sm text-blue-600"
                 onClick={() =>
-                  navigate(
-                    `/student/courses/${data.courseId}/lessons/${lesson.lessonId}`
-                  )
+                  navigate({
+                    // ✅ FIXED PATH
+                    to: "/dashboard/student/courses/$courseId/lessons/$lessonId",
+
+                    params: {
+                      courseId: String(data.courseId),
+                      lessonId: String(lesson.lessonId),
+                    },
+                  })
                 }
               >
                 Open
