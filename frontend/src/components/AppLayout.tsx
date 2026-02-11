@@ -19,6 +19,11 @@ import {
   Shield,
 } from "lucide-react"
 
+import {
+  useUserProfile,
+  useInstructorProfile,
+} from "@/hooks/useProfile"
+
 export default function AppLayout() {
   const navigate = useNavigate()
   const router = useRouterState()
@@ -27,6 +32,16 @@ export default function AppLayout() {
 
   const pathname = router.location.pathname
   const breadcrumbs = buildBreadcrumbs(pathname)
+
+  // ✅ Profile Queries
+  const userProfile = useUserProfile()
+  const instructorProfile = useInstructorProfile()
+
+  // ✅ Resolve Display Name
+  const displayName =
+    user?.role === "STUDENT"
+      ? userProfile.data?.name
+      : instructorProfile.data?.name
 
   const handleLogout = async () => {
     await logout()
@@ -133,7 +148,7 @@ export default function AppLayout() {
       {/* ✅ MAIN */}
       <div className="flex flex-1 flex-col">
 
-        {/* ✅ HEADER (CLEAN + BALANCED) */}
+        {/* ✅ HEADER */}
         <header className="h-14 border-b bg-background/80 backdrop-blur-sm">
 
           <div className="h-full px-8 flex items-center justify-between">
@@ -161,8 +176,9 @@ export default function AppLayout() {
                   {user.email.charAt(0).toUpperCase()}
                 </div>
 
+                {/* ✅ PROFILE-AWARE DISPLAY */}
                 <span className="text-sm font-medium">
-                  {user.email}
+                  {displayName ?? user.email}
                 </span>
               </div>
 

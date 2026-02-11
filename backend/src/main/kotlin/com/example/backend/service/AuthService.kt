@@ -4,6 +4,7 @@ import com.example.backend.dto.*
 import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import com.example.backend.repository.OtpRepository
+import com.example.backend.repository.UserRepository
 import com.example.backend.security.SecurityUtils
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
@@ -21,6 +22,7 @@ import kotlin.random.Random
 class AuthService(
     private val authRepository: AuthRepository,
     private val otpRepository: OtpRepository,
+    private val userRepository: UserRepository,
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
     private val emailService: EmailService
@@ -52,10 +54,12 @@ class AuthService(
         passwordRaw: String,
         role: UserRole
     ): String {
+
         val email = emailRaw.trim().lowercase()
         val name = nameRaw?.trim() ?: "Student"
 
         transaction {
+
             if (authRepository.existsByEmail(email)) {
                 throw RuntimeException("User already exists")
             }
@@ -78,10 +82,12 @@ class AuthService(
     /* ================= OTP ================= */
 
     fun verifyOtp(req: VerifyOtpRequest): String {
+
         val email = req.email.trim().lowercase()
         val otp = req.otp.trim()
 
         transaction {
+
             val otpRow = otpRepository.findByEmail(email)
                 ?: throw RuntimeException("OTP not found, signup again")
 
@@ -98,15 +104,39 @@ class AuthService(
 
             otpRepository.markVerified(email)
             authRepository.markEmailVerified(email)
+
+            /* ✅ NEW LOGIC — AUTO USER PROFILE CREATION ⭐⭐⭐⭐⭐ */
+
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("User not found after verification")
+
+            if (user.role == UserRole.STUDENT.name) {
+
+                if (userRepository.findByAuthId(user.id) == null) {
+
+                    userRepository.createProfile(
+                        authId = user.id,
+                        email = user.email,
+                        req = UserProfileRequest(
+                            name = user.name,
+                            contactNo = null,
+                            address = null,
+                            collegeName = null
+                        )
+                    )
+                }
+            }
         }
 
         return "OTP verified. Signup successful."
     }
 
     fun resendOtp(req: ResendOtpRequest): String {
+
         val email = req.email.trim().lowercase()
 
         transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("User not found")
 
@@ -123,6 +153,7 @@ class AuthService(
     /* ================= LOGIN ================= */
 
     fun login(req: LoginRequest, request: HttpServletRequest): SessionResponse {
+
         val email = req.email.trim().lowercase()
 
         val user = transaction {
@@ -155,6 +186,7 @@ class AuthService(
     }
 
     fun logout(request: HttpServletRequest, response: HttpServletResponse): String {
+
         SecurityContextHolder.clearContext()
         request.getSession(false)?.invalidate()
 
@@ -163,16 +195,21 @@ class AuthService(
             isHttpOnly = true
             maxAge = 0
         }
+
         response.addCookie(cookie)
 
         return "Logout successful"
     }
 
     fun getSessionInfo(): SessionResponse? {
-        val email = SecurityUtils.currentEmailOrNull()?.trim()?.lowercase() ?: return null
+
+        val email = SecurityUtils.currentEmailOrNull()?.trim()?.lowercase()
+            ?: return null
 
         return transaction {
-            val user = authRepository.findByEmail(email) ?: return@transaction null
+
+            val user = authRepository.findByEmail(email)
+                ?: return@transaction null
 
             SessionResponse(
                 userId = user.id,
@@ -186,6 +223,7 @@ class AuthService(
     /* ================= OTP HELPER ================= */
 
     private fun sendOtp(email: String) {
+
         val otp = Random.nextInt(100000, 999999).toString()
 
         val otpHash = passwordEncoder.encode(otp)

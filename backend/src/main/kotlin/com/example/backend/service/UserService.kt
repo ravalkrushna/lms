@@ -12,19 +12,16 @@ class UserService(
 ) {
 
     fun createProfile(authId: Long, email: String, req: UserProfileRequest) {
+        if (userRepository.findByAuthId(authId) != null) {
+            throw RuntimeException("Profile already exists")
+        }
         userRepository.createProfile(authId, email, req)
     }
 
-    fun getProfile(authId: Long): UserProfileResponse {
-        val row = userRepository.findByAuthId(authId)
+    fun getProfile(authId: Long) =
+        userRepository.findByAuthId(authId)
             ?: throw RuntimeException("Profile not found")
 
-        return UserProfileResponse(
-            name = row[UsersTable.name],
-            email = row[UsersTable.email],
-            contactNo = row[UsersTable.contactNo],
-            address = row[UsersTable.address],
-            collegeName = row[UsersTable.collegeName]
-        )
-    }
+    fun updateProfile(authId: Long, req: UserProfileRequest) =
+        userRepository.updateProfile(authId, req)
 }
