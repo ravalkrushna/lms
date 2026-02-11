@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/student/courses")
 class StudentCourseController(
     private val studentCourseService: StudentCourseService,
-    private val studentProgressService: StudentProgressService
 ) {
 
     @GetMapping
@@ -31,14 +30,6 @@ class StudentCourseController(
     }
 
 
-    @PostMapping("/lessons/{lessonId}/complete")
-    fun completeLesson(
-        @AuthenticationPrincipal user: AuthUser,
-        @PathVariable lessonId: Long
-    ): ResponseEntity<Void> {
 
-        studentProgressService.completeLesson(user.id, lessonId)
-        return ResponseEntity.ok().build()
-    }
 
 }
