@@ -12,12 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
+import { Route as InstructorDashboardRouteImport } from './routes/instructor/dashboard'
 import { Route as AuthVerifyotpRouteImport } from './routes/auth/verifyotp'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthResetpasswordRouteImport } from './routes/auth/resetpassword'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotpasswordRouteImport } from './routes/auth/forgotpassword'
 import { Route as AuthChangepasswordRouteImport } from './routes/auth/changepassword'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as StudentLessonsLessonIdRouteImport } from './routes/student/lessons/$lessonId'
+import { Route as StudentCoursesCourseIdRouteImport } from './routes/student/courses/$courseId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -32,6 +38,21 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/student/profile',
+  path: '/student/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/student/dashboard',
+  path: '/student/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstructorDashboardRoute = InstructorDashboardRouteImport.update({
+  id: '/instructor/dashboard',
+  path: '/instructor/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyotpRoute = AuthVerifyotpRouteImport.update({
@@ -64,40 +85,73 @@ const AuthChangepasswordRoute = AuthChangepasswordRouteImport.update({
   path: '/changepassword',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentLessonsLessonIdRoute = StudentLessonsLessonIdRouteImport.update({
+  id: '/student/lessons/$lessonId',
+  path: '/student/lessons/$lessonId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentCoursesCourseIdRoute = StudentCoursesCourseIdRouteImport.update({
+  id: '/student/courses/$courseId',
+  path: '/student/courses/$courseId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/resetpassword': typeof AuthResetpasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
+  '/instructor/dashboard': typeof InstructorDashboardRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/resetpassword': typeof AuthResetpasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
+  '/instructor/dashboard': typeof InstructorDashboardRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/resetpassword': typeof AuthResetpasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
+  '/instructor/dashboard': typeof InstructorDashboardRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,40 +159,64 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
     | '/auth/resetpassword'
     | '/auth/signup'
     | '/auth/verifyotp'
+    | '/instructor/dashboard'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/courses/$courseId'
+    | '/student/lessons/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/login'
+    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
     | '/auth/resetpassword'
     | '/auth/signup'
     | '/auth/verifyotp'
+    | '/instructor/dashboard'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/courses/$courseId'
+    | '/student/lessons/$lessonId'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/login'
+    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
     | '/auth/resetpassword'
     | '/auth/signup'
     | '/auth/verifyotp'
+    | '/instructor/dashboard'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/courses/$courseId'
+    | '/student/lessons/$lessonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  InstructorDashboardRoute: typeof InstructorDashboardRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
+  StudentProfileRoute: typeof StudentProfileRoute
+  StudentCoursesCourseIdRoute: typeof StudentCoursesCourseIdRoute
+  StudentLessonsLessonIdRoute: typeof StudentLessonsLessonIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -162,6 +240,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/student/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/student/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/instructor/dashboard': {
+      id: '/instructor/dashboard'
+      path: '/instructor/dashboard'
+      fullPath: '/instructor/dashboard'
+      preLoaderRoute: typeof InstructorDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/verifyotp': {
@@ -206,6 +305,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthChangepasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/lessons/$lessonId': {
+      id: '/student/lessons/$lessonId'
+      path: '/student/lessons/$lessonId'
+      fullPath: '/student/lessons/$lessonId'
+      preLoaderRoute: typeof StudentLessonsLessonIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/courses/$courseId': {
+      id: '/student/courses/$courseId'
+      path: '/student/courses/$courseId'
+      fullPath: '/student/courses/$courseId'
+      preLoaderRoute: typeof StudentCoursesCourseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -235,6 +355,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   LoginRoute: LoginRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  InstructorDashboardRoute: InstructorDashboardRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
+  StudentProfileRoute: StudentProfileRoute,
+  StudentCoursesCourseIdRoute: StudentCoursesCourseIdRoute,
+  StudentLessonsLessonIdRoute: StudentLessonsLessonIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

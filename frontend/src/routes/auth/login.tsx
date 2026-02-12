@@ -34,8 +34,26 @@ function LoginPage() {
   })
 
   const onSubmit = (values: LoginInput) => {
-    loginMutation.mutate(values)
-  }
+  loginMutation.mutate(values, {
+    onSuccess: (data) => {
+
+      const role = data.role
+
+      if (role === "STUDENT") {
+        navigate({ to: "/student/dashboard" })
+      }
+
+      if (role === "INSTRUCTOR") {
+        navigate({ to: "/instructor/dashboard" })
+      }
+
+      if (role === "ADMIN") {
+        navigate({ to: "/admin/dashboard" })
+      }
+    },
+  })
+}
+
 
   return (
     <div className="flex items-center justify-center min-h-screen">

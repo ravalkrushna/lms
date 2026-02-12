@@ -32,6 +32,12 @@ export const resetPasswordAction = async (data: ResetPasswordInput) => {
   return response.data
 }
 
+/* LOGOUT */
+export const logoutAction = async () => {
+  const response = await api.post("/auth/logout")
+  return response.data
+}
+
 
 // /** SESSION */
 // export const getSessionAction = async () => {
@@ -41,18 +47,6 @@ export const resetPasswordAction = async (data: ResetPasswordInput) => {
 //   } catch {
 //     return null
 //   }
-// }
-
-// /** LOGOUT */
-// export const logoutAction = async () => {
-//   const response = await api.post("/auth/logout")
-//   return response.data
-// }
-
-// /** RESET PASSWORD */
-// export const resetPasswordAction = async (data: TResetPassword) => {
-//   const response = await api.post("/auth/reset-password", data)
-//   return response.data
 // }
 
 // /** CHANGE PASSWORD */
