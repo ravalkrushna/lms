@@ -35,6 +35,8 @@ class AuthService(
             nameRaw = req.name,
             emailRaw = req.email,
             passwordRaw = req.password,
+            contactNoRaw = req.contactNo,
+            addressRaw = req.address,
             role = UserRole.STUDENT
         )
     }
@@ -44,6 +46,8 @@ class AuthService(
             nameRaw = req.name,
             emailRaw = req.email,
             passwordRaw = req.password,
+            contactNoRaw = null,
+            addressRaw = null,
             role = UserRole.INSTRUCTOR
         )
     }
@@ -52,6 +56,8 @@ class AuthService(
         nameRaw: String?,
         emailRaw: String,
         passwordRaw: String,
+        contactNoRaw: String?,
+        addressRaw: String?,
         role: UserRole
     ): String {
 
@@ -65,13 +71,29 @@ class AuthService(
             }
 
             val passwordHash = passwordEncoder.encode(passwordRaw)
+                ?: throw RuntimeException("Password encoding failed")
 
-            authRepository.createUser(
+            /** ✅ CREATE AUTH USER */
+            val userId = authRepository.createUser(
                 name = name,
                 email = email,
-                passwordHash = passwordHash!!,
+                passwordHash = passwordHash,
                 role = role.name
             )
+
+            /** ⭐ CREATE PROFILE IMMEDIATELY ⭐ */
+            if (role == UserRole.STUDENT) {
+
+                userRepository.createProfile(
+                    authId = userId,
+                    email = email,
+                    req = UserProfileRequest(
+                        name = name,
+                        contactNo = contactNoRaw,
+                        address = addressRaw
+                    )
+                )
+            }
 
             sendOtp(email)
         }
@@ -104,28 +126,6 @@ class AuthService(
 
             otpRepository.markVerified(email)
             authRepository.markEmailVerified(email)
-
-            /* ✅ NEW LOGIC — AUTO USER PROFILE CREATION ⭐⭐⭐⭐⭐ */
-
-            val user = authRepository.findByEmail(email)
-                ?: throw RuntimeException("User not found after verification")
-
-            if (user.role == UserRole.STUDENT.name) {
-
-                if (userRepository.findByAuthId(user.id) == null) {
-
-                    userRepository.createProfile(
-                        authId = user.id,
-                        email = user.email,
-                        req = UserProfileRequest(
-                            name = user.name,
-                            contactNo = null,
-                            address = null,
-                            collegeName = null
-                        )
-                    )
-                }
-            }
         }
 
         return "OTP verified. Signup successful."
@@ -225,12 +225,12 @@ class AuthService(
     private fun sendOtp(email: String) {
 
         val otp = Random.nextInt(100000, 999999).toString()
-
         val otpHash = passwordEncoder.encode(otp)
+            ?: throw RuntimeException("OTP encoding failed")
 
         otpRepository.upsertOtp(
             email = email,
-            otpHash = otpHash!!,
+            otpHash = otpHash,
             expiresAt = Instant.now().plusSeconds(10 * 60)
         )
 

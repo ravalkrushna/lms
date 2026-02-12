@@ -19,7 +19,6 @@ class UserRepository {
             it[UsersTable.email] = email
             it[contactNo] = req.contactNo
             it[address] = req.address
-            it[collegeName] = req.collegeName
         }
     }
 
@@ -31,8 +30,7 @@ class UserRepository {
                     name = it[UsersTable.name],
                     email = it[UsersTable.email],
                     contactNo = it[UsersTable.contactNo],
-                    address = it[UsersTable.address],
-                    collegeName = it[UsersTable.collegeName]
+                    address = it[UsersTable.address]
                 )
             }.singleOrNull()
     }
@@ -42,7 +40,6 @@ class UserRepository {
             it[name] = req.name
             it[contactNo] = req.contactNo
             it[address] = req.address
-            it[collegeName] = req.collegeName
         }
     }
 }

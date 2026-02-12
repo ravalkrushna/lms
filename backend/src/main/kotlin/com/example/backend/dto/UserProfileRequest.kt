@@ -4,5 +4,4 @@ data class UserProfileRequest(
     val name: String,
     val contactNo: String?,
     val address: String?,
-    val collegeName: String?
 )

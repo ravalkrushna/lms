@@ -5,5 +5,4 @@ data class UserProfileResponse(
     val email: String,
     val contactNo: String?,
     val address: String?,
-    val collegeName: String?
 )

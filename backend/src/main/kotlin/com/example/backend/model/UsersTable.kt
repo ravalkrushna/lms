@@ -13,5 +13,4 @@ object UsersTable : Table("users") {
 
     val contactNo = text("contact_no").nullable()
     val address = text("address").nullable()
-    val collegeName = text("college_name").nullable()
 }
