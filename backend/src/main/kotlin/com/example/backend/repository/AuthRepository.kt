@@ -74,4 +74,11 @@ class AuthRepository {
             it[updatedAt] = Instant.now()
         }
     }
+
+    fun findAllUsers(): List<ResultRow> =
+        UserAuthTable
+            .selectAll()
+            .orderBy(UserAuthTable.id, SortOrder.DESC)
+            .toList()
+
 }

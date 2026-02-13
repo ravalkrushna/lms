@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
 import { Route as InstructorDashboardRouteImport } from './routes/instructor/dashboard'
@@ -22,15 +21,9 @@ import { Route as AuthResetpasswordRouteImport } from './routes/auth/resetpasswo
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotpasswordRouteImport } from './routes/auth/forgotpassword'
 import { Route as AuthChangepasswordRouteImport } from './routes/auth/changepassword'
-import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as Admin_layoutRouteImport } from './routes/admin/__layout'
-import { Route as AdminStudentsIndexRouteImport } from './routes/admin/students/index'
-import { Route as AdminCoursesIndexRouteImport } from './routes/admin/courses/index'
 import { Route as StudentLessonsLessonIdRouteImport } from './routes/student/lessons/$lessonId'
 import { Route as StudentCoursesCourseIdRouteImport } from './routes/student/courses/$courseId'
-import { Route as AdminCoursesCreateRouteImport } from './routes/admin/courses/create'
-import { Route as AdminCoursesCourseIdSectionsRouteImport } from './routes/admin/courses/$courseId/sections'
-import { Route as AdminCoursesCourseIdSectionIdLessonsRouteImport } from './routes/admin/courses/$courseId/$sectionId/lessons'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -45,11 +38,6 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
@@ -97,24 +85,9 @@ const AuthChangepasswordRoute = AuthChangepasswordRouteImport.update({
   path: '/changepassword',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Admin_layoutRoute = Admin_layoutRouteImport.update({
   id: '/admin/__layout',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminStudentsIndexRoute = AdminStudentsIndexRouteImport.update({
-  id: '/admin/students/',
-  path: '/admin/students/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCoursesIndexRoute = AdminCoursesIndexRouteImport.update({
-  id: '/admin/courses/',
-  path: '/admin/courses/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentLessonsLessonIdRoute = StudentLessonsLessonIdRouteImport.update({
@@ -127,30 +100,12 @@ const StudentCoursesCourseIdRoute = StudentCoursesCourseIdRouteImport.update({
   path: '/student/courses/$courseId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminCoursesCreateRoute = AdminCoursesCreateRouteImport.update({
-  id: '/admin/courses/create',
-  path: '/admin/courses/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCoursesCourseIdSectionsRoute =
-  AdminCoursesCourseIdSectionsRouteImport.update({
-    id: '/admin/courses/$courseId/sections',
-    path: '/admin/courses/$courseId/sections',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AdminCoursesCourseIdSectionIdLessonsRoute =
-  AdminCoursesCourseIdSectionIdLessonsRouteImport.update({
-    id: '/admin/courses/$courseId/$sectionId/lessons',
-    path: '/admin/courses/$courseId/$sectionId/lessons',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/admin': typeof Admin_layoutRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -160,21 +115,14 @@ export interface FileRoutesByFullPath {
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/profile': typeof StudentProfileRoute
-  '/admin/': typeof AdminIndexRoute
-  '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
-  '/admin/courses/': typeof AdminCoursesIndexRoute
-  '/admin/students/': typeof AdminStudentsIndexRoute
-  '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/admin': typeof AdminIndexRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin': typeof Admin_layoutRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -184,13 +132,8 @@ export interface FileRoutesByTo {
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/profile': typeof StudentProfileRoute
-  '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
-  '/admin/courses': typeof AdminCoursesIndexRoute
-  '/admin/students': typeof AdminStudentsIndexRoute
-  '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -198,7 +141,6 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/admin/__layout': typeof Admin_layoutRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -208,14 +150,8 @@ export interface FileRoutesById {
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/profile': typeof StudentProfileRoute
-  '/admin/': typeof AdminIndexRoute
-  '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
-  '/admin/courses/': typeof AdminCoursesIndexRoute
-  '/admin/students/': typeof AdminStudentsIndexRoute
-  '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -224,7 +160,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/login'
     | '/admin'
-    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -234,21 +169,14 @@ export interface FileRouteTypes {
     | '/instructor/dashboard'
     | '/student/dashboard'
     | '/student/profile'
-    | '/admin/'
-    | '/admin/courses/create'
     | '/student/courses/$courseId'
     | '/student/lessons/$lessonId'
-    | '/admin/courses/'
-    | '/admin/students/'
-    | '/admin/courses/$courseId/sections'
-    | '/admin/courses/$courseId/$sectionId/lessons'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/login'
     | '/admin'
-    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -258,20 +186,14 @@ export interface FileRouteTypes {
     | '/instructor/dashboard'
     | '/student/dashboard'
     | '/student/profile'
-    | '/admin/courses/create'
     | '/student/courses/$courseId'
     | '/student/lessons/$lessonId'
-    | '/admin/courses'
-    | '/admin/students'
-    | '/admin/courses/$courseId/sections'
-    | '/admin/courses/$courseId/$sectionId/lessons'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/login'
     | '/admin/__layout'
-    | '/admin/dashboard'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -281,14 +203,8 @@ export interface FileRouteTypes {
     | '/instructor/dashboard'
     | '/student/dashboard'
     | '/student/profile'
-    | '/admin/'
-    | '/admin/courses/create'
     | '/student/courses/$courseId'
     | '/student/lessons/$lessonId'
-    | '/admin/courses/'
-    | '/admin/students/'
-    | '/admin/courses/$courseId/sections'
-    | '/admin/courses/$courseId/$sectionId/lessons'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -296,18 +212,11 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   Admin_layoutRoute: typeof Admin_layoutRoute
-  AdminDashboardRoute: typeof AdminDashboardRoute
   InstructorDashboardRoute: typeof InstructorDashboardRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   StudentProfileRoute: typeof StudentProfileRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  AdminCoursesCreateRoute: typeof AdminCoursesCreateRoute
   StudentCoursesCourseIdRoute: typeof StudentCoursesCourseIdRoute
   StudentLessonsLessonIdRoute: typeof StudentLessonsLessonIdRoute
-  AdminCoursesIndexRoute: typeof AdminCoursesIndexRoute
-  AdminStudentsIndexRoute: typeof AdminStudentsIndexRoute
-  AdminCoursesCourseIdSectionsRoute: typeof AdminCoursesCourseIdSectionsRoute
-  AdminCoursesCourseIdSectionIdLessonsRoute: typeof AdminCoursesCourseIdSectionIdLessonsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -331,13 +240,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/profile': {
@@ -403,32 +305,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthChangepasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/admin/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/__layout': {
       id: '/admin/__layout'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof Admin_layoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/students/': {
-      id: '/admin/students/'
-      path: '/admin/students'
-      fullPath: '/admin/students/'
-      preLoaderRoute: typeof AdminStudentsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/courses/': {
-      id: '/admin/courses/'
-      path: '/admin/courses'
-      fullPath: '/admin/courses/'
-      preLoaderRoute: typeof AdminCoursesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/lessons/$lessonId': {
@@ -443,27 +324,6 @@ declare module '@tanstack/react-router' {
       path: '/student/courses/$courseId'
       fullPath: '/student/courses/$courseId'
       preLoaderRoute: typeof StudentCoursesCourseIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/courses/create': {
-      id: '/admin/courses/create'
-      path: '/admin/courses/create'
-      fullPath: '/admin/courses/create'
-      preLoaderRoute: typeof AdminCoursesCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/courses/$courseId/sections': {
-      id: '/admin/courses/$courseId/sections'
-      path: '/admin/courses/$courseId/sections'
-      fullPath: '/admin/courses/$courseId/sections'
-      preLoaderRoute: typeof AdminCoursesCourseIdSectionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/courses/$courseId/$sectionId/lessons': {
-      id: '/admin/courses/$courseId/$sectionId/lessons'
-      path: '/admin/courses/$courseId/$sectionId/lessons'
-      fullPath: '/admin/courses/$courseId/$sectionId/lessons'
-      preLoaderRoute: typeof AdminCoursesCourseIdSectionIdLessonsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -496,19 +356,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   Admin_layoutRoute: Admin_layoutRoute,
-  AdminDashboardRoute: AdminDashboardRoute,
   InstructorDashboardRoute: InstructorDashboardRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   StudentProfileRoute: StudentProfileRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  AdminCoursesCreateRoute: AdminCoursesCreateRoute,
   StudentCoursesCourseIdRoute: StudentCoursesCourseIdRoute,
   StudentLessonsLessonIdRoute: StudentLessonsLessonIdRoute,
-  AdminCoursesIndexRoute: AdminCoursesIndexRoute,
-  AdminStudentsIndexRoute: AdminStudentsIndexRoute,
-  AdminCoursesCourseIdSectionsRoute: AdminCoursesCourseIdSectionsRoute,
-  AdminCoursesCourseIdSectionIdLessonsRoute:
-    AdminCoursesCourseIdSectionIdLessonsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

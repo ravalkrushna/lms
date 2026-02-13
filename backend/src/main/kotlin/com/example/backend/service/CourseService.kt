@@ -140,4 +140,29 @@ class CourseService(
         }
     }
 
+    fun listAllCourses(): List<CourseResponse> {
+        val email = SecurityUtils.currentEmail()
+
+        return transaction {
+            val user = authRepository.findByEmail(email)
+                ?: throw RuntimeException("Unauthorized")
+
+            if (user.role != UserRole.ADMIN.name) {
+                throw RuntimeException("Only admin can view all courses")
+            }
+
+            courseRepository.listAllCourses().map { row ->
+                CourseResponse(
+                    id = row[CoursesTable.id],
+                    title = row[CoursesTable.title],
+                    description = row[CoursesTable.description],
+                    instructorId = row[CoursesTable.instructorId],
+                    status = row[CoursesTable.status]
+                )
+            }
+        }
+    }
+
+
+
 }

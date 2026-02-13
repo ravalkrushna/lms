@@ -1,5 +1,6 @@
 package com.example.backend.repository
 
+import com.example.backend.dto.CourseResponse
 import com.example.backend.model.CoursesTable
 import com.example.backend.model.LessonTable
 import com.example.backend.model.SectionsTable
@@ -175,6 +176,13 @@ class CourseRepository {
             }
             .groupBy(SectionsTable.id, SectionsTable.title)
             .orderBy(SectionsTable.position to SortOrder.ASC)
+            .toList()
+    }
+
+    fun listAllCourses(): List<ResultRow> {
+        return CoursesTable
+            .selectAll()
+            .orderBy(CoursesTable.id, SortOrder.DESC)
             .toList()
     }
 
