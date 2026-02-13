@@ -1,0 +1,74 @@
+import { createFileRoute } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { AppShell } from "@/components/AppShell"
+import { getAdminProfile } from "@/lib/admin"
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+export const Route = createFileRoute("/admin/profile")({
+  component: AdminProfilePage,
+})
+
+function AdminProfilePage() {
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["admin-profile"],
+    queryFn: getAdminProfile,
+  })
+
+  return (
+    <AppShell title="Admin Profile 👑">
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Information</CardTitle>
+        </CardHeader>
+
+        <CardContent className="space-y-3">
+
+          {isLoading && (
+            <p className="text-muted-foreground">
+              Loading profile...
+            </p>
+          )}
+
+          {!isLoading && profile && (
+            <div className="space-y-2 text-sm">
+
+              <ProfileRow label="Name" value={profile.name} />
+              <ProfileRow label="Email" value={profile.email} />
+              <ProfileRow label="Role" value={profile.role} />
+
+            </div>
+          )}
+
+        </CardContent>
+      </Card>
+
+    </AppShell>
+  )
+}
+
+function ProfileRow({
+  label,
+  value,
+}: {
+  label: string
+  value?: string | null
+}) {
+  return (
+    <div className="flex justify-between border-b pb-2">
+      <span className="text-muted-foreground">
+        {label}
+      </span>
+
+      <span className="font-medium">
+        {value || "—"}
+      </span>
+    </div>
+  )
+}

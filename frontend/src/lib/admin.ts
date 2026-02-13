@@ -111,3 +111,17 @@ export async function getAllUsers(): Promise<AdminUser[]> {
 
 export const promoteInstructor = (email: string) =>
   api.post("/admin/instructors/promote", { email })
+
+
+
+export type AdminProfile = {
+  id: number
+  name: string
+  email: string
+  role: string
+}
+
+export const getAdminProfile = async (): Promise<AdminProfile> => {
+  const { data } = await api.get("/auth/me")
+  return data
+}

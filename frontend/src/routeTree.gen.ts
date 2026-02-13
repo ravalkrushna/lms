@@ -22,6 +22,7 @@ import { Route as AuthResetpasswordRouteImport } from './routes/auth/resetpasswo
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotpasswordRouteImport } from './routes/auth/forgotpassword'
 import { Route as AuthChangepasswordRouteImport } from './routes/auth/changepassword'
+import { Route as AdminProfileRouteImport } from './routes/admin/profile'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as Admin_layoutRouteImport } from './routes/admin/__layout'
 import { Route as AdminStudentsIndexRouteImport } from './routes/admin/students/index'
@@ -97,6 +98,11 @@ const AuthChangepasswordRoute = AuthChangepasswordRouteImport.update({
   path: '/changepassword',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/admin/profile',
+  path: '/admin/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/admin': typeof Admin_layoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin': typeof AdminIndexRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/admin/__layout': typeof Admin_layoutRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/auth/changepassword': typeof AuthChangepasswordRoute
   '/auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/admin'
     | '/admin/dashboard'
+    | '/admin/profile'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/admin'
     | '/admin/dashboard'
+    | '/admin/profile'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/admin/__layout'
     | '/admin/dashboard'
+    | '/admin/profile'
     | '/auth/changepassword'
     | '/auth/forgotpassword'
     | '/auth/login'
@@ -297,6 +309,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   Admin_layoutRoute: typeof Admin_layoutRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminProfileRoute: typeof AdminProfileRoute
   InstructorDashboardRoute: typeof InstructorDashboardRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   StudentProfileRoute: typeof StudentProfileRoute
@@ -403,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthChangepasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/admin/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
@@ -497,6 +517,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   Admin_layoutRoute: Admin_layoutRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminProfileRoute: AdminProfileRoute,
   InstructorDashboardRoute: InstructorDashboardRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   StudentProfileRoute: StudentProfileRoute,
