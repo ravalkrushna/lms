@@ -4,8 +4,6 @@ import {
   BookOpen,
   Users,
   User,
-  BarChart3,
-  Settings,
 } from "lucide-react"
 
 export function AdminSidebar() {
@@ -18,9 +16,7 @@ export function AdminSidebar() {
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     { label: "Courses", icon: BookOpen, path: "/admin/courses" },
     { label: "Students", icon: Users, path: "/admin/students" },
-    { label: "Analytics", icon: BarChart3, path: "/admin/analytics" },
     { label: "Profile", icon: User, path: "/admin/profile" },
-    { label: "Settings", icon: Settings, path: "/admin/settings" },
   ]
 
   return (

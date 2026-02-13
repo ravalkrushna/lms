@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import { AppShell } from "@/components/AppShell"
+import { AdminSidebar } from "@/components/AdminSidebar"
 import { getAdminProfile } from "@/lib/admin"
 
 import {
@@ -21,35 +21,44 @@ function AdminProfilePage() {
   })
 
   return (
-    <AppShell title="Admin Profile 👑">
+    <div className="flex min-h-screen bg-background">
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-        </CardHeader>
+      <AdminSidebar />
 
-        <CardContent className="space-y-3">
+      <main className="flex-1 p-6">
+        {/* ✅ Width Constraint Fix */}
+        <div className="max-w-3xl">
 
-          {isLoading && (
-            <p className="text-muted-foreground">
-              Loading profile...
-            </p>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Profile </CardTitle>
+            </CardHeader>
 
-          {!isLoading && profile && (
-            <div className="space-y-2 text-sm">
+            <CardContent className="space-y-4">
 
-              <ProfileRow label="Name" value={profile.name} />
-              <ProfileRow label="Email" value={profile.email} />
-              <ProfileRow label="Role" value={profile.role} />
+              {isLoading && (
+                <p className="text-muted-foreground">
+                  Loading profile...
+                </p>
+              )}
 
-            </div>
-          )}
+              {!isLoading && profile && (
+                <div className="space-y-3 text-sm">
 
-        </CardContent>
-      </Card>
+                  <ProfileRow label="Name" value={profile.name} />
+                  <ProfileRow label="Email" value={profile.email} />
+                  <ProfileRow label="Role" value={profile.role} />
 
-    </AppShell>
+                </div>
+              )}
+
+            </CardContent>
+          </Card>
+
+        </div>
+      </main>
+
+    </div>
   )
 }
 
@@ -61,14 +70,17 @@ function ProfileRow({
   value?: string | null
 }) {
   return (
-    <div className="flex justify-between border-b pb-2">
-      <span className="text-muted-foreground">
+    <div className="flex gap-6 border-b pb-2">
+
+      {/* ✅ Fixed Label Width = Perfect Alignment */}
+      <span className="text-muted-foreground w-32 shrink-0">
         {label}
       </span>
 
       <span className="font-medium">
         {value || "—"}
       </span>
+
     </div>
   )
 }
