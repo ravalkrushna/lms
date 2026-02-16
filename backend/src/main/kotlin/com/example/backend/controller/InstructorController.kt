@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/instructors")
 class InstructorController(
-    private val instructorService: InstructorService
+    private val instructorService: InstructorService,
+    private val adminService: AdminService
 ) {
 
     @GetMapping("/me")
@@ -36,4 +37,16 @@ class InstructorController(
     ) {
         instructorService.updateProfile(user.id, req)
     }
+
+    @GetMapping("/users")
+    fun listUsers(): List<AdminUserResponse> {
+        return adminService.listAllUsers()
+    }
+
+    @GetMapping("/dashboard/stats")
+    fun getStats(
+        @AuthenticationPrincipal user: CustomUserPrincipal
+    ) = instructorService.getDashboardStats(user.id)
+
+
 }

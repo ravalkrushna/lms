@@ -131,3 +131,14 @@ export async function updateInstructorProfile(
   const res = await api.put("/instructors/profile", data)
   return res.data
 }
+
+
+export type InstructorStats = {
+  totalCourses: number
+  totalStudents: number
+}
+
+export const getInstructorStats = async (): Promise<InstructorStats> => {
+  const res = await api.get("/instructors/dashboard/stats")
+  return res.data
+}

@@ -1,50 +1,46 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
+
+import { InstructorSidebar } from "@/components/InstructorSidebar"
+
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
 
-import { InstructorSidebar } from "@/components/InstructorSidebar"
-
 import {
   BookOpen,
   Users,
-  TrendingUp,
+  IndianRupee,
 } from "lucide-react"
 
-import { getInstructorCourses } from "@/lib/instructor"
+import { getInstructorStats } from "@/lib/instructor"
 
 export const Route = createFileRoute("/instructor/dashboard")({
   component: InstructorDashboard,
 })
 
 function InstructorDashboard() {
-  const { data: courses, isLoading } = useQuery({
-    queryKey: ["instructor-courses"],
-    queryFn: getInstructorCourses,
+  const { data, isLoading } = useQuery({
+    queryKey: ["instructor-dashboard-stats"],
+    queryFn: getInstructorStats,
   })
-
-  const totalCourses = courses?.length ?? 0
-
-  const totalStudents =
-    courses?.reduce((acc, c) => acc + (c.enrollments ?? 0), 0) ?? 0
 
   const stats = [
     {
       label: "My Courses",
-      value: totalCourses,
+      value: data?.totalCourses,
       icon: BookOpen,
     },
     {
-      label: "Total Students",
-      value: totalStudents,
+      label: "Platform Students",
+      value: data?.totalStudents,
       icon: Users,
     },
     {
-      label: "Completion Rate",
-      value: "—", // analytics later
-      icon: TrendingUp,
+      label: "Revenue",
+      value: "—", // future analytics
+      icon: IndianRupee,
     },
   ]
 
@@ -72,7 +68,7 @@ function InstructorDashboard() {
                   </div>
 
                   <p className="text-3xl font-bold mt-2">
-                    {isLoading ? "—" : stat.value}
+                    {isLoading ? "—" : stat.value ?? "0"}
                   </p>
                 </CardContent>
               </Card>

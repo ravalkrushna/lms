@@ -15,4 +15,8 @@ class InstructorService(
 
     fun updateProfile(authId: Long, req: UpdateInstructorRequest) =
         instructorRepository.updateProfile(authId, req)
+
+    fun getDashboardStats(authId: Long) =
+        instructorRepository.getDashboardStats(authId)
+
 }

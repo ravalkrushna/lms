@@ -70,4 +70,22 @@ class InstructorRepository {
             .where { InstructorsTable.userId eq authId }
             .count() > 0
     }
+
+    fun getDashboardStats(authId: Long) = transaction {
+
+        val coursesCount = CoursesTable
+            .selectAll()
+            .where { CoursesTable.instructorId eq authId }
+            .count()
+
+        val studentsCount = UserAuthTable
+            .selectAll()
+            .where { UserAuthTable.role eq UserRole.STUDENT.name }
+            .count()
+
+        InstructorDashboardStats(
+            totalCourses = coursesCount,
+            totalStudents = studentsCount
+        )
+    }
 }
