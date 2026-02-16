@@ -42,4 +42,21 @@ class UserRepository {
             it[address] = req.address
         }
     }
+
+    fun findProfile(authId: Long): UserProfileResponse? = transaction {
+
+        UsersTable
+            .selectAll()
+            .where { UsersTable.userId eq authId }
+            .map {
+                UserProfileResponse(
+                    name = it[UsersTable.name],
+                    email = it[UsersTable.email],
+                    contactNo = it[UsersTable.contactNo],
+                    address = it[UsersTable.address]
+                )
+            }
+            .singleOrNull()
+    }
+
 }

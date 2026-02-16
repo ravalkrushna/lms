@@ -43,6 +43,7 @@ class InstructorRepository {
             if (req.contactNo != null) it[contactNo] = req.contactNo
             if (req.address != null) it[address] = req.address
             if (req.designation != null) it[designation] = req.designation
+            if (req.salary != null) it[salary] = req.salary
         }
     }
 

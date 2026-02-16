@@ -13,5 +13,6 @@ data class PromoteInstructorRequest(
 data class UpdateInstructorRequest(
     val contactNo: String?,
     val address: String?,
-    val designation: String?
+    val designation: String?,
+    val salary: BigDecimal?
 )

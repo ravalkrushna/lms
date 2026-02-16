@@ -1,9 +1,12 @@
 package com.example.backend.controller
 
+import com.example.backend.dto.AdminUserResponse
 import com.example.backend.dto.InstructorProfileRequest
 import com.example.backend.dto.InstructorProfileResponse
 import com.example.backend.dto.UpdateInstructorRequest
+import com.example.backend.dto.UserProfileResponse
 import com.example.backend.security.CustomUserPrincipal
+import com.example.backend.service.AdminService
 import com.example.backend.service.InstructorService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/instructors")
-class InstructorController(private val instructorService: InstructorService) {
+class InstructorController(private val instructorService: InstructorService ,
+    private val adminService: AdminService) {
 
     @PostMapping("/profile")
     fun createProfile(
@@ -37,4 +41,10 @@ class InstructorController(private val instructorService: InstructorService) {
     ) {
         instructorService.updateProfile(user.id, req)
     }
+
+    @GetMapping("/users")
+    fun listUsers(): List<AdminUserResponse> {
+        return adminService.listAllUsers()
+    }
+
 }
