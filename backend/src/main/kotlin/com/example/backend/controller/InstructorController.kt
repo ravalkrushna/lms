@@ -18,19 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/instructors")
-class InstructorController(private val instructorService: InstructorService ,
-    private val adminService: AdminService) {
-
-    @PostMapping("/profile")
-    fun createProfile(
-        @AuthenticationPrincipal user: CustomUserPrincipal,
-        @RequestBody req: InstructorProfileRequest
-    ) {
-        instructorService.createProfile(user.id, user.getEmail(), req)
-    }
+class InstructorController(
+    private val instructorService: InstructorService
+) {
 
     @GetMapping("/me")
-    fun getMyProfile(@AuthenticationPrincipal user: CustomUserPrincipal): InstructorProfileResponse {
+    fun getMyProfile(
+        @AuthenticationPrincipal user: CustomUserPrincipal
+    ): InstructorProfileResponse {
         return instructorService.getProfile(user.id)
     }
 
@@ -41,10 +36,4 @@ class InstructorController(private val instructorService: InstructorService ,
     ) {
         instructorService.updateProfile(user.id, req)
     }
-
-    @GetMapping("/users")
-    fun listUsers(): List<AdminUserResponse> {
-        return adminService.listAllUsers()
-    }
-
 }

@@ -32,10 +32,8 @@ class AdminInstructorService(
 
             authRepository.updateRole(normalizedEmail, UserRole.INSTRUCTOR.name)
 
-            instructorRepository.createPromotionProfile(
-                authId = user.id,
-                email = user.email
-            )
+            instructorRepository.createPromotionProfile(user.id)
+
         }
 
         return "User promoted to instructor successfully"

@@ -16,3 +16,4 @@ data class UpdateInstructorRequest(
     val designation: String?,
     val salary: BigDecimal?
 )
+

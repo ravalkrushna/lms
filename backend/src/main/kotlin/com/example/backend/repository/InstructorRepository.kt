@@ -1,7 +1,7 @@
 package com.example.backend.repository
 
 import com.example.backend.dto.*
-import com.example.backend.model.InstructorsTable
+import com.example.backend.model.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
@@ -9,71 +9,65 @@ import org.springframework.stereotype.Repository
 @Repository
 class InstructorRepository {
 
-    fun createProfile(authId: Long, email: String, req: InstructorProfileRequest) = transaction {
-        InstructorsTable.insert {
-            it[userId] = authId
-            it[name] = req.name
-            it[InstructorsTable.email] = email
-            it[contactNo] = req.contactNo
-            it[salary] = req.salary
-            it[address] = req.address
-            it[designation] = req.designation
-        }
-    }
-
+    /* ✅ Fetch Profile (JOIN USERS + INSTRUCTORS) */
     fun findByAuthId(authId: Long) = transaction {
-        InstructorsTable
+
+        UsersTable
+            .join(
+                InstructorsTable,
+                JoinType.INNER,
+                onColumn = UsersTable.userId,
+                otherColumn = InstructorsTable.userId
+            )
             .selectAll()
-            .where { InstructorsTable.userId eq authId }
+            .where { UsersTable.userId eq authId }
             .map {
+
                 InstructorProfileResponse(
-                    name = it[InstructorsTable.name],
-                    email = it[InstructorsTable.email],
-                    contactNo = it[InstructorsTable.contactNo],
+                    name = it[UsersTable.name],
+                    email = it[UsersTable.email],
+                    contactNo = it[UsersTable.contactNo],
+                    address = it[UsersTable.address],
                     salary = it[InstructorsTable.salary],
-                    address = it[InstructorsTable.address],
                     designation = it[InstructorsTable.designation]
                 )
             }
             .singleOrNull()
     }
 
+
+    /* ✅ Update Profile (Split Correctly) */
     fun updateProfile(authId: Long, req: UpdateInstructorRequest) = transaction {
+
+        /* USERS table → identity data */
+        UsersTable.update({ UsersTable.userId eq authId }) {
+
+            req.contactNo?.let { value -> it[contactNo] = value }
+            req.address?.let { value -> it[address] = value }
+        }
+
+        /* INSTRUCTORS table → role data */
         InstructorsTable.update({ InstructorsTable.userId eq authId }) {
-            if (req.contactNo != null) it[contactNo] = req.contactNo
-            if (req.address != null) it[address] = req.address
-            if (req.designation != null) it[designation] = req.designation
-            if (req.salary != null) it[salary] = req.salary
+
+            req.salary?.let { value -> it[salary] = value }
+            req.designation?.let { value -> it[designation] = value }
         }
     }
 
-    fun updateAdminDetails(userId: Long, req: PromoteInstructorRequest) = transaction {
-        InstructorsTable.update({ InstructorsTable.userId eq userId }) {
-            if (req.salary != null) it[salary] = req.salary
-            if (req.designation != null) it[designation] = req.designation
-            if (req.contactNo != null) it[contactNo] = req.contactNo
-            if (req.address != null) it[address] = req.address
+    /* ✅ Promotion Profile */
+    fun createPromotionProfile(authId: Long) = transaction {
+
+        InstructorsTable.insert {
+            it[userId] = authId
+            it[salary] = null
+            it[designation] = null
         }
     }
-
-    /* ✅ NEW METHODS — CRITICAL */
 
     fun existsByUserId(authId: Long) = transaction {
         InstructorsTable
             .selectAll()
             .where { InstructorsTable.userId eq authId }
             .count() > 0
-    }
-
-    fun createPromotionProfile(authId: Long, email: String) = transaction {
-        InstructorsTable.insert {
-            it[userId] = authId
-            it[name] = "Instructor"
-            it[InstructorsTable.email] = email
-            it[contactNo] = null
-            it[salary] = null
-            it[address] = null
-            it[designation] = null
-        }
     }
 }
