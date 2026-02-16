@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
+import { motion } from "framer-motion"
 
 import {
   Card,
@@ -26,8 +27,7 @@ export const Route = createFileRoute("/auth/verifyotp")({
 })
 
 function VerifyOtpPage() {
-
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const form = useForm<VerifyOtpInput>({
     resolver: zodResolver(VerifyOtpSchema),
@@ -38,63 +38,90 @@ function VerifyOtpPage() {
   })
 
   const onSubmit = (values: VerifyOtpInput) => {
-    verifyOtpMutation.mutate(values , {
-       onSuccess: () => {
-      navigate({
-        to: "/auth/login",
-      })
-    },
+    verifyOtpMutation.mutate(values, {
+      onSuccess: () => {
+        navigate({ to: "/auth/login" })
+      },
     })
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Verify OTP</CardTitle>
-        </CardHeader>
+    <>
+      {/* ✅ FULLSCREEN BACKGROUND */}
+      <div className="fixed inset-0 -z-10">
+        <div
+          className="absolute inset-0 bg-cover"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee')",
+            backgroundPosition: "center 65%", // 🔥 Perfect balance
+          }}
+        />
 
-        <CardContent>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
-            <FormField
-              label="Email"
-              error={form.formState.errors.email?.message}
-            >
-              <Input {...form.register("email")} />
-            </FormField>
+        {/* Premium overlay */}
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
 
-            <FormField
-              label="OTP"
-              error={form.formState.errors.otp?.message}
-            >
-              <Input {...form.register("otp")} />
-            </FormField>
+      {/* ✅ CONTENT */}
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="w-full max-w-md"
+        >
+          <Card className="bg-white/90 backdrop-blur-xl shadow-2xl border border-white/20 rounded-2xl">
+            
+            <CardHeader>
+              <CardTitle className="text-2xl text-center">
+                Verify OTP
+              </CardTitle>
+            </CardHeader>
 
-            <Button
-              className="w-full"
-              disabled={verifyOtpMutation.isPending}
-            >
-              {verifyOtpMutation.isPending
-                ? "Verifying..."
-                : "Verify OTP"}
-            </Button>
+            <CardContent>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <FormField
+                  label="Email"
+                  error={form.formState.errors.email?.message}
+                >
+                  <Input {...form.register("email")} />
+                </FormField>
 
-            {verifyOtpMutation.error && (
-              <p className="text-sm text-destructive">
-                {(verifyOtpMutation.error as Error).message}
-              </p>
-            )}
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+                <FormField
+                  label="OTP"
+                  error={form.formState.errors.otp?.message}
+                >
+                  <Input {...form.register("otp")} />
+                </FormField>
+
+                <Button
+                  className="w-full"
+                  disabled={verifyOtpMutation.isPending}
+                >
+                  {verifyOtpMutation.isPending
+                    ? "Verifying..."
+                    : "Verify OTP"}
+                </Button>
+
+                {verifyOtpMutation.error && (
+                  <p className="text-sm text-destructive text-center">
+                    {(verifyOtpMutation.error as Error).message}
+                  </p>
+                )}
+              </form>
+            </CardContent>
+
+          </Card>
+        </motion.div>
+      </div>
+    </>
   )
 }
 
-/** Reusable Field */
+/** ✅ Reusable Field */
 function FormField({
   label,
   error,
@@ -108,7 +135,9 @@ function FormField({
     <div className="space-y-2">
       <Label>{label}</Label>
       {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p className="text-sm text-destructive">{error}</p>
+      )}
     </div>
   )
 }
