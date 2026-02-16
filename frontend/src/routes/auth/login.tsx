@@ -63,7 +63,7 @@ function LoginPage() {
       <div className="flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl border border-white/20 rounded-2xl">
           <CardHeader className="space-y-1 pb-6 pt-8">
-            <CardTitle className="text-3xl text-center font-bold text-gray-900">Welcome Back</CardTitle>
+            <CardTitle className="text-3xl text-center font-bold text-gray-900"> Welcome </CardTitle>
             <p className="text-sm text-center text-gray-600">
               Sign in to your account
             </p>
