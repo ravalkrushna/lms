@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { AppShell } from "@/components/AppShell"
 import {
   getPublishedCourses,
   getMyCourses,
+  enrollCourse,     // ✅ IMPORTANT
 } from "@/lib/student"
 
 import {
@@ -23,20 +24,33 @@ export const Route = createFileRoute("/student/courses/")({
 
 function CoursesPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
-  /* ✅ Fetch Published Courses */
+  /* ✅ Published Courses */
   const { data: publishedCourses = [], isLoading } = useQuery({
     queryKey: ["published-courses"],
     queryFn: getPublishedCourses,
   })
 
-  /* ✅ Fetch Student Enrollments */
+  /* ✅ Enrolled Courses */
   const { data: myCourses = [] } = useQuery({
     queryKey: ["student-enrolled-courses"],
     queryFn: getMyCourses,
   })
 
-  /* ✅ Build Fast Lookup Map (CRITICAL FOR PERFORMANCE 🚀) */
+  /* ✅ Enrollment Mutation (CRITICAL 🚀) */
+  const enrollMutation = useMutation({
+    mutationFn: enrollCourse,
+
+    onSuccess: () => {
+      /* ✅ Refresh enrollment cache */
+      queryClient.invalidateQueries({
+        queryKey: ["student-enrolled-courses"],
+      })
+    },
+  })
+
+  /* ✅ Fast Lookup Map */
   const enrolledCourseIds = new Set(
     myCourses.map((c: any) => c.courseId)
   )
@@ -66,20 +80,23 @@ function CoursesPage() {
 
               <CardContent>
 
-                {/* ✅ SMART LMS BUTTON SYSTEM 🚀 */}
+                {/* ✅ NOT ENROLLED → ENROLL BUTTON */}
 
                 {!isEnrolled && (
                   <Button
                     className="w-full"
                     onClick={() =>
-                      navigate({
-                        to: `/student/courses/${course.id}/preview`,
-                      })
+                      enrollMutation.mutate(course.id)
                     }
+                    disabled={enrollMutation.isPending}
                   >
-                    View Course
+                    {enrollMutation.isPending
+                      ? "Enrolling..."
+                      : "Enroll Now"}
                   </Button>
                 )}
+
+                {/* ✅ ENROLLED → VIEW COURSE */}
 
                 {isEnrolled && (
                   <Button
