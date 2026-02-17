@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 
 import { AdminSidebar } from "@/components/AdminSidebar"
 
@@ -10,11 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { Button } from "@/components/ui/button"
-
 import {
   getAllUsers,
-  promoteInstructor,
   type AdminUser,
 } from "@/lib/admin"
 
@@ -24,21 +21,10 @@ export const Route = createFileRoute("/admin/students/")({
 
 function AdminStudents() {
 
-  const queryClient = useQueryClient()
-
   const { data: users, isLoading } = useQuery<AdminUser[]>({
     queryKey: ["admin-users"],
     queryFn: getAllUsers,
     refetchOnWindowFocus: false,
-  })
-
-  const promoteMutation = useMutation({
-    mutationFn: (email: string) => promoteInstructor(email),
-
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["admin-users"],
-      }),
   })
 
   return (
@@ -93,26 +79,7 @@ function AdminStudents() {
                         </td>
 
                         <td className="p-3">
-                          <div className="flex items-center gap-2">
-
-                            <RoleBadge role={user.role} />
-
-                            {user.role === "STUDENT" && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  promoteMutation.mutate(user.email)
-                                }
-                                disabled={promoteMutation.isPending}
-                              >
-                                {promoteMutation.isPending
-                                  ? "Promoting..."
-                                  : "Promote 🚀"}
-                              </Button>
-                            )}
-
-                          </div>
+                          <RoleBadge role={user.role} />
                         </td>
                       </tr>
                     ))}

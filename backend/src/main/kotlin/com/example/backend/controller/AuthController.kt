@@ -23,11 +23,6 @@ class AuthController(
         return ResponseEntity.ok(AuthResponse(authService.signup(req)))
     }
 
-    @PostMapping("/signup/instructor")
-    fun instructorSignup(@Valid @RequestBody req: InstructorSignupRequest): ResponseEntity<AuthResponse> {
-        return ResponseEntity.ok(AuthResponse(authService.signupInstructor(req)))
-    }
-
     @PostMapping("/verify-otp")
     fun verifyOtp(@Valid @RequestBody req: VerifyOtpRequest): ResponseEntity<AuthResponse> {
         return ResponseEntity.ok(AuthResponse(authService.verifyOtp(req)))

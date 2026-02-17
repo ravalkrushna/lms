@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from "./api"
 
 export type CourseStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED"
@@ -124,4 +125,9 @@ export type AdminProfile = {
 export const getAdminProfile = async (): Promise<AdminProfile> => {
   const { data } = await api.get("/auth/me")
   return data
+}
+
+export async function createInstructor(data: any) {
+  const res = await api.post("/admin/instructor", data)
+  return res.data
 }

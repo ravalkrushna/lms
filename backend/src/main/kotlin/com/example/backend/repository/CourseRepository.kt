@@ -186,4 +186,34 @@ class CourseRepository {
             .toList()
     }
 
+    fun getPublicCurriculum(courseId: Long) = transaction {
+
+        val sections = SectionsTable
+            .selectAll()
+            .where { SectionsTable.courseId eq courseId }
+            .orderBy(SectionsTable.position)
+            .map { sectionRow ->
+
+                val lessons = LessonTable
+                    .selectAll()
+                    .where { LessonTable.sectionId eq sectionRow[SectionsTable.id] }
+                    .orderBy(LessonTable.position)
+                    .map { lessonRow ->
+
+                        mapOf(
+                            "lessonId" to lessonRow[LessonTable.id],
+                            "title" to lessonRow[LessonTable.title]
+                        )
+                    }
+
+                mapOf(
+                    "sectionId" to sectionRow[SectionsTable.id],
+                    "title" to sectionRow[SectionsTable.title],
+                    "lessons" to lessons
+                )
+            }
+
+        sections
+    }
+
 }

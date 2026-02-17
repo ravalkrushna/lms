@@ -1,9 +1,13 @@
 package com.example.backend.controller
 
 import com.example.backend.dto.AdminUserResponse
+import com.example.backend.dto.CreateInstructorRequest
+import com.example.backend.dto.PromoteInstructorRequest
 import com.example.backend.service.AdminService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -17,4 +21,11 @@ class AdminController(
     @GetMapping("/users")
     fun listUsers(): List<AdminUserResponse> =
         adminService.listAllUsers()
+
+    @PostMapping("/instructor")
+    fun createInstructor(
+        @RequestBody req: CreateInstructorRequest
+    ) {
+        adminService.createInstructor(req)
+    }
 }

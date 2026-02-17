@@ -1,7 +1,6 @@
 package com.example.backend.service
 
 import com.example.backend.dto.*
-import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import com.example.backend.repository.OtpRepository
 import com.example.backend.repository.UserRepository
@@ -36,19 +35,7 @@ class AuthService(
             emailRaw = req.email,
             passwordRaw = req.password,
             contactNoRaw = req.contactNo,
-            addressRaw = req.address,
-            role = UserRole.STUDENT
-        )
-    }
-
-    fun signupInstructor(req: InstructorSignupRequest): String {
-        return signupInternal(
-            nameRaw = req.name,
-            emailRaw = req.email,
-            passwordRaw = req.password,
-            contactNoRaw = null,
-            addressRaw = null,
-            role = UserRole.INSTRUCTOR
+            addressRaw = req.address
         )
     }
 
@@ -57,8 +44,7 @@ class AuthService(
         emailRaw: String,
         passwordRaw: String,
         contactNoRaw: String?,
-        addressRaw: String?,
-        role: UserRole
+        addressRaw: String?
     ): String {
 
         val email = emailRaw.trim().lowercase()
@@ -70,30 +56,25 @@ class AuthService(
                 throw RuntimeException("User already exists")
             }
 
-            val passwordHash = passwordEncoder.encode(passwordRaw)
-                ?: throw RuntimeException("Password encoding failed")
+            val passwordHash = passwordEncoder.encode(passwordRaw).toString()
 
-            /** ✅ CREATE AUTH USER */
-            val userId = authRepository.createUser(
+            /** ✅ CREATE STUDENT (Lifecycle Safe) */
+            val userId = authRepository.createStudent(
                 name = name,
                 email = email,
-                passwordHash = passwordHash,
-                role = role.name
+                passwordHash = passwordHash
             )
 
-            /** ⭐ CREATE PROFILE IMMEDIATELY ⭐ */
-            if (role == UserRole.STUDENT) {
-
-                userRepository.createProfile(
-                    authId = userId,
-                    email = email,
-                    req = UserProfileRequest(
-                        name = name,
-                        contactNo = contactNoRaw,
-                        address = addressRaw
-                    )
+            /** ✅ CREATE PROFILE */
+            userRepository.createProfile(
+                authId = userId,
+                email = email,
+                req = UserProfileRequest(
+                    name = name,
+                    contactNo = contactNoRaw,
+                    address = addressRaw
                 )
-            }
+            )
 
             sendOtp(email)
         }
@@ -225,8 +206,7 @@ class AuthService(
     private fun sendOtp(email: String) {
 
         val otp = Random.nextInt(100000, 999999).toString()
-        val otpHash = passwordEncoder.encode(otp)
-            ?: throw RuntimeException("OTP encoding failed")
+        val otpHash = passwordEncoder.encode(otp).toString()
 
         otpRepository.upsertOtp(
             email = email,

@@ -8,6 +8,12 @@ object InstructorsTable : Table("instructors") {
         .uniqueIndex()
         .references(UserAuthTable.id)
 
+    val name = text("name")
+    val email = text("email")
+
+    val contactNo = text("contact_no").nullable()
+    val address = text("address").nullable()
+
     val salary = decimal("salary", 10, 2).nullable()
     val designation = text("designation").nullable()
 }

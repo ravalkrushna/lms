@@ -2,6 +2,7 @@ package com.example.backend.repository
 
 import com.example.backend.model.UserAuth
 import com.example.backend.model.UserAuthTable
+import com.example.backend.model.UserRole
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
@@ -17,24 +18,69 @@ class AuthRepository {
             .empty()
     }
 
-    fun createUser(
+    /* ================= ROLE-SAFE CREATORS ================= */
+
+    /** ✅ Student → ALWAYS OTP */
+    fun createStudent(
         name: String,
         email: String,
-        passwordHash: String,
-        role: String
+        passwordHash: String
     ): Long {
+
         val now = Instant.now()
 
         return UserAuthTable.insert {
-            it[UserAuthTable.name] = name
-            it[UserAuthTable.email] = email
-            it[UserAuthTable.passwordHash] = passwordHash
-            it[UserAuthTable.role] = role
-            it[UserAuthTable.emailVerified] = false
-            it[UserAuthTable.createdAt] = now
-            it[UserAuthTable.updatedAt] = null
+            it[this.name] = name
+            it[this.email] = email
+            it[this.passwordHash] = passwordHash
+            it[role] = UserRole.STUDENT.name
+            it[emailVerified] = false    // ✅ NEVER VERIFIED
+            it[createdAt] = now
+            it[updatedAt] = null
         } get UserAuthTable.id
     }
+
+    /** ✅ Instructor → ALWAYS VERIFIED */
+    fun createInstructor(
+        name: String,
+        email: String,
+        passwordHash: String
+    ): Long {
+
+        val now = Instant.now()
+
+        return UserAuthTable.insert {
+            it[this.name] = name
+            it[this.email] = email
+            it[this.passwordHash] = passwordHash
+            it[role] = UserRole.INSTRUCTOR.name
+            it[emailVerified] = true     // 🔥 PERMANENT FIX
+            it[createdAt] = now
+            it[updatedAt] = null
+        } get UserAuthTable.id
+    }
+
+    /** ✅ Admin → ALWAYS VERIFIED */
+    fun createAdmin(
+        name: String,
+        email: String,
+        passwordHash: String
+    ): Long {
+
+        val now = Instant.now()
+
+        return UserAuthTable.insert {
+            it[this.name] = name
+            it[this.email] = email
+            it[this.passwordHash] = passwordHash
+            it[role] = UserRole.ADMIN.name
+            it[emailVerified] = true
+            it[createdAt] = now
+            it[updatedAt] = null
+        } get UserAuthTable.id
+    }
+
+    /* ================= QUERY ================= */
 
     fun findByEmail(email: String): UserAuth? {
         return UserAuthTable
@@ -53,6 +99,8 @@ class AuthRepository {
             }
             .singleOrNull()
     }
+
+    /* ================= MUTATIONS ================= */
 
     fun markEmailVerified(email: String): Int {
         return UserAuthTable.update({ UserAuthTable.email eq email }) {
@@ -80,5 +128,4 @@ class AuthRepository {
             .selectAll()
             .orderBy(UserAuthTable.id, SortOrder.DESC)
             .toList()
-
 }

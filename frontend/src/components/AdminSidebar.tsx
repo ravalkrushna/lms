@@ -3,11 +3,13 @@ import {
   LayoutDashboard,
   BookOpen,
   Users,
+  GraduationCap,  
   User,
 } from "lucide-react"
 
 export function AdminSidebar() {
   const navigate = useNavigate()
+
   const pathname = useRouterState({
     select: s => s.location.pathname,
   })
@@ -16,6 +18,10 @@ export function AdminSidebar() {
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     { label: "Courses", icon: BookOpen, path: "/admin/courses" },
     { label: "Students", icon: Users, path: "/admin/students" },
+
+    // ✅ NEW MENU ITEM
+    { label: "Instructors", icon: GraduationCap, path: "/admin/instructor" },
+
     { label: "Profile", icon: User, path: "/admin/profile" },
   ]
 
@@ -37,7 +43,9 @@ export function AdminSidebar() {
 
         {menu.map(item => {
           const Icon = item.icon
-          const isActive = pathname === item.path
+
+          // ✅ Slightly more robust active check (better UX)
+          const isActive = pathname.startsWith(item.path)
 
           return (
             <button

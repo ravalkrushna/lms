@@ -9,83 +9,76 @@ import org.springframework.stereotype.Repository
 @Repository
 class InstructorRepository {
 
-    /* ✅ Fetch Profile (JOIN USERS + INSTRUCTORS) */
-    fun findByAuthId(authId: Long) = transaction {
+    fun findByAuthId(authId: Long): InstructorProfileResponse? = transaction {
 
-        UsersTable
-            .join(
-                InstructorsTable,
-                JoinType.INNER,
-                onColumn = UsersTable.userId,
-                otherColumn = InstructorsTable.userId
-            )
-            .selectAll()
-            .where { UsersTable.userId eq authId }
-            .map {
-
-                InstructorProfileResponse(
-                    name = it[UsersTable.name],
-                    email = it[UsersTable.email],
-                    contactNo = it[UsersTable.contactNo],
-                    address = it[UsersTable.address],
-                    salary = it[InstructorsTable.salary],
-                    designation = it[InstructorsTable.designation]
-                )
-            }
-            .singleOrNull()
-    }
-
-
-    /* ✅ Update Profile (Split Correctly) */
-    fun updateProfile(authId: Long, req: UpdateInstructorRequest) = transaction {
-
-        /* USERS table → identity data */
-        UsersTable.update({ UsersTable.userId eq authId }) {
-
-            req.contactNo?.let { value -> it[contactNo] = value }
-            req.address?.let { value -> it[address] = value }
-        }
-
-        /* INSTRUCTORS table → role data */
-        InstructorsTable.update({ InstructorsTable.userId eq authId }) {
-
-            req.salary?.let { value -> it[salary] = value }
-            req.designation?.let { value -> it[designation] = value }
-        }
-    }
-
-    /* ✅ Promotion Profile */
-    fun createPromotionProfile(authId: Long) = transaction {
-
-        InstructorsTable.insert {
-            it[userId] = authId
-            it[salary] = null
-            it[designation] = null
-        }
-    }
-
-    fun existsByUserId(authId: Long) = transaction {
-        InstructorsTable
+        val instructor = InstructorsTable
             .selectAll()
             .where { InstructorsTable.userId eq authId }
-            .count() > 0
+            .singleOrNull() ?: return@transaction null
+
+        InstructorProfileResponse(
+            name = instructor[InstructorsTable.name],
+            email = instructor[InstructorsTable.email],
+            contactNo = instructor[InstructorsTable.contactNo],
+            address = instructor[InstructorsTable.address],
+            salary = instructor[InstructorsTable.salary],
+            designation = instructor[InstructorsTable.designation]
+        )
     }
 
-    fun getDashboardStats(authId: Long) = transaction {
+    /** ✅ Update Instructor Profile */
+    fun updateProfile(authId: Long, req: UpdateInstructorRequest) = transaction {
 
-        val coursesCount = CoursesTable
+        InstructorsTable.update({ InstructorsTable.userId eq authId }) {
+
+            req.contactNo?.let { it1 -> it[contactNo] = it1 }
+            req.address?.let { it1 -> it[address] = it1 }
+            req.salary?.let { it1 -> it[salary] = it1 }
+            req.designation?.let { it1 -> it[designation] = it1 }
+        }
+    }
+
+    fun createInstructorProfile(
+        userId: Long,
+        req: CreateInstructorRequest
+    ) {
+
+        InstructorsTable.insert {
+
+            it[InstructorsTable.userId] = userId
+            it[name] = req.name
+            it[email] = req.email.trim().lowercase()
+
+            it[contactNo] = req.contactNo
+            it[address] = req.address
+            it[salary] = req.salary
+            it[designation] = req.designation
+        }
+    }
+
+
+    /** ✅ Dashboard Stats (🔥 CORRECTED LOGIC) */
+    fun getDashboardStats(authId: Long): InstructorDashboardStats = transaction {
+
+        /** Total courses created by instructor */
+        val totalCourses = CoursesTable
             .selectAll()
             .where { CoursesTable.instructorId eq authId }
             .count()
 
-        val studentsCount = UserAuthTable
+        /** Total students across instructor courses */
+        val totalStudents = EnrollmentsTable
+            .join(CoursesTable, JoinType.INNER,
+                onColumn = EnrollmentsTable.courseId,
+                otherColumn = CoursesTable.id
+            )
             .selectAll()
-            .where { UserAuthTable.role eq UserRole.STUDENT.name }
+            .where { CoursesTable.instructorId eq authId }
             .count()
 
         InstructorDashboardStats(
-            totalCourses = coursesCount,
-            totalStudents = studentsCount
+            totalCourses = totalCourses,
+            totalStudents = totalStudents
         )
     }
 }

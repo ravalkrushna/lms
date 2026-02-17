@@ -1,7 +1,11 @@
 package com.example.backend.service
 
+import com.example.backend.model.CoursesTable
 import com.example.backend.repository.CourseRepository
 import com.example.backend.repository.EnrollmentRepository
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Service
 
 
@@ -11,10 +15,26 @@ class EnrollmentService(
     private val courseRepository: CourseRepository
 ) {
 
-    fun enroll(userId: Long, courseId: Long) {
-        if (enrollmentRepository.existsActive(userId, courseId)) {
-            throw IllegalStateException("User already enrolled in this course")
+     fun enroll(userId: Long, courseId: Long) = transaction {
+
+        /* ✅ Course must exist & be published */
+        val validCourse = CoursesTable
+            .selectAll()
+            .where {
+                (CoursesTable.id eq courseId) and
+                        (CoursesTable.status eq "PUBLISHED")
+            }
+            .any()
+
+        if (!validCourse) {
+            throw IllegalStateException("Course not available")
         }
+
+        /* ✅ Prevent duplicate enrollment */
+        if (enrollmentRepository.existsActive(userId, courseId)) {
+            return@transaction
+        }
+
         enrollmentRepository.create(userId, courseId)
     }
 
