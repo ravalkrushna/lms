@@ -21,7 +21,7 @@ import {
   GraduationCap,
 } from "lucide-react"
 
-export const Route = createFileRoute("/student/courses/$courseId")({
+export const Route = createFileRoute("/student/courses/$courseId")({  
   component: CourseDetailPage,
 })
 

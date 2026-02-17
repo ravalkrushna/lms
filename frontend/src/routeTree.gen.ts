@@ -36,6 +36,7 @@ import { Route as StudentLessonsLessonIdRouteImport } from './routes/student/les
 import { Route as StudentCoursesCourseIdRouteImport } from './routes/student/courses/$courseId'
 import { Route as InstructorCoursesCreateRouteImport } from './routes/instructor/courses/create'
 import { Route as AdminCoursesCreateRouteImport } from './routes/admin/courses/create'
+import { Route as StudentCoursesCourseIdPreviewRouteImport } from './routes/student/courses/$courseId/preview'
 import { Route as InstructorCoursesCourseIdSectionsRouteImport } from './routes/instructor/courses/$courseId/sections'
 import { Route as AdminCoursesCourseIdSectionsRouteImport } from './routes/admin/courses/$courseId/sections'
 import { Route as InstructorCoursesCourseIdSectionIdLessonsRouteImport } from './routes/instructor/courses/$courseId/$sectionId/lessons'
@@ -176,6 +177,12 @@ const AdminCoursesCreateRoute = AdminCoursesCreateRouteImport.update({
   path: '/admin/courses/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentCoursesCourseIdPreviewRoute =
+  StudentCoursesCourseIdPreviewRouteImport.update({
+    id: '/preview',
+    path: '/preview',
+    getParentRoute: () => StudentCoursesCourseIdRoute,
+  } as any)
 const InstructorCoursesCourseIdSectionsRoute =
   InstructorCoursesCourseIdSectionsRouteImport.update({
     id: '/instructor/courses/$courseId/sections',
@@ -220,7 +227,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/instructor/courses/create': typeof InstructorCoursesCreateRoute
-  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRouteWithChildren
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
   '/admin/courses/': typeof AdminCoursesIndexRoute
   '/admin/instructor/': typeof AdminInstructorIndexRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/student/my-courses/': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
+  '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
 }
@@ -252,7 +260,7 @@ export interface FileRoutesByTo {
   '/student/profile': typeof StudentProfileRoute
   '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/instructor/courses/create': typeof InstructorCoursesCreateRoute
-  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRouteWithChildren
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
   '/admin/courses': typeof AdminCoursesIndexRoute
   '/admin/instructor': typeof AdminInstructorIndexRoute
@@ -263,6 +271,7 @@ export interface FileRoutesByTo {
   '/student/my-courses': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
+  '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
 }
@@ -286,7 +295,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/admin/courses/create': typeof AdminCoursesCreateRoute
   '/instructor/courses/create': typeof InstructorCoursesCreateRoute
-  '/student/courses/$courseId': typeof StudentCoursesCourseIdRoute
+  '/student/courses/$courseId': typeof StudentCoursesCourseIdRouteWithChildren
   '/student/lessons/$lessonId': typeof StudentLessonsLessonIdRoute
   '/admin/courses/': typeof AdminCoursesIndexRoute
   '/admin/instructor/': typeof AdminInstructorIndexRoute
@@ -297,6 +306,7 @@ export interface FileRoutesById {
   '/student/my-courses/': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
+  '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
 }
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/student/my-courses/'
     | '/admin/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
+    | '/student/courses/$courseId/preview'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
   fileRoutesByTo: FileRoutesByTo
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/student/my-courses'
     | '/admin/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
+    | '/student/courses/$courseId/preview'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
   id:
@@ -397,6 +409,7 @@ export interface FileRouteTypes {
     | '/student/my-courses/'
     | '/admin/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
+    | '/student/courses/$courseId/preview'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
   fileRoutesById: FileRoutesById
@@ -414,7 +427,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCoursesCreateRoute: typeof AdminCoursesCreateRoute
   InstructorCoursesCreateRoute: typeof InstructorCoursesCreateRoute
-  StudentCoursesCourseIdRoute: typeof StudentCoursesCourseIdRoute
+  StudentCoursesCourseIdRoute: typeof StudentCoursesCourseIdRouteWithChildren
   StudentLessonsLessonIdRoute: typeof StudentLessonsLessonIdRoute
   AdminCoursesIndexRoute: typeof AdminCoursesIndexRoute
   AdminInstructorIndexRoute: typeof AdminInstructorIndexRoute
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoursesCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student/courses/$courseId/preview': {
+      id: '/student/courses/$courseId/preview'
+      path: '/preview'
+      fullPath: '/student/courses/$courseId/preview'
+      preLoaderRoute: typeof StudentCoursesCourseIdPreviewRouteImport
+      parentRoute: typeof StudentCoursesCourseIdRoute
+    }
     '/instructor/courses/$courseId/sections': {
       id: '/instructor/courses/$courseId/sections'
       path: '/instructor/courses/$courseId/sections'
@@ -673,6 +693,20 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface StudentCoursesCourseIdRouteChildren {
+  StudentCoursesCourseIdPreviewRoute: typeof StudentCoursesCourseIdPreviewRoute
+}
+
+const StudentCoursesCourseIdRouteChildren: StudentCoursesCourseIdRouteChildren =
+  {
+    StudentCoursesCourseIdPreviewRoute: StudentCoursesCourseIdPreviewRoute,
+  }
+
+const StudentCoursesCourseIdRouteWithChildren =
+  StudentCoursesCourseIdRoute._addFileChildren(
+    StudentCoursesCourseIdRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
@@ -686,7 +720,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminCoursesCreateRoute: AdminCoursesCreateRoute,
   InstructorCoursesCreateRoute: InstructorCoursesCreateRoute,
-  StudentCoursesCourseIdRoute: StudentCoursesCourseIdRoute,
+  StudentCoursesCourseIdRoute: StudentCoursesCourseIdRouteWithChildren,
   StudentLessonsLessonIdRoute: StudentLessonsLessonIdRoute,
   AdminCoursesIndexRoute: AdminCoursesIndexRoute,
   AdminInstructorIndexRoute: AdminInstructorIndexRoute,
