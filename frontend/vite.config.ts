@@ -13,6 +13,20 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),  
   react()],
+  server: {
+  allowedHosts: [
+    "immunology-caution-within-len.trycloudflare.com",
+  ],
+
+  proxy: {
+    "/api": {
+      target: "http://localhost:8080",
+      changeOrigin: true,
+      secure: false,
+    },
+  },
+}
+,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
