@@ -1,29 +1,61 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
+
+import { AdminSidebar } from "@/components/AdminSidebar"
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card"
-import { AdminSidebar } from "@/components/AdminSidebar"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
+
 import {
   BookOpen,
   Users,
-  BarChart3,
+  GraduationCap,
   TrendingUp,
   Activity,
+  ShieldCheck,
   Clock,
+  BarChart3,
 } from "lucide-react"
-import { getAllCourses } from "@/lib/admin"
-import { getAllUsers } from "@/lib/admin"
+
+import { getAllCourses, getAllUsers } from "@/lib/admin"
 
 export const Route = createFileRoute("/admin/dashboard")({
   component: AdminDashboard,
 })
 
+/* ── Static recent activity ── */
+const RECENT_ACTIVITY = [
+  { title: "New student enrolled",    time: "2 minutes ago",  type: "user"     },
+  { title: "Course published",        time: "15 minutes ago", type: "course"   },
+  { title: "Assignment submitted",    time: "1 hour ago",     type: "activity" },
+  { title: "New instructor joined",   time: "3 hours ago",    type: "user"     },
+  { title: "Course content updated",  time: "5 hours ago",    type: "course"   },
+]
+
+/* ── Progress rows ── */
+const PROGRESS_ROWS = [
+  { label: "Active Courses",       pct: 85, color: "bg-primary"        },
+  { label: "Student Engagement",   pct: 92, color: "bg-emerald-500"    },
+  { label: "Instructor Activity",  pct: 78, color: "bg-sky-500"        },
+  { label: "Course Completion",    pct: 73, color: "bg-violet-500"     },
+]
+
+/* ── Dot color per activity type ── */
+const DOT: Record<string, string> = {
+  user:     "bg-sky-500",
+  course:   "bg-violet-500",
+  activity: "bg-emerald-500",
+}
+
 function AdminDashboard() {
-  /* ✅ Queries */
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["admin-courses"],
     queryFn: getAllCourses,
@@ -34,248 +66,186 @@ function AdminDashboard() {
     queryFn: getAllUsers,
   })
 
-  /* ✅ Derived Stats */
-  const totalCourses = courses?.length ?? 0
-  const totalStudents = users?.filter(u => u.role === "STUDENT").length ?? 0
-  const totalInstructors = users?.filter(u => u.role === "INSTRUCTOR").length ?? 0
-  const growth = "+18%" // placeholder until analytics added
-
-  const stats = [
-    {
-      label: "Total Courses",
-      value: totalCourses,
-      icon: BookOpen,
-      color: "from-blue-500/20 to-blue-600/20",
-      iconColor: "text-blue-600",
-      bgColor: "bg-blue-500/10",
-      change: "+12%",
-      trend: "up",
-    },
-    {
-      label: "Active Students",
-      value: totalStudents,
-      icon: Users,
-      color: "from-purple-500/20 to-purple-600/20",
-      iconColor: "text-purple-600",
-      bgColor: "bg-purple-500/10",
-      change: "+8%",
-      trend: "up",
-    },
-    {
-      label: "Instructors",
-      value: totalInstructors,
-      icon: Activity,
-      color: "from-emerald-500/20 to-emerald-600/20",
-      iconColor: "text-emerald-600",
-      bgColor: "bg-emerald-500/10",
-      change: "+5%",
-      trend: "up",
-    },
-    {
-      label: "Platform Growth",
-      value: growth,
-      icon: TrendingUp,
-      color: "from-amber-500/20 to-amber-600/20",
-      iconColor: "text-amber-600",
-      bgColor: "bg-amber-500/10",
-      change: "This month",
-      trend: "neutral",
-    },
-  ] as const
-
-  const recentActivity = [
-    { title: "New student enrolled", time: "2 minutes ago", type: "user" },
-    { title: "Course published", time: "15 minutes ago", type: "course" },
-    { title: "Assignment submitted", time: "1 hour ago", type: "activity" },
-    { title: "New instructor joined", time: "3 hours ago", type: "user" },
-  ]
-
   const isLoading = coursesLoading || usersLoading
 
+  const totalCourses     = courses?.length ?? 0
+  const totalStudents    = users?.filter(u => u.role === "STUDENT").length    ?? 0
+  const totalInstructors = users?.filter(u => u.role === "INSTRUCTOR").length ?? 0
+  const totalUsers       = users?.length ?? 0
+
+  const stats = [
+    { label: "Total Courses",   value: totalCourses,     icon: BookOpen,     change: "+12%" },
+    { label: "Students",        value: totalStudents,    icon: GraduationCap,change: "+8%"  },
+    { label: "Instructors",     value: totalInstructors, icon: ShieldCheck,  change: "+5%"  },
+    { label: "Platform Growth", value: "+18%",           icon: TrendingUp,   change: "This month" },
+  ]
+
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+    <div className="flex min-h-screen">
       <AdminSidebar />
-      
-      <main className="flex-1 p-6 space-y-6">
-        {/* ✅ Welcome Banner with gradient and animation */}
-        <Card className="relative overflow-hidden border-none shadow-lg bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 text-white animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="absolute inset-0 bg-linear-to-r from-blue-600/90 via-purple-600/90 to-pink-600/90" />
-          <CardContent className="relative p-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-2 animate-in fade-in slide-in-from-left duration-700 delay-100">
-                  Welcome back, Admin 👋
-                </h2>
-                <p className="text-blue-100 animate-in fade-in slide-in-from-left duration-700 delay-200">
-                  Here's what's happening with your platform today
-                </p>
-              </div>
-              <div className="hidden md:flex items-center gap-2 animate-in fade-in slide-in-from-right duration-700 delay-300">
-                <Clock className="w-5 h-5" />
-                <span className="text-sm">
-                  {new Date().toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </span>
-              </div>
+
+      <main className="flex-1 p-6 bg-muted/30 space-y-6">
+
+        {/* ── Welcome Banner ── */}
+        <Card className="border-0 bg-primary text-primary-foreground shadow-md">
+          <CardContent className="p-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold">Welcome back, Admin 👋</h2>
+              <p className="text-primary-foreground/70 text-sm mt-0.5">
+                Here's what's happening on your platform today.
+              </p>
+            </div>
+            <div className="hidden md:flex items-center gap-2 text-primary-foreground/70 text-sm">
+              <Clock size={15} />
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </div>
           </CardContent>
         </Card>
 
-        {/* ✅ Stats Section with staggered animations */}
+        {/* ── Stat Cards ── */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <Card 
-                key={stat.label}
-                className="group relative overflow-hidden border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Gradient background on hover */}
-                <div className={`absolute inset-0 bg-linear-to-br ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                
-                <CardContent className="relative p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-xl ${stat.bgColor} group-hover:scale-110 transition-transform duration-500`}>
-                      <Icon className={`w-6 h-6 ${stat.iconColor}`} />
-                    </div>
-                    {stat.trend !== "neutral" && (
-                      <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                        {stat.change}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <p className="text-sm text-slate-600 font-medium">
-                      {stat.label}
-                    </p>
-                    <p className="text-3xl font-bold text-slate-900">
-                      {isLoading ? (
-                        <span className="inline-block w-16 h-8 bg-slate-200 rounded animate-pulse" />
-                      ) : (
-                        <span className="tabular-nums">{stat.value}</span>
-                      )}
-                    </p>
-                    {stat.trend === "neutral" && (
-                      <p className="text-xs text-slate-500">{stat.change}</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+          {stats.map(({ label, value, icon: Icon, change }) => (
+            <Card key={label}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {label}
+                </CardTitle>
+                <Icon size={16} className="text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <Skeleton className="h-9 w-20" />
+                ) : (
+                  <p className="text-3xl font-bold tracking-tight">{value}</p>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">{change}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* ✅ Two Column Layout */}
+        {/* ── Two col layout ── */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* System Overview - takes 2 columns */}
-          <Card className="lg:col-span-2 border-slate-200/60 shadow-sm animate-in fade-in slide-in-from-left duration-700 delay-500">
-            <CardHeader className="border-b border-slate-100 bg-linear-to-r from-slate-50 to-transparent">
-              <CardTitle className="flex items-center gap-2 text-slate-800">
-                <BarChart3 className="w-5 h-5 text-blue-600" />
-                System Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                {/* Quick Stats Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg bg-linear-to-br from-blue-50 to-blue-100/50 border border-blue-200/50">
-                    <p className="text-sm text-slate-600 mb-1">Total Users</p>
-                    <p className="text-2xl font-bold text-blue-700">
-                      {isLoading ? (
-                        <span className="inline-block w-12 h-7 bg-blue-200 rounded animate-pulse" />
-                      ) : (
-                        users?.length ?? 0
-                      )}
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-linear-to-br from-purple-50 to-purple-100/50 border border-purple-200/50">
-                    <p className="text-sm text-slate-600 mb-1">Completion Rate</p>
-                    <p className="text-2xl font-bold text-purple-700">73%</p>
-                  </div>
-                </div>
 
-                {/* Progress Bars */}
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-600">Active Courses</span>
-                      <span className="font-medium text-slate-900">85%</span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-linear-to-r from-blue-500 to-blue-600 rounded-full animate-in slide-in-from-left duration-1000 delay-700"
-                        style={{ width: '85%' }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-600">Student Engagement</span>
-                      <span className="font-medium text-slate-900">92%</span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-linear-to-r from-purple-500 to-purple-600 rounded-full animate-in slide-in-from-left duration-1000 delay-800"
-                        style={{ width: '92%' }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-600">Instructor Activity</span>
-                      <span className="font-medium text-slate-900">78%</span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-linear-to-r from-emerald-500 to-emerald-600 rounded-full animate-in slide-in-from-left duration-1000 delay-900"
-                        style={{ width: '78%' }}
-                      />
-                    </div>
-                  </div>
+          {/* ── System Overview ── */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <BarChart3 size={16} className="text-primary" />
+                    System Overview
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    Platform health and engagement metrics.
+                  </CardDescription>
                 </div>
+                <Badge variant="secondary" className="gap-1.5 text-emerald-600 bg-emerald-50 border-emerald-200">
+                  <Activity size={11} />
+                  Live
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card className="border-slate-200/60 shadow-sm animate-in fade-in slide-in-from-right duration-700 delay-500">
-            <CardHeader className="border-b border-slate-100 bg-linear-to-r from-slate-50 to-transparent">
-              <CardTitle className="flex items-center gap-2 text-slate-800">
-                <Activity className="w-5 h-5 text-purple-600" />
-                Recent Activity
-              </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+
+            <Separator />
+
+            <CardContent className="pt-5 space-y-6">
+
+              {/* Quick stats mini grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: "Total Users",      value: isLoading ? null : totalUsers,       color: "text-sky-600",    bg: "bg-sky-50 border-sky-200"    },
+                  { label: "Completion Rate",  value: "73%",                               color: "text-violet-600", bg: "bg-violet-50 border-violet-200" },
+                  { label: "Avg. Rating",      value: "4.8★",                              color: "text-emerald-600",bg: "bg-emerald-50 border-emerald-200" },
+                ].map(({ label, value, color, bg }) => (
+                  <div key={label} className={`rounded-lg border p-3 ${bg}`}>
+                    <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                    {value === null ? (
+                      <Skeleton className="h-7 w-12" />
+                    ) : (
+                      <p className={`text-xl font-bold ${color}`}>{value}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              {/* Progress bars */}
               <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div 
-                    key={index}
-                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors duration-200 animate-in fade-in slide-in-from-right"
-                    style={{ animationDelay: `${600 + index * 100}ms` }}
-                  >
-                    <div className={`w-2 h-2 rounded-full mt-2 ${
-                      activity.type === 'user' ? 'bg-blue-500' :
-                      activity.type === 'course' ? 'bg-purple-500' :
-                      'bg-emerald-500'
-                    }`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900 truncate">
-                        {activity.title}
-                      </p>
-                      <p className="text-xs text-slate-500">{activity.time}</p>
+                {PROGRESS_ROWS.map(({ label, pct, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-sm mb-1.5">
+                      <span className="text-muted-foreground">{label}</span>
+                      <span className="font-semibold text-foreground">{pct}%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${color}`}
+                        style={{ width: `${pct}%` }}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
+
             </CardContent>
           </Card>
+
+          {/* ── Recent Activity ── */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Activity size={16} className="text-primary" />
+                Recent Activity
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Latest actions on the platform.
+              </CardDescription>
+            </CardHeader>
+
+            <Separator />
+
+            <CardContent className="pt-4 space-y-1">
+              {RECENT_ACTIVITY.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${DOT[item.type]}`} />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{item.title}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <Clock size={10} />
+                      {item.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+
+            <Separator />
+
+            {/* Summary footer */}
+            <CardContent className="py-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Users size={12} />
+                  {isLoading ? "—" : `${totalUsers} total users`}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <BookOpen size={12} />
+                  {isLoading ? "—" : `${totalCourses} courses`}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
         </div>
       </main>
     </div>
