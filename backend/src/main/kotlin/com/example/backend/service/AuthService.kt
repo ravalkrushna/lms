@@ -216,4 +216,11 @@ class AuthService(
 
         emailService.sendOtp(email, otp)
     }
+
+    fun getUserById(userId: Long): UserDetailResponse {
+
+        return authRepository.findUserDetailById(userId)
+            ?: throw RuntimeException("User not found")
+    }
+
 }

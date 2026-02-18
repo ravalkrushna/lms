@@ -1,17 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 
 import {
-  Card, CardContent, CardHeader, CardTitle, CardDescription,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
 } from "@/components/ui/card"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
 import {
-  Table, TableBody, TableCell, TableHead,
-  TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 
 import { Search, RefreshCw } from "lucide-react"
@@ -20,11 +30,17 @@ import { HigherupsSidebar } from "@/components/HigherupsSidebar"
 import { getUsersByRole, type User } from "@/lib/higherups"
 
 export const Route = createFileRoute("/higherups/students/")({
+  validateSearch: (search) => ({
+    q: typeof search.q === "string" ? search.q : "",
+  }),
   component: AdminStudents,
 })
 
 function AdminStudents() {
-  const [search, setSearch] = useState("")
+  const navigate = useNavigate()
+  const search = Route.useSearch()
+
+  const q = typeof search.q === "string" ? search.q : ""
 
   const { data: students, isLoading, refetch, isFetching } = useQuery<User[]>({
     queryKey: ["students"],
@@ -33,11 +49,23 @@ function AdminStudents() {
 
   const filtered = useMemo(() => {
     if (!students) return []
+
     return students.filter((s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.email.toLowerCase().includes(search.toLowerCase())
+      s.name.toLowerCase().includes(q.toLowerCase()) ||
+      s.email.toLowerCase().includes(q.toLowerCase())
     )
-  }, [students, search])
+  }, [students, q])
+
+  function updateSearch(value: string) {
+  navigate({
+    to: "/higherups/students",
+    search: (prev) => ({
+      ...prev,
+      q: value,
+    }),
+    replace: true,
+  })
+}
 
   function UserAvatar({ name }: { name: string }) {
     const initials = name
@@ -76,7 +104,10 @@ function AdminStudents() {
             onClick={() => refetch()}
             disabled={isFetching}
           >
-            <RefreshCw size={15} className={isFetching ? "animate-spin" : ""} />
+            <RefreshCw
+              size={15}
+              className={isFetching ? "animate-spin" : ""}
+            />
           </Button>
         </div>
 
@@ -89,12 +120,15 @@ function AdminStudents() {
             </CardDescription>
 
             <div className="relative mt-3">
-              <Search size={15} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={15}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <Input
                 placeholder="Search student..."
                 className="pl-8 w-64 h-9"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={q}
+                onChange={(e) => updateSearch(e.target.value)}
               />
             </div>
 
@@ -117,14 +151,27 @@ function AdminStudents() {
                       <TableCell className="pl-6">
                         <Skeleton className="h-4 w-32" />
                       </TableCell>
-                      <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-48" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-10 ml-auto" />
+                      </TableCell>
                     </TableRow>
                   ))}
 
                 {!isLoading &&
                   filtered.map((student) => (
-                    <TableRow key={student.id}>
+                    <TableRow
+                      key={student.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() =>
+                        navigate({
+                          to: "/higherups/students/$studentId",
+                          params: { studentId: String(student.id) },
+                        })
+                      }
+                    >
                       <TableCell className="pl-6">
                         <div className="flex items-center gap-3">
                           <UserAvatar name={student.name} />

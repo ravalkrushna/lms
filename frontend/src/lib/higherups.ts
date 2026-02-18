@@ -266,3 +266,7 @@ export const getUsersByRole = async (role: string) => {
   return res.data
 }
 
+export async function getUserById(id: string) {
+  const res = await api.get(`/admin/users/${id}`)
+  return res.data
+}

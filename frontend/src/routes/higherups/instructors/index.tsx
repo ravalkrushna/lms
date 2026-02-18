@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { useState, useMemo } from "react"
-
 
 import {
   Card, CardContent, CardHeader, CardTitle, CardDescription,
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
 import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow,
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/higherups/instructors/")({
 
 function AdminInstructors() {
   const [search, setSearch] = useState("")
+  const navigate = useNavigate()
 
   const { data: instructors, isLoading, refetch, isFetching } = useQuery<User[]>({
     queryKey: ["instructors"],
@@ -123,25 +124,50 @@ function AdminInstructors() {
                     </TableRow>
                   ))}
 
-                {!isLoading &&
-                  filtered.map((instructor) => (
-                    <TableRow key={instructor.id}>
-                      <TableCell className="pl-6">
-                        <div className="flex items-center gap-3">
-                          <UserAvatar name={instructor.name} />
-                          <span className="font-medium">{instructor.name}</span>
-                        </div>
-                      </TableCell>
+                {!isLoading && filtered.map((instructor) => (
+                  <TableRow
+                    key={instructor.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() =>
+                      navigate({
+                        to: "/higherups/instructors/$instructorId",
+                        params: {
+                          instructorId: String(instructor.id),
+                        },
+                      })
+                    }
+                  >
 
-                      <TableCell className="text-muted-foreground">
-                        {instructor.email}
-                      </TableCell>
+                    <TableCell className="pl-6">
+                      <div className="flex items-center gap-3">
+                        <UserAvatar name={instructor.name} />
+                        <span className="font-medium">{instructor.name}</span>
+                      </div>
+                    </TableCell>
 
-                      <TableCell className="pr-6 text-right text-xs font-mono text-muted-foreground">
+                    <TableCell className="text-muted-foreground">
+                      {instructor.email}
+                    </TableCell>
+
+                    {/* ✅ CLICKABLE ID */}
+                    <TableCell className="pr-6 text-right">
+                      <button
+                        onClick={() =>
+                          navigate({
+                            to: "/higherups/instructors/$instructorId",
+                            params: {
+                              instructorId: String(instructor.id),
+                            },
+                          })
+                        }
+                        className="text-xs font-mono text-primary hover:underline"
+                      >
                         #{instructor.id}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                      </button>
+                    </TableCell>
+
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </CardContent>

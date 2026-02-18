@@ -1,8 +1,11 @@
 package com.example.backend.repository
 
+import com.example.backend.dto.UserDetailResponse
+import com.example.backend.model.InstructorsTable
 import com.example.backend.model.UserAuth
 import com.example.backend.model.UserAuthTable
 import com.example.backend.model.UserRole
+import com.example.backend.model.UsersTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -148,6 +151,72 @@ class AuthRepository {
                 )
             }
     }
+
+    fun findUserDetailById(userId: Long): UserDetailResponse? = transaction {
+
+        val user = UserAuthTable
+            .selectAll()
+            .where { UserAuthTable.id eq userId }
+            .singleOrNull() ?: return@transaction null
+
+        val role = user[UserAuthTable.role]
+
+        when (role) {
+
+            UserRole.STUDENT.name -> {
+
+                val profile = UsersTable
+                    .selectAll()
+                    .where { UsersTable.userId eq userId }
+                    .singleOrNull()
+
+                UserDetailResponse(
+                    id = user[UserAuthTable.id],
+                    name = profile?.getOrNull(UsersTable.name) ?: user[UserAuthTable.name],
+                    email = profile?.getOrNull(UsersTable.email) ?: user[UserAuthTable.email],
+                    role = role,
+                    contactNo = profile?.getOrNull(UsersTable.contactNo),
+                    address = profile?.getOrNull(UsersTable.address),
+                    salary = null,
+                    designation = null
+                )
+            }
+
+            UserRole.INSTRUCTOR.name -> {
+
+                val profile = InstructorsTable
+                    .selectAll()
+                    .where { InstructorsTable.userId eq userId }
+                    .singleOrNull()
+
+                UserDetailResponse(
+                    id = user[UserAuthTable.id],
+                    name = profile?.getOrNull(InstructorsTable.name) ?: user[UserAuthTable.name],
+                    email = profile?.getOrNull(InstructorsTable.email) ?: user[UserAuthTable.email],
+                    role = role,
+                    contactNo = profile?.getOrNull(InstructorsTable.contactNo),
+                    address = profile?.getOrNull(InstructorsTable.address),
+                    salary = profile?.getOrNull(InstructorsTable.salary),
+                    designation = profile?.getOrNull(InstructorsTable.designation)
+                )
+            }
+
+            else -> {
+
+                UserDetailResponse(
+                    id = user[UserAuthTable.id],
+                    name = user[UserAuthTable.name],
+                    email = user[UserAuthTable.email],
+                    role = role,
+                    contactNo = null,
+                    address = null,
+                    salary = null,
+                    designation = null
+                )
+            }
+        }
+    }
+
 
 
 }
