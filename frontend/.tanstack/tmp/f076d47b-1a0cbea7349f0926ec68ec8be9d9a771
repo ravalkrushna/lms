@@ -42,12 +42,13 @@ import { Route as AdminCoursesCreateRouteImport } from './routes/admin/courses/c
 import { Route as HigherupsCoursesCourseIdIndexRouteImport } from './routes/higherups/courses/$courseId/index'
 import { Route as StudentCoursesCourseIdPreviewRouteImport } from './routes/student/courses/$courseId/preview'
 import { Route as InstructorCoursesCourseIdSectionsRouteImport } from './routes/instructor/courses/$courseId/sections'
-import { Route as HigherupsCoursesCourseIdSectionsRouteImport } from './routes/higherups/courses/$courseId/sections'
 import { Route as AdminCoursesCourseIdSectionsRouteImport } from './routes/admin/courses/$courseId/sections'
+import { Route as HigherupsCoursesCourseIdSectionsIndexRouteImport } from './routes/higherups/courses/$courseId/sections/index'
 import { Route as InstructorCoursesCourseIdSectionIdLessonsRouteImport } from './routes/instructor/courses/$courseId/$sectionId/lessons'
 import { Route as AdminCoursesCourseIdSectionIdLessonsRouteImport } from './routes/admin/courses/$courseId/$sectionId/lessons'
-import { Route as HigherupsCoursesCourseIdSectionIdLessonsIndexRouteImport } from './routes/higherups/courses/$courseId/$sectionId/lessons/index'
-import { Route as HigherupsCoursesCourseIdSectionIdLessonsLessonIdRouteImport } from './routes/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
+import { Route as HigherupsCoursesCourseIdSectionsSectionIdIndexRouteImport } from './routes/higherups/courses/$courseId/sections/$sectionId/index'
+import { Route as HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRouteImport } from './routes/higherups/courses/$courseId/sections/$sectionId/lessons/index'
+import { Route as HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRouteImport } from './routes/higherups/courses/$courseId/sections/$sectionId/lessons/create'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/auth',
@@ -217,16 +218,16 @@ const InstructorCoursesCourseIdSectionsRoute =
     path: '/instructor/courses/$courseId/sections',
     getParentRoute: () => rootRouteImport,
   } as any)
-const HigherupsCoursesCourseIdSectionsRoute =
-  HigherupsCoursesCourseIdSectionsRouteImport.update({
-    id: '/higherups/courses/$courseId/sections',
-    path: '/higherups/courses/$courseId/sections',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminCoursesCourseIdSectionsRoute =
   AdminCoursesCourseIdSectionsRouteImport.update({
     id: '/admin/courses/$courseId/sections',
     path: '/admin/courses/$courseId/sections',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const HigherupsCoursesCourseIdSectionsIndexRoute =
+  HigherupsCoursesCourseIdSectionsIndexRouteImport.update({
+    id: '/higherups/courses/$courseId/sections/',
+    path: '/higherups/courses/$courseId/sections/',
     getParentRoute: () => rootRouteImport,
   } as any)
 const InstructorCoursesCourseIdSectionIdLessonsRoute =
@@ -241,16 +242,22 @@ const AdminCoursesCourseIdSectionIdLessonsRoute =
     path: '/admin/courses/$courseId/$sectionId/lessons',
     getParentRoute: () => rootRouteImport,
   } as any)
-const HigherupsCoursesCourseIdSectionIdLessonsIndexRoute =
-  HigherupsCoursesCourseIdSectionIdLessonsIndexRouteImport.update({
-    id: '/higherups/courses/$courseId/$sectionId/lessons/',
-    path: '/higherups/courses/$courseId/$sectionId/lessons/',
+const HigherupsCoursesCourseIdSectionsSectionIdIndexRoute =
+  HigherupsCoursesCourseIdSectionsSectionIdIndexRouteImport.update({
+    id: '/higherups/courses/$courseId/sections/$sectionId/',
+    path: '/higherups/courses/$courseId/sections/$sectionId/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute =
-  HigherupsCoursesCourseIdSectionIdLessonsLessonIdRouteImport.update({
-    id: '/higherups/courses/$courseId/$sectionId/lessons/$lessonId',
-    path: '/higherups/courses/$courseId/$sectionId/lessons/$lessonId',
+const HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute =
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRouteImport.update({
+    id: '/higherups/courses/$courseId/sections/$sectionId/lessons/',
+    path: '/higherups/courses/$courseId/sections/$sectionId/lessons/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute =
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRouteImport.update({
+    id: '/higherups/courses/$courseId/sections/$sectionId/lessons/create',
+    path: '/higherups/courses/$courseId/sections/$sectionId/lessons/create',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -286,14 +293,15 @@ export interface FileRoutesByFullPath {
   '/student/courses/': typeof StudentCoursesIndexRoute
   '/student/my-courses/': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/higherups/courses/$courseId/sections': typeof HigherupsCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
   '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/higherups/courses/$courseId/': typeof HigherupsCoursesCourseIdIndexRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
-  '/higherups/courses/$courseId/$sectionId/lessons/$lessonId': typeof HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute
-  '/higherups/courses/$courseId/$sectionId/lessons/': typeof HigherupsCoursesCourseIdSectionIdLessonsIndexRoute
+  '/higherups/courses/$courseId/sections/': typeof HigherupsCoursesCourseIdSectionsIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId/': typeof HigherupsCoursesCourseIdSectionsSectionIdIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons/create': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons/': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -326,14 +334,15 @@ export interface FileRoutesByTo {
   '/student/courses': typeof StudentCoursesIndexRoute
   '/student/my-courses': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/higherups/courses/$courseId/sections': typeof HigherupsCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
   '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/higherups/courses/$courseId': typeof HigherupsCoursesCourseIdIndexRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
-  '/higherups/courses/$courseId/$sectionId/lessons/$lessonId': typeof HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute
-  '/higherups/courses/$courseId/$sectionId/lessons': typeof HigherupsCoursesCourseIdSectionIdLessonsIndexRoute
+  '/higherups/courses/$courseId/sections': typeof HigherupsCoursesCourseIdSectionsIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId': typeof HigherupsCoursesCourseIdSectionsSectionIdIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons/create': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -368,14 +377,15 @@ export interface FileRoutesById {
   '/student/courses/': typeof StudentCoursesIndexRoute
   '/student/my-courses/': typeof StudentMyCoursesIndexRoute
   '/admin/courses/$courseId/sections': typeof AdminCoursesCourseIdSectionsRoute
-  '/higherups/courses/$courseId/sections': typeof HigherupsCoursesCourseIdSectionsRoute
   '/instructor/courses/$courseId/sections': typeof InstructorCoursesCourseIdSectionsRoute
   '/student/courses/$courseId/preview': typeof StudentCoursesCourseIdPreviewRoute
   '/higherups/courses/$courseId/': typeof HigherupsCoursesCourseIdIndexRoute
   '/admin/courses/$courseId/$sectionId/lessons': typeof AdminCoursesCourseIdSectionIdLessonsRoute
   '/instructor/courses/$courseId/$sectionId/lessons': typeof InstructorCoursesCourseIdSectionIdLessonsRoute
-  '/higherups/courses/$courseId/$sectionId/lessons/$lessonId': typeof HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute
-  '/higherups/courses/$courseId/$sectionId/lessons/': typeof HigherupsCoursesCourseIdSectionIdLessonsIndexRoute
+  '/higherups/courses/$courseId/sections/': typeof HigherupsCoursesCourseIdSectionsIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId/': typeof HigherupsCoursesCourseIdSectionsSectionIdIndexRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons/create': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute
+  '/higherups/courses/$courseId/sections/$sectionId/lessons/': typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -411,14 +421,15 @@ export interface FileRouteTypes {
     | '/student/courses/'
     | '/student/my-courses/'
     | '/admin/courses/$courseId/sections'
-    | '/higherups/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
     | '/student/courses/$courseId/preview'
     | '/higherups/courses/$courseId/'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
-    | '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-    | '/higherups/courses/$courseId/$sectionId/lessons/'
+    | '/higherups/courses/$courseId/sections/'
+    | '/higherups/courses/$courseId/sections/$sectionId/'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -451,14 +462,15 @@ export interface FileRouteTypes {
     | '/student/courses'
     | '/student/my-courses'
     | '/admin/courses/$courseId/sections'
-    | '/higherups/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
     | '/student/courses/$courseId/preview'
     | '/higherups/courses/$courseId'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
-    | '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-    | '/higherups/courses/$courseId/$sectionId/lessons'
+    | '/higherups/courses/$courseId/sections'
+    | '/higherups/courses/$courseId/sections/$sectionId'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons'
   id:
     | '__root__'
     | '/'
@@ -492,14 +504,15 @@ export interface FileRouteTypes {
     | '/student/courses/'
     | '/student/my-courses/'
     | '/admin/courses/$courseId/sections'
-    | '/higherups/courses/$courseId/sections'
     | '/instructor/courses/$courseId/sections'
     | '/student/courses/$courseId/preview'
     | '/higherups/courses/$courseId/'
     | '/admin/courses/$courseId/$sectionId/lessons'
     | '/instructor/courses/$courseId/$sectionId/lessons'
-    | '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-    | '/higherups/courses/$courseId/$sectionId/lessons/'
+    | '/higherups/courses/$courseId/sections/'
+    | '/higherups/courses/$courseId/sections/$sectionId/'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+    | '/higherups/courses/$courseId/sections/$sectionId/lessons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -528,13 +541,14 @@ export interface RootRouteChildren {
   StudentCoursesIndexRoute: typeof StudentCoursesIndexRoute
   StudentMyCoursesIndexRoute: typeof StudentMyCoursesIndexRoute
   AdminCoursesCourseIdSectionsRoute: typeof AdminCoursesCourseIdSectionsRoute
-  HigherupsCoursesCourseIdSectionsRoute: typeof HigherupsCoursesCourseIdSectionsRoute
   InstructorCoursesCourseIdSectionsRoute: typeof InstructorCoursesCourseIdSectionsRoute
   HigherupsCoursesCourseIdIndexRoute: typeof HigherupsCoursesCourseIdIndexRoute
   AdminCoursesCourseIdSectionIdLessonsRoute: typeof AdminCoursesCourseIdSectionIdLessonsRoute
   InstructorCoursesCourseIdSectionIdLessonsRoute: typeof InstructorCoursesCourseIdSectionIdLessonsRoute
-  HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute: typeof HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute
-  HigherupsCoursesCourseIdSectionIdLessonsIndexRoute: typeof HigherupsCoursesCourseIdSectionIdLessonsIndexRoute
+  HigherupsCoursesCourseIdSectionsIndexRoute: typeof HigherupsCoursesCourseIdSectionsIndexRoute
+  HigherupsCoursesCourseIdSectionsSectionIdIndexRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdIndexRoute
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -770,18 +784,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstructorCoursesCourseIdSectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/higherups/courses/$courseId/sections': {
-      id: '/higherups/courses/$courseId/sections'
-      path: '/higherups/courses/$courseId/sections'
-      fullPath: '/higherups/courses/$courseId/sections'
-      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/courses/$courseId/sections': {
       id: '/admin/courses/$courseId/sections'
       path: '/admin/courses/$courseId/sections'
       fullPath: '/admin/courses/$courseId/sections'
       preLoaderRoute: typeof AdminCoursesCourseIdSectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/courses/$courseId/sections/': {
+      id: '/higherups/courses/$courseId/sections/'
+      path: '/higherups/courses/$courseId/sections'
+      fullPath: '/higherups/courses/$courseId/sections/'
+      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/instructor/courses/$courseId/$sectionId/lessons': {
@@ -798,18 +812,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoursesCourseIdSectionIdLessonsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/higherups/courses/$courseId/$sectionId/lessons/': {
-      id: '/higherups/courses/$courseId/$sectionId/lessons/'
-      path: '/higherups/courses/$courseId/$sectionId/lessons'
-      fullPath: '/higherups/courses/$courseId/$sectionId/lessons/'
-      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionIdLessonsIndexRouteImport
+    '/higherups/courses/$courseId/sections/$sectionId/': {
+      id: '/higherups/courses/$courseId/sections/$sectionId/'
+      path: '/higherups/courses/$courseId/sections/$sectionId'
+      fullPath: '/higherups/courses/$courseId/sections/$sectionId/'
+      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/higherups/courses/$courseId/$sectionId/lessons/$lessonId': {
-      id: '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-      path: '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-      fullPath: '/higherups/courses/$courseId/$sectionId/lessons/$lessonId'
-      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionIdLessonsLessonIdRouteImport
+    '/higherups/courses/$courseId/sections/$sectionId/lessons/': {
+      id: '/higherups/courses/$courseId/sections/$sectionId/lessons/'
+      path: '/higherups/courses/$courseId/sections/$sectionId/lessons'
+      fullPath: '/higherups/courses/$courseId/sections/$sectionId/lessons/'
+      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/courses/$courseId/sections/$sectionId/lessons/create': {
+      id: '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+      path: '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+      fullPath: '/higherups/courses/$courseId/sections/$sectionId/lessons/create'
+      preLoaderRoute: typeof HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -877,7 +898,6 @@ const rootRouteChildren: RootRouteChildren = {
   StudentCoursesIndexRoute: StudentCoursesIndexRoute,
   StudentMyCoursesIndexRoute: StudentMyCoursesIndexRoute,
   AdminCoursesCourseIdSectionsRoute: AdminCoursesCourseIdSectionsRoute,
-  HigherupsCoursesCourseIdSectionsRoute: HigherupsCoursesCourseIdSectionsRoute,
   InstructorCoursesCourseIdSectionsRoute:
     InstructorCoursesCourseIdSectionsRoute,
   HigherupsCoursesCourseIdIndexRoute: HigherupsCoursesCourseIdIndexRoute,
@@ -885,10 +905,14 @@ const rootRouteChildren: RootRouteChildren = {
     AdminCoursesCourseIdSectionIdLessonsRoute,
   InstructorCoursesCourseIdSectionIdLessonsRoute:
     InstructorCoursesCourseIdSectionIdLessonsRoute,
-  HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute:
-    HigherupsCoursesCourseIdSectionIdLessonsLessonIdRoute,
-  HigherupsCoursesCourseIdSectionIdLessonsIndexRoute:
-    HigherupsCoursesCourseIdSectionIdLessonsIndexRoute,
+  HigherupsCoursesCourseIdSectionsIndexRoute:
+    HigherupsCoursesCourseIdSectionsIndexRoute,
+  HigherupsCoursesCourseIdSectionsSectionIdIndexRoute:
+    HigherupsCoursesCourseIdSectionsSectionIdIndexRoute,
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute:
+    HigherupsCoursesCourseIdSectionsSectionIdLessonsCreateRoute,
+  HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute:
+    HigherupsCoursesCourseIdSectionsSectionIdLessonsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

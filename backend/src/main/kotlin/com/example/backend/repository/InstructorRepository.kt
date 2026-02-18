@@ -11,20 +11,28 @@ class InstructorRepository {
 
     fun findByAuthId(authId: Long): InstructorProfileResponse? = transaction {
 
-        val instructor = InstructorsTable
+        val row = InstructorsTable
+            .join(UserAuthTable, JoinType.INNER,
+                onColumn = InstructorsTable.userId,
+                otherColumn = UserAuthTable.id
+            )
             .selectAll()
             .where { InstructorsTable.userId eq authId }
             .singleOrNull() ?: return@transaction null
 
         InstructorProfileResponse(
-            name = instructor[InstructorsTable.name],
-            email = instructor[InstructorsTable.email],
-            contactNo = instructor[InstructorsTable.contactNo],
-            address = instructor[InstructorsTable.address],
-            salary = instructor[InstructorsTable.salary],
-            designation = instructor[InstructorsTable.designation]
+            id = row[UserAuthTable.id],                 // ✅ FROM AUTH TABLE
+            name = row[UserAuthTable.name],             // ✅ TRUST AUTH TABLE
+            email = row[UserAuthTable.email],
+            role = row[UserAuthTable.role],             // ✅ THE FIX 🔥
+
+            contactNo = row[InstructorsTable.contactNo],
+            address = row[InstructorsTable.address],
+            salary = row[InstructorsTable.salary],
+            designation = row[InstructorsTable.designation]
         )
     }
+
 
     /** ✅ Update Instructor Profile */
     fun updateProfile(authId: Long, req: UpdateInstructorRequest) = transaction {
@@ -81,4 +89,26 @@ class InstructorRepository {
             totalStudents = totalStudents
         )
     }
+
+    private fun toCourse(row: ResultRow): Course {
+        return Course(
+            id = row[CoursesTable.id],
+            title = row[CoursesTable.title],
+            description = row[CoursesTable.description],
+            instructorId = row[CoursesTable.instructorId],
+            status = row[CoursesTable.status]
+        )
+    }
+
+
+
+    fun findById(courseId: Long): Course? = transaction {
+        CoursesTable
+            .selectAll()
+            .where { CoursesTable.id eq courseId }
+            .map(::toCourse)
+            .singleOrNull()
+    }
+
+
 }

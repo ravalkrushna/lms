@@ -5,6 +5,7 @@ import com.example.backend.dto.CourseResponse
 import com.example.backend.dto.CreateCourseRequest
 import com.example.backend.dto.ReorderRequest
 import com.example.backend.service.CourseService
+import com.example.backend.service.InstructorService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/instructor/courses")
 @PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")
 class InstructorCourseController(
-    private val courseService: CourseService
+    private val courseService: CourseService,
+    private val instructorService: InstructorService
 ) {
 
     @PostMapping
@@ -41,4 +43,12 @@ class InstructorCourseController(
         @RequestBody req: ReorderRequest
     ) =
         ResponseEntity.ok(courseService.reorderSections(courseId, req))
+
+    @GetMapping("/{courseId}")
+    fun getCourseById(@PathVariable courseId: Long): ResponseEntity<CourseResponse> {
+        val course = instructorService.getCourseById(courseId)
+        return ResponseEntity.ok(course)
+    }
+
+
 }

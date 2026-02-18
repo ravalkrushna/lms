@@ -1,6 +1,7 @@
 package com.example.backend.repository
 
 import com.example.backend.dto.CourseResponse
+import com.example.backend.model.Course
 import com.example.backend.model.CoursesTable
 import com.example.backend.model.LessonTable
 import com.example.backend.model.SectionsTable
@@ -26,14 +27,6 @@ class CourseRepository {
             it[CoursesTable.createdAt] = Instant.now()
             it[CoursesTable.updatedAt] = Instant.now()
         } get CoursesTable.id)
-    }
-
-    fun findById(courseId: Long): ResultRow? {
-        return CoursesTable
-            .selectAll()
-            .where { CoursesTable.id eq courseId }
-            .limit(1)
-            .singleOrNull()
     }
 
     fun publishCourse(courseId: Long): Int {
@@ -215,5 +208,24 @@ class CourseRepository {
 
         sections
     }
+
+    fun findById(courseId: Long): Course? = transaction {
+        CoursesTable
+            .selectAll()
+            .where { CoursesTable.id eq courseId }
+            .map(::toCourse)
+            .singleOrNull()
+    }
+
+    private fun toCourse(row: ResultRow): Course {
+        return Course(
+            id = row[CoursesTable.id],
+            title = row[CoursesTable.title],
+            description = row[CoursesTable.description],
+            instructorId = row[CoursesTable.instructorId],
+            status = row[CoursesTable.status]
+        )
+    }
+
 
 }

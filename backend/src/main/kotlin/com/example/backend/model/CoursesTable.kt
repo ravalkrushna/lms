@@ -18,3 +18,11 @@ object CoursesTable : Table("courses") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+data class Course(
+    val id: Long,
+    val title: String,
+    val description: String?,
+    val instructorId: Long,
+    val status: String
+)

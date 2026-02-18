@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Card,
   CardContent,
@@ -28,22 +28,23 @@ function LoginPage() {
     mutationFn: loginAction,
   })
 
+  const queryClient = useQueryClient()
+
   const onSubmit = (values: LoginInput) => {
     loginMutation.mutate(values, {
       onSuccess: (data) => {
-        const role = data.role
-        if (role === "STUDENT") {
+
+        queryClient.invalidateQueries({ queryKey: ["auth-user"] })
+
+        if (data.role === "STUDENT") {
           navigate({ to: "/student/dashboard" })
-        }
-        if (role === "INSTRUCTOR") {
-          navigate({ to: "/instructor/dashboard" })
-        }
-        if (role === "ADMIN") {
-          navigate({ to: "/admin/dashboard" })
+        } else {
+          navigate({ to: "/higherups/dashboard" })
         }
       },
     })
   }
+
 
   return (
     <>

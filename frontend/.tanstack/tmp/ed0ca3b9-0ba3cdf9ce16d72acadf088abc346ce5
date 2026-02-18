@@ -1,0 +1,122 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
+
+import { HigherupsSidebar } from "@/components/HigherupsSidebar"
+import { getAllCourses, type Course } from "@/lib/higherups"
+import { permissions } from "@/lib/permissions"
+import { useAuth } from "@/lib/auth-context"
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+import { Button } from "@/components/ui/button"
+
+import { Plus, BookOpen } from "lucide-react"
+
+export const Route = createFileRoute("/higherups/courses/")({
+  component: HigherupsCoursesPage,
+})
+
+function HigherupsCoursesPage() {
+  const navigate = useNavigate()
+  const { user } = useAuth()
+
+  /* ✅ ALWAYS CALL HOOKS */
+  const coursesQuery = useQuery({
+    queryKey: ["higherups-courses"],
+    queryFn: getAllCourses,
+  })
+
+  const courses = coursesQuery.data ?? []
+
+  const filteredCourses = useMemo(() => {
+    return courses
+  }, [courses])
+
+  /* ✅ Guards AFTER hooks */
+  if (!user) return null
+
+  return (
+    <div className="flex min-h-screen">
+      <HigherupsSidebar />
+
+      <main className="flex-1 p-6 bg-muted/30 space-y-6">
+
+        {/* ✅ Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">
+              {permissions.isAdmin(user) ? "All Courses" : "My Courses"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Manage your courses
+            </p>
+          </div>
+
+          {permissions.canCreateCourse(user) && (
+            <Button
+              onClick={() => navigate({ to: "/higherups/courses/create" })}
+            >
+              <Plus size={16} className="mr-2" />
+              Create Course
+            </Button>
+          )}
+        </div>
+
+        {/* ✅ Loading */}
+        {coursesQuery.isLoading ? (
+          <div>Loading courses...</div>
+        ) : filteredCourses.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredCourses.map((course: Course) => (
+              <Card key={course.id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen size={16} />
+                    {course.title}
+                  </CardTitle>
+                </CardHeader>
+
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {course.description || "No description"}
+                  </p>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      navigate({
+                        to: "/higherups/courses/$courseId/sections",
+                        params: { courseId: course.id.toString() },
+                      })
+                    }
+                  >
+                    Manage →
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
+
+function EmptyState() {
+  return (
+    <div className="text-center py-20 text-muted-foreground">
+      <BookOpen size={40} className="mx-auto mb-3 opacity-20" />
+      <p>No courses found</p>
+    </div>
+  )
+}

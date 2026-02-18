@@ -3,7 +3,6 @@ package com.example.backend.service
 import com.example.backend.dto.CourseResponse
 import com.example.backend.dto.CreateCourseRequest
 import com.example.backend.dto.ReorderRequest
-import com.example.backend.model.CoursesTable
 import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import com.example.backend.repository.CourseRepository
@@ -23,10 +22,13 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
-            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name) {
+            if (user.role != UserRole.INSTRUCTOR.name &&
+                user.role != UserRole.ADMIN.name
+            ) {
                 throw RuntimeException("Only instructor/admin can create course")
             }
 
@@ -36,15 +38,15 @@ class CourseService(
                 instructorId = user.id
             )
 
-            val row = courseRepository.findById(courseId)
+            val course = courseRepository.findById(courseId)
                 ?: throw RuntimeException("Course not found")
 
             CourseResponse(
-                id = row[CoursesTable.id],
-                title = row[CoursesTable.title],
-                description = row[CoursesTable.description],
-                instructorId = row[CoursesTable.instructorId],
-                status = row[CoursesTable.status]
+                id = course.id,
+                title = course.title,
+                description = course.description,
+                instructorId = course.instructorId,
+                status = course.status
             )
         }
     }
@@ -53,10 +55,13 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
-            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name) {
+            if (user.role != UserRole.INSTRUCTOR.name &&
+                user.role != UserRole.ADMIN.name
+            ) {
                 throw RuntimeException("Only instructor/admin can publish course")
             }
 
@@ -71,16 +76,18 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
             courseRepository.listInstructorCourses(user.id).map { row ->
+
                 CourseResponse(
-                    id = row[CoursesTable.id],
-                    title = row[CoursesTable.title],
-                    description = row[CoursesTable.description],
-                    instructorId = row[CoursesTable.instructorId],
-                    status = row[CoursesTable.status]
+                    id = row[com.example.backend.model.CoursesTable.id],
+                    title = row[com.example.backend.model.CoursesTable.title],
+                    description = row[com.example.backend.model.CoursesTable.description],
+                    instructorId = row[com.example.backend.model.CoursesTable.instructorId],
+                    status = row[com.example.backend.model.CoursesTable.status]
                 )
             }
         }
@@ -88,13 +95,15 @@ class CourseService(
 
     fun listPublishedCourses(): List<CourseResponse> {
         return transaction {
+
             courseRepository.listPublishedCourses().map { row ->
+
                 CourseResponse(
-                    id = row[CoursesTable.id],
-                    title = row[CoursesTable.title],
-                    description = row[CoursesTable.description],
-                    instructorId = row[CoursesTable.instructorId],
-                    status = row[CoursesTable.status]
+                    id = row[com.example.backend.model.CoursesTable.id],
+                    title = row[com.example.backend.model.CoursesTable.title],
+                    description = row[com.example.backend.model.CoursesTable.description],
+                    instructorId = row[com.example.backend.model.CoursesTable.instructorId],
+                    status = row[com.example.backend.model.CoursesTable.status]
                 )
             }
         }
@@ -104,18 +113,21 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
-            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name)
-                throw RuntimeException("Forbidden")
+            if (user.role != UserRole.INSTRUCTOR.name &&
+                user.role != UserRole.ADMIN.name
+            ) throw RuntimeException("Forbidden")
 
             if (user.role != UserRole.ADMIN.name &&
                 !courseRepository.isInstructorOfCourse(user.id, courseId)
             ) throw RuntimeException("Forbidden")
 
             val updated = courseRepository.unpublishCourse(courseId)
-            if (updated == 0) throw RuntimeException("Course not found or already draft")
+            if (updated == 0)
+                throw RuntimeException("Course not found or already draft")
 
             "Course unpublished successfully"
         }
@@ -125,17 +137,20 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
-            if (user.role != UserRole.INSTRUCTOR.name && user.role != UserRole.ADMIN.name)
-                throw RuntimeException("Forbidden")
+            if (user.role != UserRole.INSTRUCTOR.name &&
+                user.role != UserRole.ADMIN.name
+            ) throw RuntimeException("Forbidden")
 
             if (user.role != UserRole.ADMIN.name &&
                 !courseRepository.isInstructorOfCourse(user.id, courseId)
             ) throw RuntimeException("Forbidden")
 
             sectionRepository.reorderSections(courseId, req.orderedSectionIds)
+
             "Sections reordered successfully"
         }
     }
@@ -144,25 +159,24 @@ class CourseService(
         val email = SecurityUtils.currentEmail()
 
         return transaction {
+
             val user = authRepository.findByEmail(email)
                 ?: throw RuntimeException("Unauthorized")
 
-            if (user.role != UserRole.ADMIN.name) {
-                throw RuntimeException("Only admin can view all courses")
-            }
+            if (user.role != UserRole.ADMIN.name &&
+                user.role != UserRole.INSTRUCTOR.name
+            ) throw RuntimeException("Forbidden")
 
             courseRepository.listAllCourses().map { row ->
+
                 CourseResponse(
-                    id = row[CoursesTable.id],
-                    title = row[CoursesTable.title],
-                    description = row[CoursesTable.description],
-                    instructorId = row[CoursesTable.instructorId],
-                    status = row[CoursesTable.status]
+                    id = row[com.example.backend.model.CoursesTable.id],
+                    title = row[com.example.backend.model.CoursesTable.title],
+                    description = row[com.example.backend.model.CoursesTable.description],
+                    instructorId = row[com.example.backend.model.CoursesTable.instructorId],
+                    status = row[com.example.backend.model.CoursesTable.status]
                 )
             }
         }
     }
-
-
-
 }
