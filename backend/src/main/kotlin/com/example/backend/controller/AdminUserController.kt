@@ -23,4 +23,14 @@ class AdminUserController(
         val msg = adminUserService.updateUserRole(email, req.role)
         return ResponseEntity.ok(AuthResponse(msg))
     }
+
+    @GetMapping("/role/{role}")
+    fun getUsersByRole(
+        @PathVariable role: String
+    ): ResponseEntity<List<Map<String, Any>>> {
+
+        return ResponseEntity.ok(adminUserService.getUsersByRole(role))
+    }
+
+
 }

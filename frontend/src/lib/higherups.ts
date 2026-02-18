@@ -260,3 +260,9 @@ export async function getCourseById(courseId: number): Promise<Course> {
   const { data } = await api.get(`/instructor/courses/${courseId}`)
   return data
 }
+
+export const getUsersByRole = async (role: string) => {
+  const res = await api.get(`/admin/users/role/${role}`)
+  return res.data
+}
+

@@ -1,5 +1,6 @@
 package com.example.backend.service
 
+import com.example.backend.model.UserAuthTable
 import com.example.backend.model.UserRole
 import com.example.backend.repository.AuthRepository
 import org.springframework.stereotype.Service
@@ -20,4 +21,25 @@ class AdminUserService(
 
         return "Role updated successfully to ${enumRole.name}"
     }
+
+    fun getUsersByRole(role: String): List<Map<String, Any>> {
+
+        val normalizedRole = role.trim().uppercase()
+
+        if (normalizedRole !in listOf("STUDENT", "INSTRUCTOR", "ADMIN")) {
+            throw RuntimeException("Invalid role")
+        }
+
+        return authRepository.findUsersByRole(normalizedRole)
+            .map {
+                mapOf(
+                    "id" to it.id,
+                    "name" to it.name,
+                    "email" to it.email,
+                    "role" to it.role
+                )
+            }
+    }
+
+
 }

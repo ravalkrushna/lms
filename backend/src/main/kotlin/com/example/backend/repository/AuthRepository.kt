@@ -5,6 +5,7 @@ import com.example.backend.model.UserAuthTable
 import com.example.backend.model.UserRole
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -123,9 +124,30 @@ class AuthRepository {
         }
     }
 
-    fun findAllUsers(): List<ResultRow> =
+    fun findAllUsers(): List<ResultRow> = transaction {
         UserAuthTable
             .selectAll()
             .orderBy(UserAuthTable.id, SortOrder.DESC)
             .toList()
+    }
+
+
+    fun findUsersByRole(role: String): List<UserAuth> = transaction {
+        UserAuthTable
+            .selectAll()
+            .where { UserAuthTable.role eq role }
+            .orderBy(UserAuthTable.id, SortOrder.DESC)
+            .map {
+                UserAuth(
+                    id = it[UserAuthTable.id],
+                    name = it[UserAuthTable.name],
+                    email = it[UserAuthTable.email],
+                    passwordHash = it[UserAuthTable.passwordHash],
+                    emailVerified = it[UserAuthTable.emailVerified],
+                    role = it[UserAuthTable.role]
+                )
+            }
+    }
+
+
 }

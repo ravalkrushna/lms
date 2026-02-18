@@ -16,6 +16,7 @@ import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
 import { Route as InstructorProfileRouteImport } from './routes/instructor/profile'
 import { Route as InstructorDashboardRouteImport } from './routes/instructor/dashboard'
+import { Route as HigherupsProfileRouteImport } from './routes/higherups/profile'
 import { Route as HigherupsDashboardRouteImport } from './routes/higherups/dashboard'
 import { Route as AuthVerifyotpRouteImport } from './routes/auth/verifyotp'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
@@ -30,6 +31,9 @@ import { Route as StudentMyCoursesIndexRouteImport } from './routes/student/my-c
 import { Route as StudentCoursesIndexRouteImport } from './routes/student/courses/index'
 import { Route as InstructorStudentsIndexRouteImport } from './routes/instructor/students/index'
 import { Route as InstructorCoursesIndexRouteImport } from './routes/instructor/courses/index'
+import { Route as HigherupsStudentsIndexRouteImport } from './routes/higherups/students/index'
+import { Route as HigherupsMycoursesIndexRouteImport } from './routes/higherups/mycourses/index'
+import { Route as HigherupsInstructorsIndexRouteImport } from './routes/higherups/instructors/index'
 import { Route as HigherupsCoursesIndexRouteImport } from './routes/higherups/courses/index'
 import { Route as AdminStudentsIndexRouteImport } from './routes/admin/students/index'
 import { Route as AdminInstructorIndexRouteImport } from './routes/admin/instructor/index'
@@ -82,6 +86,11 @@ const InstructorProfileRoute = InstructorProfileRouteImport.update({
 const InstructorDashboardRoute = InstructorDashboardRouteImport.update({
   id: '/instructor/dashboard',
   path: '/instructor/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HigherupsProfileRoute = HigherupsProfileRouteImport.update({
+  id: '/higherups/profile',
+  path: '/higherups/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HigherupsDashboardRoute = HigherupsDashboardRouteImport.update({
@@ -154,6 +163,22 @@ const InstructorCoursesIndexRoute = InstructorCoursesIndexRouteImport.update({
   path: '/instructor/courses/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HigherupsStudentsIndexRoute = HigherupsStudentsIndexRouteImport.update({
+  id: '/higherups/students/',
+  path: '/higherups/students/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HigherupsMycoursesIndexRoute = HigherupsMycoursesIndexRouteImport.update({
+  id: '/higherups/mycourses/',
+  path: '/higherups/mycourses/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HigherupsInstructorsIndexRoute =
+  HigherupsInstructorsIndexRouteImport.update({
+    id: '/higherups/instructors/',
+    path: '/higherups/instructors/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const HigherupsCoursesIndexRoute = HigherupsCoursesIndexRouteImport.update({
   id: '/higherups/courses/',
   path: '/higherups/courses/',
@@ -267,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
   '/higherups/dashboard': typeof HigherupsDashboardRoute
+  '/higherups/profile': typeof HigherupsProfileRoute
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/instructor/profile': typeof InstructorProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -281,6 +307,9 @@ export interface FileRoutesByFullPath {
   '/admin/instructor/': typeof AdminInstructorIndexRoute
   '/admin/students/': typeof AdminStudentsIndexRoute
   '/higherups/courses/': typeof HigherupsCoursesIndexRoute
+  '/higherups/instructors/': typeof HigherupsInstructorsIndexRoute
+  '/higherups/mycourses/': typeof HigherupsMycoursesIndexRoute
+  '/higherups/students/': typeof HigherupsStudentsIndexRoute
   '/instructor/courses/': typeof InstructorCoursesIndexRoute
   '/instructor/students/': typeof InstructorStudentsIndexRoute
   '/student/courses/': typeof StudentCoursesIndexRoute
@@ -308,6 +337,7 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
   '/higherups/dashboard': typeof HigherupsDashboardRoute
+  '/higherups/profile': typeof HigherupsProfileRoute
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/instructor/profile': typeof InstructorProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -321,6 +351,9 @@ export interface FileRoutesByTo {
   '/admin/instructor': typeof AdminInstructorIndexRoute
   '/admin/students': typeof AdminStudentsIndexRoute
   '/higherups/courses': typeof HigherupsCoursesIndexRoute
+  '/higherups/instructors': typeof HigherupsInstructorsIndexRoute
+  '/higherups/mycourses': typeof HigherupsMycoursesIndexRoute
+  '/higherups/students': typeof HigherupsStudentsIndexRoute
   '/instructor/courses': typeof InstructorCoursesIndexRoute
   '/instructor/students': typeof InstructorStudentsIndexRoute
   '/student/courses': typeof StudentCoursesIndexRoute
@@ -349,6 +382,7 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verifyotp': typeof AuthVerifyotpRoute
   '/higherups/dashboard': typeof HigherupsDashboardRoute
+  '/higherups/profile': typeof HigherupsProfileRoute
   '/instructor/dashboard': typeof InstructorDashboardRoute
   '/instructor/profile': typeof InstructorProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -363,6 +397,9 @@ export interface FileRoutesById {
   '/admin/instructor/': typeof AdminInstructorIndexRoute
   '/admin/students/': typeof AdminStudentsIndexRoute
   '/higherups/courses/': typeof HigherupsCoursesIndexRoute
+  '/higherups/instructors/': typeof HigherupsInstructorsIndexRoute
+  '/higherups/mycourses/': typeof HigherupsMycoursesIndexRoute
+  '/higherups/students/': typeof HigherupsStudentsIndexRoute
   '/instructor/courses/': typeof InstructorCoursesIndexRoute
   '/instructor/students/': typeof InstructorStudentsIndexRoute
   '/student/courses/': typeof StudentCoursesIndexRoute
@@ -392,6 +429,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verifyotp'
     | '/higherups/dashboard'
+    | '/higherups/profile'
     | '/instructor/dashboard'
     | '/instructor/profile'
     | '/student/dashboard'
@@ -406,6 +444,9 @@ export interface FileRouteTypes {
     | '/admin/instructor/'
     | '/admin/students/'
     | '/higherups/courses/'
+    | '/higherups/instructors/'
+    | '/higherups/mycourses/'
+    | '/higherups/students/'
     | '/instructor/courses/'
     | '/instructor/students/'
     | '/student/courses/'
@@ -433,6 +474,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verifyotp'
     | '/higherups/dashboard'
+    | '/higherups/profile'
     | '/instructor/dashboard'
     | '/instructor/profile'
     | '/student/dashboard'
@@ -446,6 +488,9 @@ export interface FileRouteTypes {
     | '/admin/instructor'
     | '/admin/students'
     | '/higherups/courses'
+    | '/higherups/instructors'
+    | '/higherups/mycourses'
+    | '/higherups/students'
     | '/instructor/courses'
     | '/instructor/students'
     | '/student/courses'
@@ -473,6 +518,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verifyotp'
     | '/higherups/dashboard'
+    | '/higherups/profile'
     | '/instructor/dashboard'
     | '/instructor/profile'
     | '/student/dashboard'
@@ -487,6 +533,9 @@ export interface FileRouteTypes {
     | '/admin/instructor/'
     | '/admin/students/'
     | '/higherups/courses/'
+    | '/higherups/instructors/'
+    | '/higherups/mycourses/'
+    | '/higherups/students/'
     | '/instructor/courses/'
     | '/instructor/students/'
     | '/student/courses/'
@@ -509,6 +558,7 @@ export interface RootRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminProfileRoute: typeof AdminProfileRoute
   HigherupsDashboardRoute: typeof HigherupsDashboardRoute
+  HigherupsProfileRoute: typeof HigherupsProfileRoute
   InstructorDashboardRoute: typeof InstructorDashboardRoute
   InstructorProfileRoute: typeof InstructorProfileRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
@@ -523,6 +573,9 @@ export interface RootRouteChildren {
   AdminInstructorIndexRoute: typeof AdminInstructorIndexRoute
   AdminStudentsIndexRoute: typeof AdminStudentsIndexRoute
   HigherupsCoursesIndexRoute: typeof HigherupsCoursesIndexRoute
+  HigherupsInstructorsIndexRoute: typeof HigherupsInstructorsIndexRoute
+  HigherupsMycoursesIndexRoute: typeof HigherupsMycoursesIndexRoute
+  HigherupsStudentsIndexRoute: typeof HigherupsStudentsIndexRoute
   InstructorCoursesIndexRoute: typeof InstructorCoursesIndexRoute
   InstructorStudentsIndexRoute: typeof InstructorStudentsIndexRoute
   StudentCoursesIndexRoute: typeof StudentCoursesIndexRoute
@@ -586,6 +639,13 @@ declare module '@tanstack/react-router' {
       path: '/instructor/dashboard'
       fullPath: '/instructor/dashboard'
       preLoaderRoute: typeof InstructorDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/profile': {
+      id: '/higherups/profile'
+      path: '/higherups/profile'
+      fullPath: '/higherups/profile'
+      preLoaderRoute: typeof HigherupsProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/higherups/dashboard': {
@@ -684,6 +744,27 @@ declare module '@tanstack/react-router' {
       path: '/instructor/courses'
       fullPath: '/instructor/courses/'
       preLoaderRoute: typeof InstructorCoursesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/students/': {
+      id: '/higherups/students/'
+      path: '/higherups/students'
+      fullPath: '/higherups/students/'
+      preLoaderRoute: typeof HigherupsStudentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/mycourses/': {
+      id: '/higherups/mycourses/'
+      path: '/higherups/mycourses'
+      fullPath: '/higherups/mycourses/'
+      preLoaderRoute: typeof HigherupsMycoursesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/higherups/instructors/': {
+      id: '/higherups/instructors/'
+      path: '/higherups/instructors'
+      fullPath: '/higherups/instructors/'
+      preLoaderRoute: typeof HigherupsInstructorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/higherups/courses/': {
@@ -858,6 +939,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminProfileRoute: AdminProfileRoute,
   HigherupsDashboardRoute: HigherupsDashboardRoute,
+  HigherupsProfileRoute: HigherupsProfileRoute,
   InstructorDashboardRoute: InstructorDashboardRoute,
   InstructorProfileRoute: InstructorProfileRoute,
   StudentDashboardRoute: StudentDashboardRoute,
@@ -872,6 +954,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminInstructorIndexRoute: AdminInstructorIndexRoute,
   AdminStudentsIndexRoute: AdminStudentsIndexRoute,
   HigherupsCoursesIndexRoute: HigherupsCoursesIndexRoute,
+  HigherupsInstructorsIndexRoute: HigherupsInstructorsIndexRoute,
+  HigherupsMycoursesIndexRoute: HigherupsMycoursesIndexRoute,
+  HigherupsStudentsIndexRoute: HigherupsStudentsIndexRoute,
   InstructorCoursesIndexRoute: InstructorCoursesIndexRoute,
   InstructorStudentsIndexRoute: InstructorStudentsIndexRoute,
   StudentCoursesIndexRoute: StudentCoursesIndexRoute,
