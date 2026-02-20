@@ -2,6 +2,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
+import { motion } from "framer-motion"
 
 import { HigherupsSidebar } from "@/components/HigherupsSidebar"
 
@@ -11,27 +12,14 @@ import {
   type Section,
 } from "@/lib/higherups"
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 
 import {
-  BookOpen,
-  Plus,
-  ChevronRight,
-  LayoutList,
   X,
   Check,
+  Layers,
 } from "lucide-react"
 
 /* ── Route ── */
@@ -47,21 +35,15 @@ function CourseSections() {
   const queryClient = useQueryClient()
 
   const numericCourseId = Number(courseId)
-
-  if (!numericCourseId) {
-    console.error("Invalid courseId:", courseId)
-    return null
-  }
+  if (!numericCourseId) return null
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  /* ── Query ── */
   const { data: sections, isLoading } = useQuery<Section[]>({
     queryKey: ["higherups-sections", numericCourseId],
     queryFn: () => getCourseSections(numericCourseId),
   })
 
-  /* ── Mutation ── */
   const createMutation = useMutation({
     mutationFn: (title: string) =>
       createSection(numericCourseId, title),
@@ -74,15 +56,8 @@ function CourseSections() {
 
       if (inputRef.current) {
         inputRef.current.value = ""
+        inputRef.current.focus()
       }
-
-      navigate({
-        to: "/higherups/courses/$courseId/$sectionId/lessons",
-        params: {
-          courseId,
-          sectionId: String(newSection.id),
-        },
-      })
     },
   })
 
@@ -96,64 +71,44 @@ function CourseSections() {
   const totalSections = sections?.length ?? 0
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-muted/50">
       <HigherupsSidebar />
 
-      <main className="flex-1 p-6 bg-muted/30 space-y-6">
+      <main className="flex-1">
 
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-5xl mx-auto p-8 space-y-8"
+        >
+
+          {/* ── HERO HEADER */}
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <Layers size={20} />
               Course Sections
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Organise your course structure.
+
+            <p className="text-muted-foreground mt-1">
+              Structure your learning experience
             </p>
           </div>
 
-          <Button
-            size="sm"
-            className="gap-1.5"
-            onClick={() => inputRef.current?.focus()}
+          {/* ── PRIMARY CREATOR ⭐⭐⭐ */}
+          <motion.div
+            layout
+            className="rounded-3xl border bg-background p-6 shadow-sm space-y-4"
           >
-            <Plus size={14} />
-            Add Section
-          </Button>
-        </div>
+            <p className="text-sm font-semibold">
+              Create New Section
+            </p>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-base">Sections</CardTitle>
-                <CardDescription className="mt-1">
-                  {isLoading
-                    ? "Loading..."
-                    : `${totalSections} section${totalSections !== 1 ? "s" : ""}`}
-                </CardDescription>
-              </div>
-
-              {!isLoading && totalSections > 0 && (
-                <Badge variant="secondary" className="gap-1.5">
-                  <LayoutList size={13} />
-                  {totalSections}
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-
-          <Separator />
-
-          <CardContent className="pt-5 space-y-4">
-
-            {/* ── Inline Creator (Always Visible = Modern UX) */}
-            <div className="rounded-lg border bg-muted/40 p-4 space-y-3">
-              <p className="text-sm font-medium">New Section</p>
+            <div className="flex gap-2">
 
               <Input
                 ref={inputRef}
-                placeholder="Section title"
+                placeholder="Enter section title..."
+                className="h-11"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleCreateSection()
@@ -161,70 +116,80 @@ function CourseSections() {
                 }}
               />
 
-              <div className="flex gap-2">
+              <motion.div whileTap={{ scale: 0.95 }}>
                 <Button
-                  size="sm"
-                  className="gap-1.5"
                   onClick={handleCreateSection}
                   disabled={createMutation.isPending}
+                  className="h-11 px-5"
                 >
-                  <Check size={13} />
-                  Save Section
+                  <Check size={14} />
                 </Button>
+              </motion.div>
 
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    if (inputRef.current) {
-                      inputRef.current.value = ""
-                    }
-                  }}
-                >
-                  <X size={13} />
-                  Clear
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                className="h-11"
+                onClick={() => {
+                  if (inputRef.current) {
+                    inputRef.current.value = ""
+                    inputRef.current.focus()
+                  }
+                }}
+              >
+                <X size={14} />
+              </Button>
+
+            </div>
+          </motion.div>
+
+          {/* ── SECTIONS LIST */}
+          <div className="space-y-3">
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">
+                {isLoading
+                  ? "Loading..."
+                  : `${totalSections} section${totalSections !== 1 ? "s" : ""}`}
+              </p>
             </div>
 
-            {/* ── Loading */}
-            {isLoading && (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <Skeleton key={i} className="h-14 w-full" />
-                ))}
+            {isLoading ? (
+              <>
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+              </>
+            ) : totalSections === 0 ? (
+              <div className="rounded-2xl border bg-background p-10 text-center text-muted-foreground">
+                No sections yet
               </div>
-            )}
+            ) : (
+              sections!.map((section, index) => (
+                <motion.div
+                  key={section.id}
+                  whileHover={{ scale: 1.01 }}
+                  className="group rounded-2xl border bg-background p-5 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-4">
 
-            {/* ── Empty */}
-            {!isLoading && totalSections === 0 && (
-              <div className="flex flex-col items-center py-10 text-muted-foreground">
-                <BookOpen size={36} className="mb-3 opacity-20" />
-                <p>No sections yet</p>
-              </div>
-            )}
-
-            {/* ── List */}
-            {!isLoading && sections && sections.length > 0 && (
-              <div className="space-y-2">
-                {sections.map((section, index) => (
-                  <div
-                    key={section.id}
-                    className="flex items-center justify-between p-4 rounded-lg border bg-background hover:bg-muted/40 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                        {index + 1}
-                      </div>
-
-                      <p className="text-sm font-medium">
-                        {section.title}
-                      </p>
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-sm font-semibold">
+                      {index + 1}
                     </div>
 
+                    <div>
+                      <p className="font-semibold">
+                        {section.title}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        Section workspace
+                      </p>
+                    </div>
+                  </div>
+
+                  <motion.div whileTap={{ scale: 0.95 }}>
                     <Button
-                      size="sm"
-                      variant="ghost"
+                      variant="secondary"
+                      className="opacity-70 group-hover:opacity-100 transition"
                       onClick={() =>
                         navigate({
                           to: "/higherups/courses/$courseId/$sectionId/lessons",
@@ -235,16 +200,15 @@ function CourseSections() {
                         })
                       }
                     >
-                      Lessons
-                      <ChevronRight size={14} />
+                      Open →
                     </Button>
-                  </div>
-                ))}
-              </div>
+                  </motion.div>
+                </motion.div>
+              ))
             )}
 
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
       </main>
     </div>
   )

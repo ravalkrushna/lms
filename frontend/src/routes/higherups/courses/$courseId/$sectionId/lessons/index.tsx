@@ -2,6 +2,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
+import { motion } from "framer-motion"
 
 import { HigherupsSidebar } from "@/components/HigherupsSidebar"
 
@@ -11,29 +12,19 @@ import {
   type Lesson,
 } from "@/lib/higherups"
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import {
-  PlayCircle,
   Plus,
   Video,
   Eye,
-  BookOpen,
+  Sparkles,
 } from "lucide-react"
 
 /* ── Route ── */
@@ -51,8 +42,6 @@ type LessonForm = {
 }
 
 function SectionLessons() {
-
-  /* ⭐ REQUIRED FOR NAVIGATION */
   const navigate = Route.useNavigate()
   const { courseId, sectionId } = Route.useParams()
 
@@ -94,55 +83,40 @@ function SectionLessons() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-muted/50">
       <HigherupsSidebar />
 
-      <main className="flex-1 p-6 bg-muted/30 space-y-6">
+      <main className="flex-1">
 
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Lessons
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Build section learning content.
-          </p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-5xl mx-auto p-8 space-y-8"
+        >
 
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between">
-              <div>
-                <CardTitle className="text-base">
-                  Section Lessons
-                </CardTitle>
+          {/* ── HERO HEADER */}
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <Sparkles size={20} />
+              Lessons
+            </h1>
 
-                <CardDescription className="mt-1">
-                  {isLoading
-                    ? "Loading..."
-                    : `${totalLessons} lesson${totalLessons !== 1 ? "s" : ""}${freePreviews ? ` · ${freePreviews} free preview` : ""}`}
-                </CardDescription>
-              </div>
+            <p className="text-muted-foreground mt-1">
+              Build your learning experience
+            </p>
+          </div>
 
-              {!isLoading && totalLessons > 0 && (
-                <Badge variant="secondary" className="gap-1.5">
-                  <PlayCircle size={13} />
-                  {totalLessons}
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
+          {/* ── PRIMARY CREATOR ⭐⭐⭐ */}
+          <motion.form
+            layout
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="rounded-3xl border bg-background p-6 shadow-sm space-y-5"
+          >
+            <p className="text-sm font-semibold">
+              Create New Lesson
+            </p>
 
-          <Separator />
-
-          <CardContent className="pt-5 space-y-6">
-
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="rounded-lg border bg-muted/40 p-4 space-y-4"
-            >
-              <p className="text-sm font-semibold">
-                New Lesson
-              </p>
+            <div className="grid md:grid-cols-2 gap-4">
 
               <div className="space-y-2">
                 <Label>Lesson Title</Label>
@@ -150,92 +124,99 @@ function SectionLessons() {
               </div>
 
               <div className="space-y-2">
-                <Label>Content</Label>
-                <Textarea {...form.register("content")} />
-              </div>
-
-              <div className="space-y-2">
                 <Label>Video URL</Label>
                 <Input {...form.register("videoUrl")} />
               </div>
 
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={form.watch("isFreePreview")}
-                  onCheckedChange={v =>
-                    form.setValue("isFreePreview", Boolean(v))
-                  }
-                />
-                <Label>Free Preview</Label>
-              </div>
+            </div>
 
+            <div className="space-y-2">
+              <Label>Content</Label>
+              <Textarea {...form.register("content")} />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={form.watch("isFreePreview")}
+                onCheckedChange={v =>
+                  form.setValue("isFreePreview", Boolean(v))
+                }
+              />
+              <Label>Free Preview</Label>
+            </div>
+
+            <motion.div whileTap={{ scale: 0.97 }}>
               <Button
-                size="sm"
                 type="submit"
                 disabled={createMutation.isPending}
+                className="shadow-sm"
               >
                 <Plus size={14} className="mr-2" />
                 {createMutation.isPending ? "Saving..." : "Add Lesson"}
               </Button>
-            </form>
+            </motion.div>
+          </motion.form>
 
-            {isLoading && (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <Skeleton key={i} className="h-14 w-full" />
-                ))}
+          {/* ── LESSONS LIST */}
+          <div className="space-y-3">
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">
+                {isLoading
+                  ? "Loading..."
+                  : `${totalLessons} lesson${totalLessons !== 1 ? "s" : ""}${freePreviews ? ` · ${freePreviews} free preview` : ""}`}
+              </p>
+            </div>
+
+            {isLoading ? (
+              <>
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+              </>
+            ) : totalLessons === 0 ? (
+              <div className="rounded-2xl border bg-background p-10 text-center text-muted-foreground">
+                No lessons yet
               </div>
-            )}
+            ) : (
+              lessons!.map((lesson, index) => (
+                <motion.div
+                  key={lesson.id}
+                  whileHover={{ scale: 1.01 }}
+                  className="group rounded-2xl border bg-background p-5 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-4">
 
-            {!isLoading && totalLessons === 0 && (
-              <div className="flex flex-col items-center py-10 text-muted-foreground">
-                <BookOpen size={36} className="mb-3 opacity-20" />
-                <p>No lessons yet</p>
-              </div>
-            )}
-
-            {!isLoading && lessons && lessons.length > 0 && (
-              <div className="space-y-2">
-                {lessons.map((lesson, index) => (
-                  <div
-                    key={lesson.id}
-                    className="flex items-center justify-between p-4 rounded-lg border bg-background"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                        {index + 1}
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-medium">
-                          {lesson.title}
-                        </p>
-
-                        {lesson.videoUrl && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Video size={11} />
-                            Video attached
-                          </p>
-                        )}
-                      </div>
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-sm font-semibold">
+                      {index + 1}
                     </div>
 
-                    {/* ⭐ RIGHT SIDE */}
-                    <div className="flex items-center gap-2">
+                    <div>
+                      <p className="font-semibold">
+                        {lesson.title}
+                      </p>
 
-                      {lesson.isFreePreview && (
-                        <Badge
-                          variant="secondary"
-                          className="gap-1 text-xs"
-                        >
-                          <Eye size={11} />
-                          Free Preview
-                        </Badge>
+                      {lesson.videoUrl && (
+                        <p className="text-xs text-blue-500 flex items-center gap-1">
+                          <Video size={11} />
+                          Video attached
+                        </p>
                       )}
+                    </div>
+                  </div>
 
+                  <div className="flex items-center gap-2">
+
+                    {lesson.isFreePreview && (
+                      <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+                        <Eye size={11} className="mr-1" />
+                        Free Preview
+                      </Badge>
+                    )}
+
+                    <motion.div whileTap={{ scale: 0.95 }}>
                       <Button
-                        size="sm"
-                        variant="outline"
+                        variant="secondary"
+                        className="opacity-70 group-hover:opacity-100 transition"
                         onClick={() =>
                           navigate({
                             to: "/higherups/courses/$courseId/$sectionId/lessons/$lessonId",
@@ -247,17 +228,17 @@ function SectionLessons() {
                           })
                         }
                       >
-                        View
+                        Open →
                       </Button>
+                    </motion.div>
 
-                    </div>
                   </div>
-                ))}
-              </div>
+                </motion.div>
+              ))
             )}
 
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
       </main>
     </div>
   )
