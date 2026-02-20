@@ -31,7 +31,7 @@ export const completeLesson = async (lessonId: number) => {
 }
 
 export const getStudentProfile = async () => {
-  const response = await api.get("/student/profile")
+  const response = await api.get("/users/me")
   return response.data
 }
 

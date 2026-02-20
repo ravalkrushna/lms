@@ -16,16 +16,23 @@ import { permissions } from "@/lib/permissions"
 import { useAuth } from "@/lib/auth-context"
 
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-
-import { Plus, BookOpen } from "lucide-react"
+import { Plus, BookOpen, ChevronDown, Eye } from "lucide-react"
 
 export const Route = createFileRoute("/higherups/courses/")({
   component: HigherupsCoursesPage,
@@ -35,7 +42,6 @@ function HigherupsCoursesPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  /* ✅ Hooks ALWAYS run */
   const { user, isLoading } = useAuth()
 
   const role = user?.role
@@ -45,8 +51,6 @@ function HigherupsCoursesPage() {
   const coursesQuery = useQuery({
     queryKey: ["higherups-courses", role],
     queryFn: getAdminCourses,
-
-    /* ⭐ CRITICAL FIX */
     enabled: !!user && !isLoading,
   })
 
@@ -57,11 +61,15 @@ function HigherupsCoursesPage() {
   const unpublishMutation = useMutation({ mutationFn: unpublishCourse, onSuccess: invalidate })
   const archiveMutation = useMutation({ mutationFn: archiveCourse, onSuccess: invalidate })
 
-  /* ✅ Guards AFTER hooks */
   if (isLoading) return null
   if (!user) return null
 
   const courses = coursesQuery.data ?? []
+
+  const isMutating =
+    publishMutation.isPending ||
+    unpublishMutation.isPending ||
+    archiveMutation.isPending
 
   return (
     <div className="flex min-h-screen">
@@ -69,6 +77,7 @@ function HigherupsCoursesPage() {
 
       <main className="flex-1 p-6 bg-muted/30 space-y-6">
 
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Courses</h1>
@@ -78,94 +87,191 @@ function HigherupsCoursesPage() {
           </div>
 
           {canCreate && (
-            <Button
-              onClick={() => navigate({ to: "/higherups/courses/create" })}
-            >
+            <Button onClick={() => navigate({ to: "/higherups/courses/create" })}>
               <Plus size={16} className="mr-2" />
               Create Course
             </Button>
           )}
         </div>
 
+        {/* Table */}
         {coursesQuery.isLoading ? (
           <div>Loading courses...</div>
         ) : courses.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course: Course) => (
-              <Card key={course.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen size={16} />
-                      {course.title}
-                    </CardTitle>
+          <div className="rounded-lg border overflow-hidden shadow-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-800 hover:bg-slate-800">
+                  <TableHead className="text-slate-100 font-semibold">#</TableHead>
+                  <TableHead className="text-slate-100 font-semibold">Title</TableHead>
+                  <TableHead className="text-slate-100 font-semibold">Description</TableHead>
+                  <TableHead className="text-slate-100 font-semibold">Status</TableHead>
+                  <TableHead className="text-slate-100 font-semibold text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
 
-                    <StatusBadge status={course.status} />
-                  </div>
-                </CardHeader>
+              <TableBody>
+                {courses.map((course: Course, index: number) => (
+                  <TableRow
+                    key={course.id}
+                    className={ROW_STYLES[course.status]}
+                  >
 
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    {course.description || "No description"}
-                  </p>
-                  
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        navigate({
-                          to: "/higherups/courses/$courseId",
-                          params: { courseId: String(course.id) },
-                        })
-                      }
-                    >
-                      View
-                    </Button>
+                    {/* Index */}
+                    <TableCell className="text-xs text-muted-foreground w-8">
+                      {index + 1}
+                    </TableCell>
 
-                    {isAdmin && (
-                      <div className="flex gap-2 flex-wrap">
-
-                        {course.status === "DRAFT" && (
-                          <Button size="sm" onClick={() => publishMutation.mutate(course.id)}>
-                            Publish
-                          </Button>
-                        )}
-
-                        {course.status === "PUBLISHED" && (
-                          <Button size="sm" variant="secondary" onClick={() => unpublishMutation.mutate(course.id)}>
-                            Unpublish
-                          </Button>
-                        )}
-
-                        {course.status !== "ARCHIVED" && (
-                          <Button size="sm" variant="destructive" onClick={() => archiveMutation.mutate(course.id)}>
-                            Archive
-                          </Button>
-                        )}
+                    {/* Title */}
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <BookOpen size={14} className={ICON_STYLES[course.status]} />
+                        {course.title}
                       </div>
-                    )}
-                </CardContent>
-              </Card>
-            ))}
+                    </TableCell>
+
+                    {/* Description */}
+                    <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                      {course.description || "No description"}
+                    </TableCell>
+
+                    {/* Status — clickable button that opens a dropdown to change it */}
+                    <TableCell>
+                      {isAdmin ? (
+                        <StatusDropdown
+                          course={course}
+                          disabled={isMutating}
+                          onPublish={() => publishMutation.mutate(course.id)}
+                          onUnpublish={() => unpublishMutation.mutate(course.id)}
+                          onArchive={() => archiveMutation.mutate(course.id)}
+                        />
+                      ) : (
+                        <StatusButton status={course.status} />
+                      )}
+                    </TableCell>
+
+                    {/* View */}
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-white/60 hover:bg-white"
+                        onClick={() =>
+                          navigate({
+                            to: "/higherups/courses/$courseId",
+                            params: { courseId: String(course.id) },
+                          })
+                        }
+                      >
+                        <Eye size={14} className="mr-1" />
+                        View
+                      </Button>
+                    </TableCell>
+
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
+
       </main>
     </div>
   )
 }
 
-function StatusBadge({ status }: { status: CourseStatus }) {
-  const variant =
-    status === "PUBLISHED"
-      ? "default"
-      : status === "DRAFT"
-        ? "secondary"
-        : "destructive"
+// ─── Status button (display only) ────────────────────────────────────────────
 
-  return <Badge variant={variant}>{status}</Badge>
+const STATUS_STYLES: Record<CourseStatus, string> = {
+  PUBLISHED: "bg-green-100 text-green-700 border-green-200 hover:bg-green-200",
+  DRAFT:     "bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200",
+  ARCHIVED:  "bg-red-100 text-red-700 border-red-200 hover:bg-red-200",
 }
+
+const ROW_STYLES: Record<CourseStatus, string> = {
+  PUBLISHED: "bg-green-50 hover:bg-green-100 border-b border-green-100",
+  DRAFT:     "bg-yellow-50 hover:bg-yellow-100 border-b border-yellow-100",
+  ARCHIVED:  "bg-red-50 hover:bg-red-100 border-b border-red-100",
+}
+
+const ICON_STYLES: Record<CourseStatus, string> = {
+  PUBLISHED: "text-green-500",
+  DRAFT:     "text-yellow-500",
+  ARCHIVED:  "text-red-400",
+}
+
+function StatusButton({ status }: { status: CourseStatus }) {
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      className={`capitalize text-xs font-semibold cursor-default ${STATUS_STYLES[status]}`}
+    >
+      {status}
+    </Button>
+  )
+}
+
+// ─── Status dropdown (admin — click to change) ────────────────────────────────
+
+interface StatusDropdownProps {
+  course: Course
+  disabled: boolean
+  onPublish: () => void
+  onUnpublish: () => void
+  onArchive: () => void
+}
+
+function StatusDropdown({
+  course,
+  disabled,
+  onPublish,
+  onUnpublish,
+  onArchive,
+}: StatusDropdownProps) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={disabled}
+          className={`capitalize text-xs font-semibold gap-1 ${STATUS_STYLES[course.status]}`}
+        >
+          {course.status}
+          <ChevronDown size={12} />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="start">
+        {course.status !== "PUBLISHED" && course.status !== "ARCHIVED" && (
+          <DropdownMenuItem onClick={onPublish}>
+            ✅ Publish
+          </DropdownMenuItem>
+        )}
+
+        {course.status === "PUBLISHED" && (
+          <DropdownMenuItem onClick={onUnpublish}>
+            ⏸ Unpublish
+          </DropdownMenuItem>
+        )}
+
+        {course.status !== "ARCHIVED" && (
+          <DropdownMenuItem
+            onClick={onArchive}
+            className="text-destructive focus:text-destructive"
+          >
+            🗄 Archive
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
 
 function EmptyState() {
   return (
