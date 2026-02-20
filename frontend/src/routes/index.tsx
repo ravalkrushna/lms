@@ -1,1651 +1,750 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import {
+  BookOpen, Users, BarChart3, CheckCircle, MessageSquare, Award,
+  Gamepad2, FlaskConical, Target, Laptop, Globe, TrendingUp,
+  DollarSign, ShieldCheck, Zap, ArrowRight, Star,
+  GraduationCap, Building2, Menu,
+} from "lucide-react"
 
 export const Route = createFileRoute("/")({
   component: HomePage,
-});
+})
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
 function HomePage() {
-  const navigate = useNavigate();
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleCreateAccount = () => {
-    navigate({ to: "/auth/signup" });
-  };
-
-  const handleLogin = () => {
-    navigate({ to: "/auth/login" });
-  };
+  const navigate = useNavigate()
+  const toSignup = () => navigate({ to: "/auth/signup" })
+  const toLogin  = () => navigate({ to: "/auth/login"  })
 
   return (
-    <div style={styles.homepage}>
-      {/* Animated Background Elements */}
-      <div style={styles.animatedBg}></div>
-      <div style={styles.gridOverlay}></div>
-      
-      {/* Floating Particles */}
-      <div style={{ ...styles.particle, top: "20%", left: "10%", animationDelay: "0s" }}></div>
-      <div style={{ ...styles.particle, top: "60%", left: "80%", animationDelay: "2s" }}></div>
-      <div style={{ ...styles.particle, top: "40%", left: "60%", animationDelay: "4s" }}></div>
-      <div style={{ ...styles.particle, top: "80%", left: "20%", animationDelay: "1s" }}></div>
+    <div className="edu-root">
+      <style>{css}</style>
 
-      {/* Navigation Bar */}
-      <nav style={{
-        ...styles.navbar,
-        background: scrollY > 50 ? "rgba(10, 10, 15, 0.95)" : "rgba(10, 10, 15, 0.8)",
-        boxShadow: scrollY > 50 ? "0 10px 40px rgba(0, 0, 0, 0.5)" : "none",
-      }}>
-        <div style={styles.container}>
-          <div style={styles.navContent}>
-            <div style={styles.logo}>EDUFLOW</div>
-            <div style={styles.navLinks}>
-              <a href="#features" style={styles.navLink}>Features</a>
-              <a href="#benefits" style={styles.navLink}>Benefits</a>
-              <a href="#pricing" style={styles.navLink}>Pricing</a>
-              <button
-                style={styles.navButton}
-                onClick={handleLogin}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#00d9ff";
-                  e.currentTarget.style.color = "#0a0a0f";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "#00d9ff";
-                }}
-              >
-                Login
-              </button>
-            </div>
+      {/* ── Navbar — mobile toggle is pure CSS via hidden checkbox ── */}
+      <nav className="edu-nav">
+        <div className="edu-container edu-nav__inner">
+          <span className="edu-logo" onClick={toLogin}>EDUFLOW</span>
+
+          {/* Hidden checkbox drives mobile menu open/close — no useState needed */}
+          <input type="checkbox" id="edu-menu-toggle" className="edu-menu-checkbox" />
+
+          <div className="edu-nav__links">
+            <a href="#features" className="edu-nav__link">Features</a>
+            <a href="#benefits" className="edu-nav__link">Benefits</a>
+            <a href="#pricing"  className="edu-nav__link">Pricing</a>
+          </div>
+
+          <div className="edu-nav__actions">
+            <button className="edu-btn edu-btn--ghost"    onClick={toLogin}>Login</button>
+            <button className="edu-btn edu-btn--primary"  onClick={toSignup}>Get Started</button>
+          </div>
+
+          {/* Label acts as hamburger — toggles checkbox above */}
+          <label htmlFor="edu-menu-toggle" className="edu-hamburger" aria-label="Toggle menu">
+            <Menu size={22} />
+          </label>
+        </div>
+
+        {/* Mobile drawer — shown/hidden via CSS when checkbox is checked */}
+        <div className="edu-mobile-drawer">
+          <a href="#features" className="edu-mobile-link">Features</a>
+          <a href="#benefits" className="edu-mobile-link">Benefits</a>
+          <a href="#pricing"  className="edu-mobile-link">Pricing</a>
+          <div className="edu-mobile-actions">
+            <button className="edu-btn edu-btn--ghost   edu-btn--full" onClick={toLogin}>Login</button>
+            <button className="edu-btn edu-btn--primary edu-btn--full" onClick={toSignup}>Get Started</button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section style={styles.hero}>
-        <div style={styles.container}>
-          <div style={styles.heroContent}>
-            <h1 style={styles.mainTitle}>
-              Transform Your Future with <span style={styles.gradientText}>Next-Gen Learning</span>
-            </h1>
-            <p style={styles.subtitle}>
-              Experience the most advanced Learning Management System designed for modern education. 
-              Master new skills, advance your career, and achieve your dreams through our cutting-edge platform.
-            </p>
+      {/* ── Hero ── */}
+      <section className="edu-hero">
+        <div className="edu-blob edu-blob--1" />
+        <div className="edu-blob edu-blob--2" />
 
-            <div style={styles.ctaButtons}>
-              <button
-                style={{ ...styles.btn, ...styles.btnPrimary }}
-                onClick={handleCreateAccount}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-3px) scale(1.05)";
-                  e.currentTarget.style.boxShadow = "0 20px 60px rgba(0, 217, 255, 0.6)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0) scale(1)";
-                  e.currentTarget.style.boxShadow = "0 10px 40px rgba(0, 217, 255, 0.3)";
-                }}
-              >
-                🎓 Start Learning Free
-              </button>
-              <button
-                style={{ ...styles.btn, ...styles.btnSecondary }}
-                onClick={handleLogin}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(0, 217, 255, 0.1)";
-                  e.currentTarget.style.transform = "translateY(-3px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                🔐 Login to Continue
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What is LMS Section */}
-      <section style={styles.section} id="about">
-        <div style={styles.container}>
-          <h2 style={styles.sectionTitle}>What is a Learning Management System?</h2>
-          <p style={styles.sectionDescription}>
-            A Learning Management System (LMS) is a comprehensive digital platform that revolutionizes 
-            the way we learn and teach. It's your complete educational ecosystem that brings together 
-            students, instructors, content, and technology in one seamless experience.
-          </p>
-          <p style={styles.sectionDescription}>
-            Imagine having access to world-class education at your fingertips, available 24/7, 
-            personalized to your learning style, and tracked to ensure your success. That's the power 
-            of a modern LMS like EduFlow.
-          </p>
-          
-          <div style={styles.highlightBox}>
-            <h4 style={styles.highlightTitle}>💡 Did You Know?</h4>
-            <p style={styles.highlightText}>
-              Companies using LMS platforms see an average of 42% increase in employee productivity 
-              and a 50% reduction in training costs. The global e-learning market is projected to 
-              reach $375 billion by 2026.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Key Features Section */}
-      <section style={{ ...styles.section, ...styles.featuresSection }} id="features">
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Powerful Features That Drive Success</h2>
-            <p style={styles.sectionSubtitle}>
-              Everything you need to create, deliver, and manage exceptional learning experiences
-            </p>
+        <div className="edu-container edu-hero__body">
+          <div className="edu-hero__badge">
+            <Star size={12} fill="currentColor" />
+            Trusted by 50,000+ learners
           </div>
 
-          <div style={styles.featuresGrid}>
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
+          <h1 className="edu-hero__title">
+            Learn smarter.<br />
+            <span className="edu-accent">Grow faster.</span>
+          </h1>
 
-      {/* Interactive Learning Section */}
-      <section style={styles.interactiveSection}>
-        <div style={styles.container}>
-          <h2 style={styles.sectionTitle}>Experience Interactive Learning</h2>
-          <p style={styles.sectionSubtitle}>
-            Engage with content in ways that make learning stick
+          <p className="edu-hero__sub">
+            EduFlow is a modern Learning Management System built for students,
+            instructors, and organisations who want real results — not just content.
           </p>
 
-          <div style={styles.interactiveGrid}>
-            {interactiveLearning.map((item, index) => (
-              <InteractiveCard key={index} {...item} />
+          <div className="edu-hero__cta">
+            <button className="edu-btn edu-btn--primary edu-btn--lg" onClick={toSignup}>
+              Start for free <ArrowRight size={15} />
+            </button>
+            <button className="edu-btn edu-btn--outline edu-btn--lg" onClick={toLogin}>
+              Login to continue
+            </button>
+          </div>
+
+          <div className="edu-hero__stats">
+            {[
+              { value: "50K+",  label: "Learners"          },
+              { value: "1,200+",label: "Courses"           },
+              { value: "98%",   label: "Satisfaction"      },
+              { value: "42%",   label: "Productivity boost"},
+            ].map(s => (
+              <div key={s.label} className="edu-hero__stat">
+                <span className="edu-hero__stat-val">{s.value}</span>
+                <span className="edu-hero__stat-lbl">{s.label}</span>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section style={styles.section} id="benefits">
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Why Choose EduFlow LMS?</h2>
-            <p style={styles.sectionSubtitle}>
-              Join the learning revolution and experience education reimagined
-            </p>
-          </div>
-
-          <div style={styles.benefitsGrid}>
-            {benefits.map((benefit, index) => (
-              <BenefitCard key={index} {...benefit} index={index} />
+      {/* ── Features ── */}
+      <section className="edu-section edu-section--white" id="features">
+        <div className="edu-container">
+          <SectionHeader label="Platform Features" title="Everything you need to learn — and teach" sub="Built for modern education with tools that actually make a difference." />
+          <div className="edu-grid edu-grid--3">
+            {features.map((f, i) => (
+              <div key={i} className="edu-feature-card edu-reveal" style={{ "--delay": `${i * 60}ms` } as any}>
+                <div className="edu-feature-card__icon"><f.icon size={18} /></div>
+                <h3 className="edu-feature-card__title">{f.title}</h3>
+                <p  className="edu-feature-card__desc">{f.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section style={styles.section} id="testimonials">
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>What Our Learners Say</h2>
-            <p style={styles.sectionSubtitle}>
-              Real stories from real students who transformed their careers
-            </p>
-          </div>
-
-          <div style={styles.testimonialsGrid}>
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Learning Paths Section */}
-      <section style={{ ...styles.section, ...styles.pathsSection }}>
-        <div style={styles.container}>
-          <h2 style={styles.sectionTitle}>Choose Your Learning Path</h2>
-          <p style={styles.sectionSubtitle}>
-            Tailored learning journeys for every goal
-          </p>
-
-          <div style={styles.pathsGrid}>
-            {learningPaths.map((path, index) => (
-              <PathCard key={index} {...path} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Who Benefits Section */}
-      <section style={styles.section}>
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Built for Everyone</h2>
-            <p style={styles.sectionSubtitle}>
-              Whether you're a student, professional, or organization—we've got you covered
-            </p>
-          </div>
-
-          <div style={styles.audienceGrid}>
-            {audiences.map((audience, index) => (
-              <AudienceCard key={index} {...audience} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section style={styles.pricingSection} id="pricing">
-        <div style={styles.container}>
-          <h2 style={styles.sectionTitle}>Simple, Transparent Pricing</h2>
-          <p style={styles.sectionSubtitle}>
-            Start free, upgrade when you're ready
-          </p>
-
-          <div style={styles.pricingGrid}>
-            {pricingPlans.map((plan, index) => (
-              <PricingCard key={index} {...plan} onCTA={plan.isPopular ? handleCreateAccount : handleLogin} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section style={{ ...styles.section, ...styles.faqSection }}>
-        <div style={styles.container}>
-          <h2 style={styles.sectionTitle}>Frequently Asked Questions</h2>
-          <div style={styles.faqGrid}>
-            {faqs.map((faq, index) => (
-              <FAQItem key={index} {...faq} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Section */}
-      <section style={styles.ctaSection}>
-        <div style={styles.container}>
-          <div style={styles.ctaContent}>
-            <h2 style={styles.ctaTitle}>Ready to Transform Your Learning Journey?</h2>
-            <p style={styles.ctaDescription}>
-              Join thousands of learners who are already advancing their skills and careers with EduFlow. 
-              Start your free account today—no credit card required.
-            </p>
-
-            <div style={styles.ctaButtons}>
-              <button
-                style={{ ...styles.btn, ...styles.btnPrimary, ...styles.btnLarge }}
-                onClick={handleCreateAccount}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-3px) scale(1.05)";
-                  e.currentTarget.style.boxShadow = "0 20px 60px rgba(0, 217, 255, 0.6)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0) scale(1)";
-                  e.currentTarget.style.boxShadow = "0 10px 40px rgba(0, 217, 255, 0.3)";
-                }}
-              >
-                🚀 Create Free Account
-              </button>
-              <button
-                style={{ ...styles.btn, ...styles.btnSecondary, ...styles.btnLarge }}
-                onClick={handleLogin}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(0, 217, 255, 0.1)";
-                  e.currentTarget.style.transform = "translateY(-3px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                🔐 Login to Enroll
-              </button>
+      {/* ── Indigo strip ── */}
+      <div className="edu-strip">
+        <div className="edu-container edu-grid edu-grid--4">
+          {interactive.map((item, i) => (
+            <div key={i} className="edu-strip__card">
+              <div className="edu-strip__icon"><item.icon size={20} /></div>
+              <h4 className="edu-strip__title">{item.title}</h4>
+              <p  className="edu-strip__desc">{item.desc}</p>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <div style={styles.ctaFeatures}>
-              <span style={styles.ctaFeature}>✓ Free forever plan</span>
-              <span style={styles.ctaFeature}>✓ No credit card needed</span>
-              <span style={styles.ctaFeature}>✓ Cancel anytime</span>
-            </div>
+      {/* ── Benefits ── */}
+      <section className="edu-section edu-section--slate" id="benefits">
+        <div className="edu-container">
+          <SectionHeader label="Why EduFlow" title="Benefits that go beyond a course list" sub="We designed EduFlow around one question: what do learners actually need?" />
+          <div className="edu-grid edu-grid--3">
+            {benefits.map((b, i) => (
+              <div key={i} className="edu-benefit-card edu-reveal" style={{ "--delay": `${i * 60}ms` } as any}>
+                <div className="edu-benefit-card__icon" style={{ background: b.color }}><b.icon size={18} color="#fff" /></div>
+                <h3 className="edu-benefit-card__title">{b.title}</h3>
+                <p  className="edu-benefit-card__desc">{b.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={styles.footer}>
-        <div style={styles.container}>
-          <div style={styles.footerContent}>
-            <div style={styles.footerSection}>
-              <h3 style={styles.footerLogo}>EDUFLOW</h3>
-              <p style={styles.footerDescription}>
-                Empowering learners worldwide with cutting-edge education technology.
-              </p>
-            </div>
-
-            <div style={styles.footerSection}>
-              <h4 style={styles.footerTitle}>Product</h4>
-              <a href="#features" style={styles.footerLink}>Features</a>
-              <a href="#benefits" style={styles.footerLink}>Benefits</a>
-              <a href="#pricing" style={styles.footerLink}>Pricing</a>
-            </div>
-
-            <div style={styles.footerSection}>
-              <h4 style={styles.footerTitle}>Company</h4>
-              <a href="#" style={styles.footerLink}>About Us</a>
-              <a href="#" style={styles.footerLink}>Contact</a>
-              <a href="#" style={styles.footerLink}>Careers</a>
-            </div>
-
-            <div style={styles.footerSection}>
-              <h4 style={styles.footerTitle}>Legal</h4>
-              <a href="#" style={styles.footerLink}>Privacy Policy</a>
-              <a href="#" style={styles.footerLink}>Terms of Service</a>
-            </div>
+      {/* ── Testimonials ── */}
+      <section className="edu-section edu-section--white">
+        <div className="edu-container">
+          <SectionHeader label="Student Stories" title="Real results from real learners" sub="Thousands of people have already changed their careers with EduFlow." />
+          <div className="edu-grid edu-grid--2">
+            {testimonials.map((t, i) => (
+              <div key={i} className="edu-testimonial edu-reveal" style={{ "--delay": `${i * 80}ms` } as any}>
+                <div className="edu-testimonial__stars">{"★".repeat(t.rating)}</div>
+                <p className="edu-testimonial__text">"{t.text}"</p>
+                <div className="edu-testimonial__author">
+                  <div className="edu-testimonial__avatar">{t.avatar}</div>
+                  <div>
+                    <div className="edu-testimonial__name">{t.name}</div>
+                    <div className="edu-testimonial__meta">{t.role} · {t.company}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div style={styles.footerBottom}>
-            <p>&copy; 2026 EduFlow. All rights reserved.</p>
+      {/* ── Audience ── */}
+      <section className="edu-section edu-section--slate">
+        <div className="edu-container">
+          <SectionHeader label="For Everyone" title="Built for every kind of learner" sub="Whether you're a student, professional, or running an organisation." />
+          <div className="edu-grid edu-grid--4">
+            {audiences.map((a, i) => (
+              <div key={i} className="edu-audience-card edu-reveal" style={{ "--delay": `${i * 70}ms` } as any}>
+                <div className="edu-audience-card__icon" style={{ background: a.color }}><a.icon size={18} color="#fff" /></div>
+                <h3 className="edu-audience-card__title">{a.title}</h3>
+                <ul className="edu-audience-card__list">
+                  {a.items.map((item: string, j: number) => (
+                    <li key={j}><CheckCircle size={12} className="edu-check" />{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Pricing ── */}
+      <section className="edu-section edu-section--white" id="pricing">
+        <div className="edu-container">
+          <SectionHeader label="Pricing" title="Simple, honest pricing" sub="Start free. Upgrade only when you need to." />
+          <div className="edu-grid edu-grid--3">
+            {pricing.map((p, i) => (
+              <div key={i} className={`edu-pricing-card edu-reveal ${p.popular ? "edu-pricing-card--popular" : ""}`} style={{ "--delay": `${i * 80}ms` } as any}>
+                {p.popular && <div className="edu-pricing-card__badge">Most Popular</div>}
+                <h3 className="edu-pricing-card__title">{p.title}</h3>
+                <div className="edu-pricing-card__price">
+                  <span className="edu-pricing-card__amount">{p.price}</span>
+                  {p.period && <span className="edu-pricing-card__period">/{p.period}</span>}
+                </div>
+                <ul className="edu-pricing-card__features">
+                  {p.featureList.map((f: string, j: number) => (
+                    <li key={j}><CheckCircle size={13} className="edu-check" />{f}</li>
+                  ))}
+                </ul>
+                <button
+                  className={`edu-btn ${p.popular ? "edu-btn--primary" : "edu-btn--outline"} edu-btn--full`}
+                  onClick={p.popular ? toSignup : toLogin}
+                >
+                  {p.popular ? "Get Started" : "Learn More"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ — uses native <details>/<summary> — zero JS needed ── */}
+      <section className="edu-section edu-section--slate">
+        <div className="edu-container">
+          <SectionHeader label="FAQ" title="Common questions" sub="" />
+          <div className="edu-faq">
+            {faqs.map((f, i) => (
+              <details key={i} className="edu-faq__item">
+                <summary className="edu-faq__question">{f.question}</summary>
+                <p className="edu-faq__answer">{f.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="edu-cta-section">
+        <div className="edu-container edu-cta-section__inner">
+          <h2 className="edu-cta-section__title">Ready to start your journey?</h2>
+          <p className="edu-cta-section__sub">Join 50,000+ learners. No credit card required.</p>
+          <div className="edu-hero__cta">
+            <button className="edu-btn edu-btn--white   edu-btn--lg" onClick={toSignup}>Create free account <ArrowRight size={15} /></button>
+            <button className="edu-btn edu-btn--outline-white edu-btn--lg" onClick={toLogin}>Login to enroll</button>
+          </div>
+          <div className="edu-cta-section__perks">
+            <span>✓ Free forever plan</span>
+            <span>✓ No credit card needed</span>
+            <span>✓ Cancel anytime</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="edu-footer">
+        <div className="edu-container edu-footer__grid">
+          <div>
+            <span className="edu-logo" style={{ color: "#fff" }}>EDUFLOW</span>
+            <p className="edu-footer__tagline">Empowering learners worldwide.</p>
+          </div>
+          {[
+            { label: "Product", links: [["#features","Features"],["#benefits","Benefits"],["#pricing","Pricing"]] },
+            { label: "Company", links: [["#","About"],["#","Contact"],["#","Careers"]] },
+            { label: "Legal",   links: [["#","Privacy Policy"],["#","Terms of Service"]] },
+          ].map(group => (
+            <div key={group.label} className="edu-footer__group">
+              <strong>{group.label}</strong>
+              {group.links.map(([href, text]) => <a key={text} href={href}>{text}</a>)}
+            </div>
+          ))}
+        </div>
+        <div className="edu-footer__bottom edu-container">
+          <p>© 2026 EduFlow. All rights reserved.</p>
         </div>
       </footer>
-
-      {/* Keyframes Animation */}
-      <style>{keyframes}</style>
     </div>
-  );
+  )
 }
 
-// Feature Card Component
-function FeatureCard({ number, title, description, icon, index }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
+// ─── Section Header ────────────────────────────────────────────────────────────
+function SectionHeader({ label, title, sub }: { label: string; title: string; sub: string }) {
   return (
-    <div
-      style={{
-        ...styles.featureItem,
-        transform: isHovered ? "translateY(-10px)" : "translateY(0)",
-        boxShadow: isHovered
-          ? "0 20px 60px rgba(0, 217, 255, 0.3)"
-          : "0 10px 40px rgba(0, 0, 0, 0.3)",
-        animationDelay: `${index * 0.1}s`,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.featureIcon}>{icon}</div>
-      <div style={styles.featureNumber}>{number}</div>
-      <h3 style={styles.featureTitle}>{title}</h3>
-      <p style={styles.featureDescription}>{description}</p>
+    <div className="edu-section-header">
+      <span className="edu-section-header__label">{label}</span>
+      <h2 className="edu-section-header__title">{title}</h2>
+      {sub && <p className="edu-section-header__sub">{sub}</p>}
     </div>
-  );
+  )
 }
 
-// Interactive Card Component
-function InteractiveCard({ icon, title, description }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.interactiveCard,
-        transform: isHovered ? "scale(1.05)" : "scale(1)",
-        borderColor: isHovered ? "#00d9ff" : "rgba(0, 217, 255, 0.2)",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.interactiveIcon}>{icon}</div>
-      <h3 style={styles.interactiveTitle}>{title}</h3>
-      <p style={styles.interactiveDescription}>{description}</p>
-    </div>
-  );
-}
-
-// Benefit Card Component
-function BenefitCard({ icon, title, description, index }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.benefitCard,
-        transform: isHovered ? "translateY(-8px) scale(1.02)" : "translateY(0) scale(1)",
-        boxShadow: isHovered
-          ? "0 20px 60px rgba(0, 217, 255, 0.4)"
-          : "0 10px 40px rgba(0, 217, 255, 0.2)",
-        animationDelay: `${index * 0.15}s`,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.benefitIcon}>{icon}</div>
-      <h3 style={styles.benefitTitle}>{title}</h3>
-      <p style={styles.benefitDescription}>{description}</p>
-    </div>
-  );
-}
-
-// Testimonial Card Component
-function TestimonialCard({ name, role, company, testimonial, rating, image }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.testimonialCard,
-        transform: isHovered ? "translateY(-5px)" : "translateY(0)",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.testimonialRating}>
-        {"⭐".repeat(rating)}
-      </div>
-      <p style={styles.testimonialText}>"{testimonial}"</p>
-      <div style={styles.testimonialAuthor}>
-        <div style={styles.testimonialAvatar}>{image}</div>
-        <div>
-          <div style={styles.testimonialName}>{name}</div>
-          <div style={styles.testimonialRole}>{role} at {company}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Learning Path Card Component
-function PathCard({ icon, title, description, courses, duration }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.pathCard,
-        transform: isHovered ? "translateY(-8px)" : "translateY(0)",
-        borderColor: isHovered ? "#00d9ff" : "rgba(0, 217, 255, 0.2)",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.pathIcon}>{icon}</div>
-      <h3 style={styles.pathTitle}>{title}</h3>
-      <p style={styles.pathDescription}>{description}</p>
-      <div style={styles.pathMeta}>
-        <span style={styles.pathMetaItem}>📚 {courses} courses</span>
-        <span style={styles.pathMetaItem}>⏱️ {duration}</span>
-      </div>
-    </div>
-  );
-}
-
-// Audience Card Component
-function AudienceCard({ icon, title, items, color }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.audienceCard,
-        transform: isHovered ? "translateY(-8px)" : "translateY(0)",
-        boxShadow: isHovered
-          ? "0 20px 60px rgba(0, 0, 0, 0.5)"
-          : "0 10px 40px rgba(0, 0, 0, 0.3)",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={{ ...styles.audienceIcon, background: color }}>{icon}</div>
-      <h3 style={styles.audienceTitle}>{title}</h3>
-      <ul style={styles.audienceList}>
-        {items.map((item: string, index: number) => (
-          <li key={index} style={styles.audienceListItem}>
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// Pricing Card Component
-function PricingCard({ title, price, period, features, isPopular, onCTA }: any) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.pricingCard,
-        ...(isPopular ? styles.pricingCardPopular : {}),
-        transform: isHovered ? "translateY(-10px) scale(1.02)" : "translateY(0)",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {isPopular && <div style={styles.popularBadge}>Most Popular</div>}
-      <h3 style={styles.pricingTitle}>{title}</h3>
-      <div style={styles.pricingPrice}>
-        <span style={styles.pricingAmount}>{price}</span>
-        {period && <span style={styles.pricingPeriod}>/{period}</span>}
-      </div>
-      <ul style={styles.pricingFeatures}>
-        {features.map((feature: string, index: number) => (
-          <li key={index} style={styles.pricingFeature}>
-            ✓ {feature}
-          </li>
-        ))}
-      </ul>
-      <button
-        style={{
-          ...styles.pricingButton,
-          ...(isPopular ? styles.pricingButtonPopular : {}),
-        }}
-        onClick={onCTA}
-        onMouseEnter={(e) => {
-          if (isPopular) {
-            e.currentTarget.style.transform = "scale(1.05)";
-            e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 217, 255, 0.5)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (isPopular) {
-            e.currentTarget.style.transform = "scale(1)";
-            e.currentTarget.style.boxShadow = "0 5px 20px rgba(0, 217, 255, 0.3)";
-          }
-        }}
-      >
-        {isPopular ? "Get Started" : "Learn More"}
-      </button>
-    </div>
-  );
-}
-
-// FAQ Item Component
-function FAQItem({ question, answer }: any) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...styles.faqItem,
-        borderColor: isOpen ? "#00d9ff" : "rgba(0, 217, 255, 0.2)",
-      }}
-      onClick={() => setIsOpen(!isOpen)}
-    >
-      <div style={styles.faqQuestion}>
-        <span>{question}</span>
-        <span style={{
-          ...styles.faqIcon,
-          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-        }}>▼</span>
-      </div>
-      {isOpen && (
-        <div style={styles.faqAnswer}>{answer}</div>
-      )}
-    </div>
-  );
-}
-
-// Data Arrays
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const features = [
-  {
-    number: "01",
-    icon: "📚",
-    title: "Course Management",
-    description: "Create, organize, and deliver structured learning content with our intuitive course builder.",
-  },
-  {
-    number: "02",
-    icon: "👥",
-    title: "User Management",
-    description: "Manage students, instructors, and administrators with role-based access control.",
-  },
-  {
-    number: "03",
-    icon: "📊",
-    title: "Progress Tracking",
-    description: "Monitor learning progress with detailed analytics and comprehensive reports.",
-  },
-  {
-    number: "04",
-    icon: "✅",
-    title: "Interactive Assessments",
-    description: "Create engaging quizzes and tests with automated grading and instant feedback.",
-  },
-  {
-    number: "05",
-    icon: "💬",
-    title: "Communication Hub",
-    description: "Foster collaboration through discussion forums, live chat, and messaging.",
-  },
-  {
-    number: "06",
-    icon: "🏆",
-    title: "Certifications",
-    description: "Award digital certificates upon course completion with verifiable credentials.",
-  },
-];
+  { icon: BookOpen,      title: "Course Management",    desc: "Create and deliver structured courses with our intuitive builder. Drag-drop modules, add videos, quizzes, and documents." },
+  { icon: Users,         title: "User Management",       desc: "Role-based access for students, instructors, and admins. Manage cohorts and track enrolments effortlessly." },
+  { icon: BarChart3,     title: "Progress Analytics",    desc: "Real-time dashboards showing completion rates, engagement, and learning outcomes." },
+  { icon: CheckCircle,   title: "Assessments & Quizzes", desc: "Auto-graded assessments with instant feedback. Schedule deadlines and set passing criteria." },
+  { icon: MessageSquare, title: "Discussion Forums",      desc: "Built-in forums and messaging to encourage peer-to-peer learning and instructor support." },
+  { icon: Award,         title: "Certifications",        desc: "Award verified digital certificates on completion. Shareable on LinkedIn with one click." },
+]
 
-const interactiveLearning = [
-  {
-    icon: "🎮",
-    title: "Gamification",
-    description: "Earn points, badges, and rewards as you progress through courses.",
-  },
-  {
-    icon: "🧪",
-    title: "Hands-On Labs",
-    description: "Practice with real-world projects and interactive environments.",
-  },
-  {
-    icon: "🎯",
-    title: "Adaptive Learning",
-    description: "AI adjusts difficulty based on your performance and pace.",
-  },
-  {
-    icon: "👥",
-    title: "Peer Learning",
-    description: "Collaborate on projects and learn from peers worldwide.",
-  },
-];
+const interactive = [
+  { icon: Gamepad2,     title: "Gamification",      desc: "Points, badges & leaderboards" },
+  { icon: FlaskConical, title: "Hands-On Labs",     desc: "Real-world projects & exercises" },
+  { icon: Target,       title: "Adaptive Learning", desc: "AI-adjusted difficulty per learner" },
+  { icon: Laptop,       title: "Learn Anywhere",    desc: "Full mobile & offline support" },
+]
 
 const benefits = [
-  {
-    icon: "🌍",
-    title: "Learn Anywhere, Anytime",
-    description: "Access your courses 24/7 from any device. Study at your own pace, on your schedule.",
-  },
-  {
-    icon: "📈",
-    title: "Scalable & Flexible",
-    description: "Whether training 10 or 10,000 learners, our platform scales with you effortlessly.",
-  },
-  {
-    icon: "💰",
-    title: "Cost-Effective",
-    description: "Reduce training costs significantly while improving learning outcomes.",
-  },
-  {
-    icon: "🎯",
-    title: "Track Everything",
-    description: "Comprehensive analytics give you insights into engagement and effectiveness.",
-  },
-  {
-    icon: "🔒",
-    title: "Secure & Reliable",
-    description: "Bank-level encryption and compliance with international security standards.",
-  },
-  {
-    icon: "⚡",
-    title: "Quick Setup",
-    description: "Get up and running in minutes with our intuitive interface and support.",
-  },
-];
+  { icon: Globe,       title: "Learn Anytime",     desc: "Access all your courses 24/7 from any device, anywhere in the world.", color: "#6366f1" },
+  { icon: TrendingUp,  title: "Track Everything",  desc: "Detailed analytics give you and your instructors a clear view of progress.", color: "#0ea5e9" },
+  { icon: DollarSign,  title: "Cost Effective",    desc: "Replace expensive in-person training. Companies save up to 50% on training costs.", color: "#10b981" },
+  { icon: ShieldCheck, title: "Secure & Reliable", desc: "Bank-grade encryption, 99.9% uptime SLA, and full GDPR compliance.", color: "#f59e0b" },
+  { icon: Zap,         title: "Quick Setup",       desc: "Get your first course live in minutes. No technical knowledge needed.", color: "#ef4444" },
+  { icon: Users,       title: "Collaborative",     desc: "Foster community with group projects, peer review, and discussion boards.", color: "#8b5cf6" },
+]
 
 const testimonials = [
-  {
-    name: "Priya Sharma",
-    role: "Data Scientist",
-    company: "Tech Corp",
-    rating: 5,
-    image: "👩‍💼",
-    testimonial: "EduFlow transformed my learning experience. The courses helped me land my dream job. The platform is intuitive and the content is excellent!",
-  },
-  {
-    name: "Rahul Verma",
-    role: "CEO",
-    company: "StartupHub",
-    rating: 5,
-    image: "👨‍💼",
-    testimonial: "We trained our entire team using EduFlow. The ROI is incredible and our productivity increased significantly. Highly recommended!",
-  },
-  {
-    name: "Ananya Patel",
-    role: "Student",
-    company: "IIT Delhi",
-    rating: 5,
-    image: "👩‍🎓",
-    testimonial: "The best learning platform I've used. The mobile app lets me learn anywhere, and I've completed multiple certifications already!",
-  },
-  {
-    name: "Vikram Singh",
-    role: "Manager",
-    company: "InfoTech",
-    rating: 5,
-    image: "👨‍💻",
-    testimonial: "As a working professional, EduFlow's flexibility is perfect. I can learn at my own pace and the certificates are recognized by employers.",
-  },
-];
-
-const learningPaths = [
-  {
-    icon: "💻",
-    title: "Full-Stack Development",
-    description: "Master front-end and back-end development from scratch.",
-    courses: 25,
-    duration: "6 months",
-  },
-  {
-    icon: "📊",
-    title: "Data Science & AI",
-    description: "Learn Python, machine learning, and build AI applications.",
-    courses: 30,
-    duration: "8 months",
-  },
-  {
-    icon: "🎨",
-    title: "UX/UI Design",
-    description: "Design beautiful, user-centric interfaces and experiences.",
-    courses: 18,
-    duration: "4 months",
-  },
-  {
-    icon: "📱",
-    title: "Mobile Development",
-    description: "Build native iOS and Android apps with modern frameworks.",
-    courses: 22,
-    duration: "5 months",
-  },
-];
+  { name: "Priya Sharma", role: "Data Scientist",   company: "Tech Corp",  rating: 5, avatar: "👩‍💼", text: "EduFlow transformed how I learn. The course quality is exceptional and I landed my dream job within 3 months of completing the Data Science track." },
+  { name: "Rahul Verma",  role: "CEO",              company: "StartupHub", rating: 5, avatar: "👨‍💼", text: "We trained our entire 200-person team with EduFlow. Productivity went up 42% and onboarding time was cut in half. Worth every rupee." },
+  { name: "Ananya Patel", role: "Student",          company: "IIT Delhi",  rating: 5, avatar: "👩‍🎓", text: "The mobile app is brilliant. I finished two certifications while commuting. The UI is clean and everything just works." },
+  { name: "Vikram Singh", role: "Product Manager",  company: "InfoTech",   rating: 5, avatar: "👨‍💻", text: "Certificates are recognised by top employers. I got two callbacks within a week of adding my EduFlow certificate to my resume." },
+]
 
 const audiences = [
-  {
-    icon: "👨‍🎓",
-    title: "Students & Learners",
-    color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    items: [
-      "Access thousands of courses across subjects",
-      "Learn at your own pace with flexibility",
-      "Earn recognized certificates",
-      "Connect with global learners",
-    ],
-  },
-  {
-    icon: "👨‍🏫",
-    title: "Educators & Trainers",
-    color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    items: [
-      "Create and monetize courses easily",
-      "Reach students worldwide",
-      "Use advanced analytics",
-      "Automate administrative tasks",
-    ],
-  },
-  {
-    icon: "🏢",
-    title: "Organizations",
-    color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    items: [
-      "Train employees at scale",
-      "Reduce training costs significantly",
-      "Ensure compliance tracking",
-      "Measure training ROI",
-    ],
-  },
-  {
-    icon: "🎓",
-    title: "Institutions",
-    color: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-    items: [
-      "Offer hybrid programs",
-      "Increase enrollment capacity",
-      "Streamline administration",
-      "Improve student outcomes",
-    ],
-  },
-];
+  { icon: GraduationCap, title: "Students",       color: "#6366f1", items: ["1,200+ courses across subjects", "Learn at your own pace", "Earn verified certificates", "Connect with global peers"] },
+  { icon: Users,         title: "Educators",      color: "#0ea5e9", items: ["Create & monetise courses", "Reach students worldwide", "Advanced analytics included", "Automate admin tasks"] },
+  { icon: Building2,     title: "Organisations",  color: "#10b981", items: ["Train teams at any scale", "Cut training costs by 50%", "Compliance tracking built-in", "Measure training ROI"] },
+  { icon: BookOpen,      title: "Institutions",   color: "#f59e0b", items: ["Offer hybrid programmes", "Increase enrolment capacity", "Streamline administration", "Improve student outcomes"] },
+]
 
-const pricingPlans = [
-  {
-    title: "Free",
-    price: "₹0",
-    period: "forever",
-    isPopular: false,
-    features: [
-      "Access to 50+ free courses",
-      "Basic progress tracking",
-      "Community forum access",
-      "Mobile app access",
-      "Email support",
-    ],
-  },
-  {
-    title: "Pro",
-    price: "₹2,499",
-    period: "month",
-    isPopular: true,
-    features: [
-      "Unlimited course access",
-      "Advanced analytics",
-      "Priority support 24/7",
-      "Downloadable resources",
-      "Custom learning paths",
-      "All certificates included",
-    ],
-  },
-  {
-    title: "Enterprise",
-    price: "Custom",
-    period: null,
-    isPopular: false,
-    features: [
-      "Everything in Pro",
-      "Dedicated account manager",
-      "Custom branding",
-      "Advanced security",
-      "Custom integrations",
-      "SLA guarantee",
-    ],
-  },
-];
+const pricing = [
+  { title: "Free",       price: "₹0",     period: "forever", popular: false, featureList: ["50+ free courses","Basic progress tracking","Community forum","Mobile app access","Email support"] },
+  { title: "Pro",        price: "₹2,499", period: "month",   popular: true,  featureList: ["Unlimited course access","Advanced analytics","Priority 24/7 support","Downloadable resources","Custom learning paths","All certificates included"] },
+  { title: "Enterprise", price: "Custom", period: null,       popular: false, featureList: ["Everything in Pro","Dedicated account manager","Custom branding","Advanced security","Custom integrations","SLA guarantee"] },
+]
 
 const faqs = [
-  {
-    question: "How do I get started with EduFlow?",
-    answer: "Simply click the 'Create Free Account' button, fill in your details, and you'll have instant access. No credit card required!",
-  },
-  {
-    question: "Can I try premium features before upgrading?",
-    answer: "Yes! We offer a 14-day free trial of our Pro plan. Explore all features risk-free and cancel anytime.",
-  },
-  {
-    question: "Are the certificates recognized by employers?",
-    answer: "Absolutely! Our certificates are verified and recognized by employers. Each includes a unique verification code.",
-  },
-  {
-    question: "Can I access courses offline?",
-    answer: "Yes, with our mobile app, you can download courses and learn offline. Perfect for learning on the go!",
-  },
-  {
-    question: "What support options are available?",
-    answer: "We offer 24/7 support via chat and email. Pro users get priority support with faster response times.",
-  },
-  {
-    question: "Do you offer refunds?",
-    answer: "Yes, we offer a 30-day money-back guarantee on all paid plans. If you're not satisfied, we'll refund you in full.",
-  },
-];
+  { question: "How do I get started?",                     answer: "Click 'Create Free Account', fill in your details and you have instant access — no credit card required." },
+  { question: "Can I try Pro features before upgrading?",  answer: "Yes! We offer a 14-day free trial of our Pro plan. Explore everything risk-free and cancel anytime." },
+  { question: "Are certificates recognised by employers?", answer: "Absolutely. Each certificate includes a unique verification code and is endorsed by our industry partners." },
+  { question: "Can I access courses offline?",             answer: "Yes, our mobile app lets you download courses and learn completely offline — perfect for commutes." },
+  { question: "Do you offer refunds?",                     answer: "We offer a 30-day money-back guarantee on all paid plans. No questions asked." },
+]
 
-// Comprehensive Styles Object
-const styles: any = {
-  homepage: {
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-    WebkitFontSmoothing: "antialiased",
-    MozOsxFontSmoothing: "grayscale",
-    lineHeight: 1.6,
-    color: "#ffffff",
-    backgroundColor: "#0a0a0f",
-    position: "relative",
-    overflow: "hidden",
-  },
-  animatedBg: {
-    position: "fixed",
-    top: "-50%",
-    left: "-50%",
-    width: "200%",
-    height: "200%",
-    background: "radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(123, 47, 247, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255, 0, 110, 0.08) 0%, transparent 50%)",
-    animation: "bgRotate 20s linear infinite",
-    zIndex: 0,
-    pointerEvents: "none",
-  },
-  gridOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundImage: "linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px)",
-    backgroundSize: "50px 50px",
-    animation: "gridMove 20s linear infinite",
-    zIndex: 0,
-    pointerEvents: "none",
-  },
-  particle: {
-    position: "fixed",
-    width: "4px",
-    height: "4px",
-    background: "#00d9ff",
-    borderRadius: "50%",
-    opacity: 0.6,
-    animation: "float 15s ease-in-out infinite",
-    zIndex: 0,
-    pointerEvents: "none",
-  },
-  navbar: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: "1.5rem 0",
-    zIndex: 1000,
-    backdropFilter: "blur(20px)",
-    borderBottom: "1px solid rgba(0, 217, 255, 0.1)",
-    transition: "all 0.3s ease",
-  },
-  navContent: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  logo: {
-    fontSize: "1.8rem",
-    fontWeight: 900,
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    letterSpacing: "0.05em",
-    cursor: "pointer",
-  },
-  navLinks: {
-    display: "flex",
-    gap: "2.5rem",
-    alignItems: "center",
-  },
-  navLink: {
-    color: "#b0b0c8",
-    textDecoration: "none",
-    fontSize: "0.95rem",
-    fontWeight: 500,
-    transition: "color 0.3s ease",
-    cursor: "pointer",
-  },
-  navButton: {
-    padding: "0.7rem 2rem",
-    background: "transparent",
-    border: "2px solid #00d9ff",
-    color: "#00d9ff",
-    borderRadius: "50px",
-    fontSize: "0.9rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textTransform: "uppercase",
-    letterSpacing: "0.1em",
-  },
-  container: {
-    maxWidth: "1200px",
-    margin: "0 auto",
-    padding: "0 2rem",
-    position: "relative",
-    zIndex: 1,
-  },
-  hero: {
-    padding: "10rem 0 6rem",
-    position: "relative",
-    zIndex: 1,
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  heroContent: {
-    maxWidth: "900px",
-    margin: "0 auto",
-  },
-  mainTitle: {
-    fontSize: "4rem",
-    fontWeight: 900,
-    marginBottom: "1.5rem",
-    lineHeight: 1.2,
-    animation: "fadeInUp 0.8s ease-out 0.2s both",
-  },
-  gradientText: {
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-  subtitle: {
-    fontSize: "1.25rem",
-    lineHeight: 1.8,
-    color: "#b0b0c8",
-    marginBottom: "2.5rem",
-    animation: "fadeInUp 0.8s ease-out 0.4s both",
-  },
-  ctaButtons: {
-    display: "flex",
-    gap: "1.5rem",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    marginBottom: "2rem",
-    animation: "fadeInUp 0.8s ease-out 0.6s both",
-  },
-  btn: {
-    padding: "1.2rem 3rem",
-    fontSize: "1rem",
-    fontWeight: 600,
-    border: "none",
-    borderRadius: "50px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-  },
-  btnPrimary: {
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    color: "#0a0a0f",
-    boxShadow: "0 10px 40px rgba(0, 217, 255, 0.3)",
-  },
-  btnSecondary: {
-    background: "transparent",
-    color: "#00d9ff",
-    border: "2px solid #00d9ff",
-  },
-  btnLarge: {
-    padding: "1.3rem 3.5rem",
-    fontSize: "1.1rem",
-  },
-  section: {
-    padding: "6rem 0",
-    position: "relative",
-    zIndex: 1,
-    backgroundColor: "#13131a",
-  },
-  featuresSection: {
-    backgroundColor: "#0a0a0f",
-  },
-  pathsSection: {
-    backgroundColor: "#0a0a0f",
-  },
-  faqSection: {
-    backgroundColor: "#0a0a0f",
-  },
-  sectionHeader: {
-    textAlign: "center",
-    marginBottom: "4rem",
-  },
-  sectionTitle: {
-    fontSize: "3rem",
-    fontWeight: 900,
-    marginBottom: "1rem",
-    background: "linear-gradient(135deg, #ffffff, #00d9ff)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    textTransform: "uppercase",
-    letterSpacing: "0.02em",
-  },
-  sectionSubtitle: {
-    fontSize: "1.2rem",
-    color: "#b0b0c8",
-    maxWidth: "700px",
-    margin: "0 auto",
-  },
-  sectionDescription: {
-    fontSize: "1.15rem",
-    lineHeight: 1.8,
-    marginBottom: "1.5rem",
-    color: "#b0b0c8",
-    maxWidth: "900px",
-    margin: "0 auto 1.5rem",
-  },
-  highlightBox: {
-    background: "rgba(0, 217, 255, 0.05)",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    borderRadius: "16px",
-    padding: "2rem",
-    marginTop: "2rem",
-    maxWidth: "900px",
-    margin: "2rem auto 0",
-  },
-  highlightTitle: {
-    fontSize: "1.3rem",
-    marginBottom: "1rem",
-    color: "#00d9ff",
-  },
-  highlightText: {
-    fontSize: "1rem",
-    color: "#b0b0c8",
-    lineHeight: 1.7,
-  },
-  featuresGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "2rem",
-  },
-  featureItem: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2.5rem",
-    borderRadius: "24px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.4s ease",
-    animation: "fadeInUp 0.6s ease-out both",
-  },
-  featureIcon: {
-    fontSize: "3rem",
-    marginBottom: "1.5rem",
-  },
-  featureNumber: {
-    fontSize: "2.5rem",
-    fontWeight: 900,
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    opacity: 0.3,
-    marginBottom: "1rem",
-  },
-  featureTitle: {
-    fontSize: "1.4rem",
-    fontWeight: 700,
-    marginBottom: "1rem",
-    color: "#ffffff",
-  },
-  featureDescription: {
-    fontSize: "1rem",
-    lineHeight: 1.7,
-    color: "#b0b0c8",
-  },
-  interactiveSection: {
-    padding: "6rem 0",
-    background: "rgba(13, 13, 26, 0.5)",
-    position: "relative",
-    zIndex: 1,
-  },
-  interactiveGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  interactiveCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2rem",
-    borderRadius: "20px",
-    border: "2px solid rgba(0, 217, 255, 0.2)",
-    textAlign: "center",
-    transition: "all 0.3s ease",
-    cursor: "pointer",
-  },
-  interactiveIcon: {
-    fontSize: "3rem",
-    marginBottom: "1rem",
-  },
-  interactiveTitle: {
-    fontSize: "1.2rem",
-    fontWeight: 700,
-    marginBottom: "0.5rem",
-    color: "#ffffff",
-  },
-  interactiveDescription: {
-    fontSize: "0.95rem",
-    color: "#b0b0c8",
-    lineHeight: 1.6,
-  },
-  benefitsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  benefitCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2.5rem",
-    borderRadius: "24px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.4s ease",
-    animation: "fadeInUp 0.6s ease-out both",
-  },
-  benefitIcon: {
-    fontSize: "3rem",
-    marginBottom: "1.5rem",
-  },
-  benefitTitle: {
-    fontSize: "1.4rem",
-    fontWeight: 700,
-    marginBottom: "1rem",
-    color: "#ffffff",
-  },
-  benefitDescription: {
-    fontSize: "1rem",
-    lineHeight: 1.7,
-    color: "#b0b0c8",
-  },
-  testimonialsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  testimonialCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2.5rem",
-    borderRadius: "24px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.3s ease",
-  },
-  testimonialRating: {
-    fontSize: "1.2rem",
-    marginBottom: "1rem",
-  },
-  testimonialText: {
-    fontSize: "1.1rem",
-    lineHeight: 1.8,
-    color: "#b0b0c8",
-    marginBottom: "2rem",
-    fontStyle: "italic",
-  },
-  testimonialAuthor: {
-    display: "flex",
-    alignItems: "center",
-    gap: "1rem",
-  },
-  testimonialAvatar: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "50%",
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "1.5rem",
-  },
-  testimonialName: {
-    fontSize: "1.1rem",
-    fontWeight: 700,
-    color: "#ffffff",
-  },
-  testimonialRole: {
-    fontSize: "0.95rem",
-    color: "#b0b0c8",
-  },
-  pathsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  pathCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2rem",
-    borderRadius: "24px",
-    border: "2px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.4s ease",
-    cursor: "pointer",
-  },
-  pathIcon: {
-    fontSize: "3rem",
-    marginBottom: "1.5rem",
-  },
-  pathTitle: {
-    fontSize: "1.3rem",
-    fontWeight: 700,
-    marginBottom: "1rem",
-    color: "#ffffff",
-  },
-  pathDescription: {
-    fontSize: "0.95rem",
-    lineHeight: 1.6,
-    color: "#b0b0c8",
-    marginBottom: "1.5rem",
-  },
-  pathMeta: {
-    display: "flex",
-    gap: "1rem",
-    flexWrap: "wrap",
-  },
-  pathMetaItem: {
-    fontSize: "0.85rem",
-    color: "#00d9ff",
-  },
-  audienceGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  audienceCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2.5rem",
-    borderRadius: "24px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.4s ease",
-  },
-  audienceIcon: {
-    width: "60px",
-    height: "60px",
-    borderRadius: "16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "2rem",
-    marginBottom: "1.5rem",
-  },
-  audienceTitle: {
-    fontSize: "1.5rem",
-    fontWeight: 700,
-    marginBottom: "1.5rem",
-    color: "#ffffff",
-  },
-  audienceList: {
-    listStyle: "none",
-    padding: 0,
-  },
-  audienceListItem: {
-    fontSize: "1rem",
-    lineHeight: 2,
-    color: "#b0b0c8",
-    paddingLeft: "1.5rem",
-    position: "relative",
-  },
-  pricingSection: {
-    padding: "6rem 0",
-    background: "rgba(13, 13, 26, 0.5)",
-    position: "relative",
-    zIndex: 1,
-  },
-  pricingGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "2rem",
-    marginTop: "3rem",
-  },
-  pricingCard: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "3rem 2.5rem",
-    borderRadius: "24px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    transition: "all 0.4s ease",
-    position: "relative",
-  },
-  pricingCardPopular: {
-    border: "2px solid #00d9ff",
-    boxShadow: "0 20px 60px rgba(0, 217, 255, 0.3)",
-  },
-  popularBadge: {
-    position: "absolute",
-    top: "-15px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    color: "#0a0a0f",
-    padding: "0.5rem 1.5rem",
-    borderRadius: "50px",
-    fontSize: "0.85rem",
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: "0.1em",
-  },
-  pricingTitle: {
-    fontSize: "1.8rem",
-    fontWeight: 700,
-    marginBottom: "1rem",
-    color: "#ffffff",
-  },
-  pricingPrice: {
-    marginBottom: "2rem",
-  },
-  pricingAmount: {
-    fontSize: "3.5rem",
-    fontWeight: 900,
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-  pricingPeriod: {
-    fontSize: "1.2rem",
-    color: "#b0b0c8",
-  },
-  pricingFeatures: {
-    listStyle: "none",
-    padding: 0,
-    marginBottom: "2rem",
-  },
-  pricingFeature: {
-    fontSize: "1rem",
-    color: "#b0b0c8",
-    lineHeight: 2.5,
-  },
-  pricingButton: {
-    width: "100%",
-    padding: "1rem",
-    background: "transparent",
-    border: "2px solid #00d9ff",
-    color: "#00d9ff",
-    borderRadius: "50px",
-    fontSize: "1rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textTransform: "uppercase",
-    letterSpacing: "0.1em",
-  },
-  pricingButtonPopular: {
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    color: "#0a0a0f",
-    border: "none",
-    boxShadow: "0 5px 20px rgba(0, 217, 255, 0.3)",
-  },
-  faqGrid: {
-    maxWidth: "800px",
-    margin: "3rem auto 0",
-  },
-  faqItem: {
-    background: "rgba(26, 26, 36, 0.6)",
-    backdropFilter: "blur(20px)",
-    padding: "2rem",
-    borderRadius: "16px",
-    border: "1px solid rgba(0, 217, 255, 0.2)",
-    marginBottom: "1rem",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  },
-  faqQuestion: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    fontSize: "1.1rem",
-    fontWeight: 600,
-    color: "#ffffff",
-  },
-  faqIcon: {
-    fontSize: "0.8rem",
-    color: "#00d9ff",
-    transition: "transform 0.3s ease",
-  },
-  faqAnswer: {
-    marginTop: "1rem",
-    fontSize: "1rem",
-    lineHeight: 1.7,
-    color: "#b0b0c8",
-    animation: "fadeIn 0.3s ease-out",
-  },
-  ctaSection: {
-    padding: "8rem 0",
-    background: "linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%)",
-    borderTop: "1px solid rgba(0, 217, 255, 0.2)",
-    borderBottom: "1px solid rgba(0, 217, 255, 0.2)",
-    position: "relative",
-    zIndex: 1,
-    textAlign: "center",
-  },
-  ctaContent: {
-    maxWidth: "900px",
-    margin: "0 auto",
-  },
-  ctaTitle: {
-    fontSize: "3rem",
-    fontWeight: 900,
-    marginBottom: "1.5rem",
-    background: "linear-gradient(135deg, #ffffff, #00d9ff)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-  ctaDescription: {
-    fontSize: "1.2rem",
-    color: "#b0b0c8",
-    marginBottom: "3rem",
-    lineHeight: 1.8,
-  },
-  ctaFeatures: {
-    display: "flex",
-    gap: "2rem",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    marginTop: "2rem",
-  },
-  ctaFeature: {
-    color: "#00d9ff",
-    fontSize: "0.95rem",
-    fontWeight: 600,
-  },
-  footer: {
-    padding: "4rem 0 2rem",
-    background: "#0a0a0f",
-    borderTop: "1px solid rgba(0, 217, 255, 0.1)",
-    position: "relative",
-    zIndex: 1,
-  },
-  footerContent: {
-    display: "grid",
-    gridTemplateColumns: "2fr 1fr 1fr 1fr",
-    gap: "3rem",
-    marginBottom: "3rem",
-  },
-  footerSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  },
-  footerLogo: {
-    fontSize: "1.5rem",
-    fontWeight: 900,
-    background: "linear-gradient(135deg, #00d9ff, #7b2ff7)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    marginBottom: "0.5rem",
-  },
-  footerDescription: {
-    fontSize: "0.95rem",
-    color: "#b0b0c8",
-    lineHeight: 1.6,
-  },
-  footerTitle: {
-    fontSize: "1.1rem",
-    fontWeight: 700,
-    color: "#ffffff",
-    marginBottom: "0.5rem",
-  },
-  footerLink: {
-    color: "#b0b0c8",
-    textDecoration: "none",
-    fontSize: "0.95rem",
-    transition: "color 0.3s ease",
-    cursor: "pointer",
-  },
-  footerBottom: {
-    textAlign: "center",
-    paddingTop: "2rem",
-    borderTop: "1px solid rgba(0, 217, 255, 0.1)",
-    color: "#b0b0c8",
-    fontSize: "0.9rem",
-  },
-};
+// ─── CSS ──────────────────────────────────────────────────────────────────────
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
 
-// Keyframes for animations
-const keyframes = `
-  @keyframes bgRotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .edu-root {
+    font-family: 'DM Sans', sans-serif;
+    color: #1e293b;
+    background: #f8fafc;
+    -webkit-font-smoothing: antialiased;
   }
 
-  @keyframes gridMove {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(50px, 50px); }
+  /* ── Tokens ── */
+  :root {
+    --indigo: #6366f1;
+    --indigo-dark: #4f46e5;
+    --indigo-light: #eef2ff;
+    --slate-50:  #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-400: #94a3b8;
+    --slate-600: #475569;
+    --slate-800: #1e293b;
+    --radius: 14px;
   }
 
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
+  /* ── Layout ── */
+  .edu-container { max-width: 1160px; margin: 0 auto; padding: 0 1.25rem; }
+  .edu-accent    { color: var(--indigo); }
+  .edu-check     { color: var(--indigo); flex-shrink: 0; }
+  .edu-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 800;
+    color: var(--indigo); cursor: pointer; letter-spacing: -.02em;
+  }
+
+  /* ── Buttons ── */
+  .edu-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+    padding: .6rem 1.35rem; font-size: .9rem; font-weight: 600;
+    border-radius: 50px; border: 2px solid transparent;
+    cursor: pointer; transition: all .2s ease; white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .edu-btn--primary       { background: var(--indigo); color: #fff; border-color: var(--indigo); box-shadow: 0 4px 14px rgba(99,102,241,.3); }
+  .edu-btn--primary:hover { background: var(--indigo-dark); border-color: var(--indigo-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,.4); }
+  .edu-btn--ghost         { background: transparent; color: var(--slate-600); }
+  .edu-btn--ghost:hover   { background: var(--indigo-light); color: var(--indigo); }
+  .edu-btn--outline       { background: transparent; color: var(--indigo); border-color: var(--indigo); }
+  .edu-btn--outline:hover { background: var(--indigo-light); }
+  .edu-btn--outline-white { background: transparent; color: #fff; border-color: rgba(255,255,255,.6); }
+  .edu-btn--outline-white:hover { background: rgba(255,255,255,.12); border-color: #fff; }
+  .edu-btn--white         { background: #fff; color: var(--indigo); border-color: #fff; }
+  .edu-btn--white:hover   { background: #f0f4ff; }
+  .edu-btn--lg   { padding: .85rem 1.9rem; font-size: 1rem; }
+  .edu-btn--full { width: 100%; }
+
+  /* ─────────────────────────────────────────────
+     NAVBAR — scroll effect via animation-timeline
+     Mobile menu — pure CSS checkbox trick
+  ───────────────────────────────────────────── */
+  .edu-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(248,250,252,.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: background .3s, border-color .3s, box-shadow .3s;
+  }
+  /* Scroll-driven navbar shadow — no JS, no useState */
+  @supports (animation-timeline: scroll()) {
+    .edu-nav {
+      animation: navScroll linear both;
+      animation-timeline: scroll();
+      animation-range: 0px 80px;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    @keyframes navScroll {
+      from { background: rgba(248,250,252,.5); }
+      to   { background: rgba(255,255,255,.97); border-color: #e2e8f0; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
     }
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  .edu-nav__inner {
+    display: flex; align-items: center; gap: 2rem; height: 64px;
+  }
+  .edu-nav__links {
+    display: flex; gap: 1.75rem; flex: 1;
+  }
+  .edu-nav__link {
+    font-size: .9rem; font-weight: 500; color: var(--slate-600);
+    text-decoration: none; transition: color .2s;
+  }
+  .edu-nav__link:hover { color: var(--indigo); }
+  .edu-nav__actions { display: flex; gap: .75rem; }
+
+  /* Hidden checkbox for mobile menu — no useState */
+  .edu-menu-checkbox { display: none; }
+  .edu-hamburger {
+    display: none; cursor: pointer; color: var(--slate-800);
+    background: none; border: none; padding: .25rem; margin-left: auto;
   }
 
-  @keyframes float {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.6;
-    }
-    33% {
-      transform: translate(100px, -100px) scale(1.5);
-      opacity: 0.3;
-    }
-    66% {
-      transform: translate(-80px, 80px) scale(0.8);
-      opacity: 0.8;
-    }
+  /* Mobile drawer — hidden by default, shown when checkbox is checked */
+  .edu-mobile-drawer {
+    display: none;
+    flex-direction: column; gap: .4rem;
+    padding: .75rem 1.25rem 1.25rem;
+    background: #fff;
+    border-top: 1px solid var(--slate-200);
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  }
+  .edu-mobile-link {
+    padding: .75rem 1rem; border-radius: 8px;
+    color: var(--slate-800); font-weight: 500;
+    text-decoration: none; transition: background .2s;
+  }
+  .edu-mobile-link:hover { background: var(--indigo-light); color: var(--indigo); }
+  .edu-mobile-actions { display: flex; flex-direction: column; gap: .5rem; margin-top: .5rem; }
+
+  /* When checkbox is checked → show drawer */
+  .edu-menu-checkbox:checked ~ .edu-mobile-drawer { display: flex; }
+
+  /* ── Hero ── */
+  .edu-hero {
+    position: relative; overflow: hidden;
+    padding: 9rem 0 5rem; text-align: center;
+    background: linear-gradient(155deg, #eef2ff 0%, #f8fafc 60%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  }
+  .edu-blob {
+    position: absolute; border-radius: 50%;
+    pointer-events: none; filter: blur(80px); opacity: .45;
+  }
+  .edu-blob--1 {
+    width: 460px; height: 460px;
+    background: radial-gradient(circle, #c7d2fe, #a5b4fc);
+    top: -80px; right: -80px;
+    animation: blobFloat 9s ease-in-out infinite;
+  }
+  .edu-blob--2 {
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, #bfdbfe, #93c5fd);
+    bottom: -60px; left: -60px;
+    animation: blobFloat 11s ease-in-out infinite reverse;
+  }
+  @keyframes blobFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(20px,-20px) scale(1.06); }
   }
 
-  li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    color: #00d9ff;
-    font-weight: bold;
+  .edu-hero__body {
+    position: relative; z-index: 1;
+    max-width: 740px; margin: 0 auto;
+  }
+  .edu-hero__badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: var(--indigo-light); color: var(--indigo);
+    padding: .32rem 1rem; border-radius: 50px;
+    font-size: .8rem; font-weight: 700; margin-bottom: 1.5rem;
+    animation: fadeUp .6s ease both;
+  }
+  .edu-hero__title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800; line-height: 1.18;
+    color: var(--slate-800); margin-bottom: 1.25rem;
+    animation: fadeUp .7s .1s ease both;
+  }
+  .edu-hero__sub {
+    font-size: clamp(.95rem, 2.2vw, 1.1rem);
+    color: var(--slate-600); line-height: 1.75;
+    max-width: 560px; margin: 0 auto 2rem;
+    animation: fadeUp .7s .2s ease both;
+  }
+  .edu-hero__cta {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 3rem;
+    animation: fadeUp .7s .3s ease both;
+  }
+  .edu-hero__stats {
+    display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+    animation: fadeUp .7s .4s ease both;
+  }
+  .edu-hero__stat      { text-align: center; }
+  .edu-hero__stat-val  { display: block; font-size: 1.6rem; font-weight: 800; color: var(--indigo); }
+  .edu-hero__stat-lbl  { font-size: .78rem; color: var(--slate-400); font-weight: 500; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ── Sections ── */
+  .edu-section { padding: 5rem 0; }
+  .edu-section--white { background: #fff; }
+  .edu-section--slate { background: var(--slate-50); }
+
+  /* Scroll-reveal via @keyframes + animation-timeline where supported, fallback opacity:1 */
+  .edu-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: revealUp .55s ease both;
+    animation-play-state: paused;
+  }
+  @supports (animation-timeline: view()) {
+    .edu-reveal {
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+      animation-play-state: running;
+      animation-delay: var(--delay, 0ms);
+    }
+  }
+  /* Fallback: just show everything if animation-timeline unsupported */
+  @supports not (animation-timeline: view()) {
+    .edu-reveal { opacity: 1; transform: none; }
+  }
+  @keyframes revealUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Section Header ── */
+  .edu-section-header { text-align: center; margin-bottom: 3rem; }
+  .edu-section-header__label {
+    display: inline-block;
+    background: var(--indigo-light); color: var(--indigo);
+    padding: .28rem .9rem; border-radius: 50px;
+    font-size: .76rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: .85rem;
+  }
+  .edu-section-header__title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 800; color: var(--slate-800); line-height: 1.2; margin-bottom: .7rem;
+  }
+  .edu-section-header__sub { color: var(--slate-600); font-size: .97rem; max-width: 580px; margin: 0 auto; }
+
+  /* ── Grids ── */
+  .edu-grid      { display: grid; gap: 1.25rem; }
+  .edu-grid--2   { grid-template-columns: repeat(2, 1fr); }
+  .edu-grid--3   { grid-template-columns: repeat(3, 1fr); }
+  .edu-grid--4   { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── Feature Cards ── */
+  .edu-feature-card {
+    background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: var(--radius); padding: 1.6rem;
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+  }
+  .edu-feature-card:hover { border-color: var(--indigo); box-shadow: 0 4px 20px rgba(99,102,241,.12); transform: translateY(-3px); }
+  .edu-feature-card__icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--indigo-light); color: var(--indigo);
+    display: flex; align-items: center; justify-content: center; margin-bottom: .9rem;
+  }
+  .edu-feature-card__title { font-size: .97rem; font-weight: 700; color: var(--slate-800); margin-bottom: .4rem; }
+  .edu-feature-card__desc  { font-size: .86rem; color: var(--slate-600); line-height: 1.65; }
+
+  /* ── Indigo Strip ── */
+  .edu-strip { padding: 2.75rem 0; background: linear-gradient(135deg, #6366f1, #818cf8); }
+  .edu-strip__card  { text-align: center; padding: 1rem; color: #fff; }
+  .edu-strip__icon  {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(255,255,255,.18); display: flex; align-items: center;
+    justify-content: center; margin: 0 auto .7rem;
+  }
+  .edu-strip__title { font-size: .92rem; font-weight: 700; margin-bottom: .3rem; }
+  .edu-strip__desc  { font-size: .8rem; opacity: .8; line-height: 1.5; }
+
+  /* ── Benefit Cards ── */
+  .edu-benefit-card {
+    background: #fff; border: 1px solid var(--slate-200);
+    border-radius: var(--radius); padding: 1.6rem;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .edu-benefit-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.09); transform: translateY(-3px); }
+  .edu-benefit-card__icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: .9rem; }
+  .edu-benefit-card__title { font-size: .97rem; font-weight: 700; color: var(--slate-800); margin-bottom: .4rem; }
+  .edu-benefit-card__desc  { font-size: .86rem; color: var(--slate-600); line-height: 1.65; }
+
+  /* ── Testimonials ── */
+  .edu-testimonial {
+    background: #fff; border: 1px solid var(--slate-200);
+    border-radius: var(--radius); padding: 1.75rem;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .edu-testimonial:hover { box-shadow: 0 8px 28px rgba(0,0,0,.09); transform: translateY(-2px); }
+  .edu-testimonial__stars  { color: #f59e0b; margin-bottom: .7rem; }
+  .edu-testimonial__text   { color: var(--slate-600); line-height: 1.75; margin-bottom: 1.4rem; font-style: italic; font-size: .92rem; }
+  .edu-testimonial__author { display: flex; align-items: center; gap: .9rem; }
+  .edu-testimonial__avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--indigo-light); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+  .edu-testimonial__name   { font-size: .9rem; font-weight: 700; color: var(--slate-800); }
+  .edu-testimonial__meta   { font-size: .78rem; color: var(--slate-400); }
+
+  /* ── Audience ── */
+  .edu-audience-card {
+    background: #fff; border: 1px solid var(--slate-200);
+    border-radius: var(--radius); padding: 1.4rem;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .edu-audience-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
+  .edu-audience-card__icon  { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: .9rem; }
+  .edu-audience-card__title { font-size: .93rem; font-weight: 700; color: var(--slate-800); margin-bottom: .7rem; }
+  .edu-audience-card__list  { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+  .edu-audience-card__list li { display: flex; align-items: flex-start; gap: .4rem; font-size: .81rem; color: var(--slate-600); line-height: 1.5; }
+
+  /* ── Pricing ── */
+  .edu-pricing-card {
+    background: #fff; border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius); padding: 2rem; position: relative;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .edu-pricing-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.09); transform: translateY(-3px); }
+  .edu-pricing-card--popular { border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
+  .edu-pricing-card__badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--indigo); color: #fff;
+    padding: .28rem 1rem; border-radius: 50px;
+    font-size: .73rem; font-weight: 700; white-space: nowrap;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .edu-pricing-card__title    { font-size: 1.05rem; font-weight: 700; color: var(--slate-800); margin-bottom: .45rem; }
+  .edu-pricing-card__price    { margin-bottom: 1.2rem; }
+  .edu-pricing-card__amount   { font-size: 2.1rem; font-weight: 800; color: var(--indigo); }
+  .edu-pricing-card__period   { font-size: .85rem; color: var(--slate-400); }
+  .edu-pricing-card__features { list-style: none; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: .5rem; }
+  .edu-pricing-card__features li { display: flex; align-items: center; gap: .4rem; font-size: .86rem; color: var(--slate-600); }
+
+  /* ── FAQ — native details/summary, zero JS ── */
+  .edu-faq { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: .65rem; }
+  .edu-faq__item {
+    background: #fff; border: 1px solid var(--slate-200);
+    border-radius: var(--radius); overflow: hidden;
+    transition: border-color .2s;
+    cursor: pointer;
+  }
+  .edu-faq__item[open] { border-color: var(--indigo); }
+  .edu-faq__question {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.1rem 1.4rem;
+    font-weight: 600; font-size: .93rem; color: var(--slate-800);
+    list-style: none; user-select: none;
+  }
+  .edu-faq__question::-webkit-details-marker { display: none; }
+  /* CSS-only chevron via ::after */
+  .edu-faq__question::after {
+    content: '›';
+    font-size: 1.2rem; color: var(--slate-400);
+    transition: transform .25s, color .25s;
+    transform: rotate(90deg);
+  }
+  .edu-faq__item[open] .edu-faq__question::after { transform: rotate(270deg); color: var(--indigo); }
+  .edu-faq__answer { padding: 0 1.4rem 1.1rem; font-size: .88rem; color: var(--slate-600); line-height: 1.7; }
+
+  /* ── CTA section ── */
+  .edu-cta-section { background: linear-gradient(135deg, #6366f1, #818cf8); padding: 5rem 0; text-align: center; color: #fff; }
+  .edu-cta-section__inner  { max-width: 680px; margin: 0 auto; }
+  .edu-cta-section__title  { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem,4vw,2.4rem); font-weight: 800; margin-bottom: .7rem; }
+  .edu-cta-section__sub    { opacity: .85; font-size: .97rem; margin-bottom: 2rem; }
+  .edu-cta-section__perks  { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; font-size: .82rem; opacity: .85; font-weight: 600; }
+
+  /* ── Footer ── */
+  .edu-footer { background: var(--slate-800); padding: 3.5rem 0 0; color: var(--slate-400); }
+  .edu-footer__tagline  { font-size: .83rem; margin-top: .5rem; line-height: 1.6; max-width: 200px; }
+  .edu-footer__grid     { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
+  .edu-footer__group    { display: flex; flex-direction: column; gap: .55rem; }
+  .edu-footer__group strong { color: #fff; font-size: .88rem; margin-bottom: .2rem; }
+  .edu-footer__group a  { color: var(--slate-400); text-decoration: none; font-size: .83rem; transition: color .2s; }
+  .edu-footer__group a:hover { color: #fff; }
+  .edu-footer__bottom   { border-top: 1px solid rgba(255,255,255,.08); padding: 1.2rem 0; font-size: .8rem; }
+
+  /* ── Responsive ── */
   @media (max-width: 1024px) {
-    .featuresGrid, .benefitsGrid {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
-    .testimonialsGrid, .audienceGrid, .pricingGrid {
-      grid-template-columns: 1fr !important;
-    }
-    .pathsGrid, .interactiveGrid {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
-    .footerContent {
-      grid-template-columns: 1fr 1fr !important;
-    }
+    .edu-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .edu-grid--3 { grid-template-columns: repeat(2, 1fr); }
+    .edu-footer__grid { grid-template-columns: 1fr 1fr; }
   }
 
   @media (max-width: 768px) {
-    h1 {
-      font-size: 2.5rem !important;
-    }
-    .featuresGrid, .benefitsGrid, .pathsGrid, .interactiveGrid {
-      grid-template-columns: 1fr !important;
-    }
-    .footerContent {
-      grid-template-columns: 1fr !important;
-    }
-    .navLinks {
-      display: none !important;
-    }
+    /* Hide desktop nav, show hamburger */
+    .edu-nav__links, .edu-nav__actions { display: none; }
+    .edu-hamburger { display: flex; }
+
+    .edu-grid--2,
+    .edu-grid--3,
+    .edu-grid--4 { grid-template-columns: 1fr; }
+
+    .edu-hero { padding: 7rem 0 4rem; min-height: auto; }
+    .edu-hero__stats { gap: 1.25rem; }
+
+    .edu-strip .edu-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .edu-footer__grid { grid-template-columns: 1fr 1fr; }
+    .edu-cta-section__perks { flex-direction: column; align-items: center; gap: .5rem; }
   }
-`;
+
+  @media (max-width: 480px) {
+    .edu-footer__grid { grid-template-columns: 1fr; }
+    .edu-strip .edu-grid--4 { grid-template-columns: 1fr; }
+    .edu-hero__cta { flex-direction: column; align-items: stretch; }
+    .edu-hero__cta .edu-btn { justify-content: center; }
+    .edu-hero__stats { gap: 1rem; }
+    .edu-hero__stat-val { font-size: 1.3rem; }
+  }
+`
